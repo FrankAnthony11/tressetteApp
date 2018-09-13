@@ -15,14 +15,19 @@ namespace TresetaApp.Hubs
         public override async Task OnConnectedAsync()
         {
             _players.Add(Context.ConnectionId);
-            await Clients.All.SendAsync("PlayerConnected", _players);
+            await GetAllPlayers();
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(System.Exception exception)
         {
             _players.Remove(Context.ConnectionId);
-            await Clients.All.SendAsync("PlayerDisconnected", _players);
+            await GetAllPlayers();
             await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task GetAllPlayers()
+        {
+            await Clients.All.SendAsync("GetAllPlayers", _players);
         }
 
         public async Task AllWaitingRoomsUpdate()

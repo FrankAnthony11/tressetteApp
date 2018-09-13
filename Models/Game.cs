@@ -9,19 +9,19 @@ namespace TresetaApp.Models
     public class Game
     {
         private string _turnToPlay;
+        private Card _lastCardPlayed =null;
         public Game(string player1ConnectionId, string player2ConnectionId)
         {
             Id = Guid.NewGuid().ToString();
             Deck = GenerateDeck();
             Player1 = new Player(Deck.GetAndRemove(0, 10), player1ConnectionId);
             Player2 = new Player(Deck.GetAndRemove(0, 10), player2ConnectionId);
-            LastCardPlayed = null;
+            _lastCardPlayed = null;
             _turnToPlay = player1ConnectionId;
         }
         public string Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
-        public Card LastCardPlayed { get; set; }
         public List<Card> Deck { get; set; }
         public bool GameEnded { get; set; } = false;
 
@@ -33,33 +33,33 @@ namespace TresetaApp.Models
             if (playerConnectionId != _turnToPlay)
                 return false;
 
-            if (LastCardPlayed == null)
+            if (_lastCardPlayed == null)
             {
-                LastCardPlayed = card;
+                _lastCardPlayed = card;
                 RemoveCardFromHand(player, card);
                 ChangePlayersTurn();
             }
             else
             {
-                if (card.Color != LastCardPlayed.Color)
+                if (card.Color != _lastCardPlayed.Color)
                 {
-                    if (player.Cards.Any(x => x.Color == LastCardPlayed.Color))
+                    if (player.Cards.Any(x => x.Color == _lastCardPlayed.Color))
                         return false;
-                    opponent.Points += card.Value + LastCardPlayed.Value;
+                    opponent.Points += card.Value + _lastCardPlayed.Value;
                 }
                 else
                 {
-                    if (card.Number > LastCardPlayed.Number)
+                    if (card.Number > _lastCardPlayed.Number)
                     {
-                        player.Points += card.Value + LastCardPlayed.Value;
+                        player.Points += card.Value + _lastCardPlayed.Value;
                     }
                     else
                     {
-                        opponent.Points += card.Value + LastCardPlayed.Value;
+                        opponent.Points += card.Value + _lastCardPlayed.Value;
                         ChangePlayersTurn();
                     }
                 }
-                LastCardPlayed = null;
+                _lastCardPlayed = null;
                 RemoveCardFromHand(player, card);
                 DrawCards();
             }
