@@ -14,7 +14,7 @@ namespace TresetaApp.Controllers
         [HttpGet("[action]")]
         public IActionResult GenerateGame()
         {
-            var game=new Game();
+            var game=new Game("d","f");
             return Ok(game);
         }
 

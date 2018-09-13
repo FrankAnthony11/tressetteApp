@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TresetaApp.Hubs;
 
 namespace TresetaApp
 {
@@ -21,6 +22,8 @@ namespace TresetaApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSignalR();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -41,6 +44,11 @@ namespace TresetaApp
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseSignalR(x =>
+            {
+                x.MapHub<GameHub>("/gamehub");
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
