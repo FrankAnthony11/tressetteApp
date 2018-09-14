@@ -96,7 +96,7 @@ namespace TresetaApp.Hubs
 
             var game = new Game(waitingRoom.ConnectionId1, waitingRoom.ConnectionId2);
             _games.Add(game);
-            await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("GameUpdate", game);
+            await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("GameStarted", game);
             await RemoveWaitingRoom(waitingRoomId);
         }
 

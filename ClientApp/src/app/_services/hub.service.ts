@@ -1,3 +1,4 @@
+import { Game } from './../_models/game';
 import { WaitingRoom } from './../_models/waitingRoom';
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
@@ -8,9 +9,10 @@ import { Router } from '@angular/router';
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
-   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
-   playersObservable = new BehaviorSubject<string[]>(null);
-   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
+  waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
+  playersObservable = new BehaviorSubject<string[]>(null);
+  activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
+  activeGameObservable = new BehaviorSubject<Game>(null);
 
   constructor(private _router: Router) {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
@@ -28,6 +30,15 @@ export class HubService {
 
     this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
       this.activeWaitingRoomObservable.next(waitingRoom);
+    });
+
+    this._hubConnection.on('GameUpdate', (game: Game) => {
+      this.activeGameObservable.next(game);
+    });
+
+    this._hubConnection.on('GameStarted', (game: Game) => {
+      this.activeGameObservable.next(game);
+      this._router.navigateByUrl("game");
     });
   }
 
@@ -53,6 +64,10 @@ export class HubService {
     this._router.navigateByUrl('/');
   }
 
+  CreateGame() {
+    this._hubConnection.invoke('CreateGame', this.activeWaitingRoomObservable.getValue().id);
+  }
+
   get Players() {
     return this.playersObservable.asObservable();
   }
@@ -61,5 +76,8 @@ export class HubService {
   }
   get ActiveWaitingRoom() {
     return this.activeWaitingRoomObservable.asObservable();
+  }
+  get ActiveGame() {
+    return this.activeGameObservable.asObservable();
   }
 }

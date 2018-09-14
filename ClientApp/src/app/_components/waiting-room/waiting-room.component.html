@@ -1,18 +1,18 @@
 <div class="row">
   <div class="col-sm-12">
     <div class="clearfix">
-        <button class="btn btn-danger float-right" (click)="leaveWaitingRoom()">Leave waiting room</button>
+      <button class="btn btn-danger float-right" (click)="leaveWaitingRoom()">Leave waiting room</button>
     </div>
     <div [hidden]="activatedWaitingRoom.connectionId2">
-        <h3>Waiting for another player....</h3>
+      <h3>Waiting for another player....</h3>
     </div>
     <div [hidden]="!activatedWaitingRoom.connectionId2">
-        <h3>Two players currently joined!</h3>
-        <ul>
-          <li>{{activatedWaitingRoom.connectionId1}}</li>
-          <li>{{activatedWaitingRoom.connectionId2}}</li>
-        </ul>
-        <button class="btn btn-success">Start game!</button>
-      </div>
+      <h3>Two players currently joined!</h3>
+      <ul>
+        <li>{{activatedWaitingRoom.connectionId1}}</li>
+        <li>{{activatedWaitingRoom.connectionId2}}</li>
+      </ul>
+      <button class="btn btn-success" (click)="CreateGame()">Start game!</button>
+    </div>
   </div>
 </div>

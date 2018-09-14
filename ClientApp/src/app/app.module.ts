@@ -1,3 +1,4 @@
+import { GameGuard } from './_guards/game.guard';
 import { GameComponent } from './_components/game/game.component';
 import { HubService } from './_services/hub.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,10 +20,11 @@ import { WaitingRoomGuard } from './_guards/waiting-room.guard';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'waitingRoom', component: WaitingRoomComponent, canActivate:[WaitingRoomGuard] }
+      { path: 'waitingRoom', component: WaitingRoomComponent, canActivate:[WaitingRoomGuard] },
+      { path: 'game', component: GameComponent, canActivate:[GameGuard] }
     ])
   ],
-  providers: [HubService, WaitingRoomGuard],
+  providers: [HubService, WaitingRoomGuard,GameGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
