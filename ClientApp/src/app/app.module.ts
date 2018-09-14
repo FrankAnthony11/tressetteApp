@@ -8,22 +8,21 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './_components/home/home.component';
+import { WaitingRoomComponent } from './_components/waiting-room/waiting-room.component';
+import { WaitingRoomGuard } from './_guards/waiting-room.guard';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    GameComponent
-  ],
+  declarations: [AppComponent, HomeComponent, GameComponent, WaitingRoomComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' }
+      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: 'waitingRoom', component: WaitingRoomComponent, canActivate:[WaitingRoomGuard] }
     ])
   ],
-  providers: [HubService],
+  providers: [HubService, WaitingRoomGuard],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+.fill-viewport-max-100{
+    max-height: 100vh;
+}
+.fill-viewport-min-100{
+    min-height: 100vh;
+}
+.scrollable-div-y{
+    overflow-y: scroll;
+}
+.scrollable-div-x{
+    overflow-x: scroll;
+}

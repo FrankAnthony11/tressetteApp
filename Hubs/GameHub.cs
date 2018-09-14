@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,9 +22,13 @@ namespace TresetaApp.Hubs
         public override async Task OnDisconnectedAsync(System.Exception exception)
         {
             _players.Remove(Context.ConnectionId);
+
+            await CleanupPlayerFromWaitingRooms();
             await GetAllPlayers();
             await base.OnDisconnectedAsync(exception);
         }
+
+
 
         public async Task GetAllPlayers()
         {
@@ -32,20 +37,33 @@ namespace TresetaApp.Hubs
 
         public async Task AllWaitingRoomsUpdate()
         {
-            await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms);
+            await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms.Where(y => string.IsNullOrEmpty(y.ConnectionId2)));
         }
+
         public async Task CreateWaitingRoom()
         {
             var waitingRoom = new WaitingRoom(Context.ConnectionId);
             _waitingRooms.Add(waitingRoom);
+            await UpdateSingleWaitingRoom(waitingRoom);
             await AllWaitingRoomsUpdate();
         }
 
         public async Task JoinWaitingRoom(string id)
         {
+           // await CleanupPlayerFromWaitingRooms();
+
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
-            waitingRoom.ConnectionId2 = Context.ConnectionId;
-            await Clients.Clients(waitingRoom.ConnectionId1, waitingRoom.ConnectionId2).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
+
+            if (waitingRoom == null)
+            {
+                await CreateWaitingRoom();
+            }
+            else
+            {
+                waitingRoom.ConnectionId2 = Context.ConnectionId;
+                await UpdateSingleWaitingRoom(waitingRoom);
+                await AllWaitingRoomsUpdate();
+            }
         }
 
         public async Task LeaveWaitingRoom(string id)
@@ -64,7 +82,8 @@ namespace TresetaApp.Hubs
             }
             else
             {
-                await Clients.Client(waitingRoom.ConnectionId1).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
+                await UpdateSingleWaitingRoom(waitingRoom);
+                await AllWaitingRoomsUpdate();
             }
         }
 
@@ -103,6 +122,22 @@ namespace TresetaApp.Hubs
         private async Task GameUpdated(Game game)
         {
             await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("GameUpdate", game);
+        }
+
+        private async Task UpdateSingleWaitingRoom(WaitingRoom waitingRoom)
+        {
+            await Clients.Clients(waitingRoom.ConnectionId1, waitingRoom.ConnectionId2).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
+        }
+
+        private async Task CleanupPlayerFromWaitingRooms()
+        {
+            _waitingRooms.ForEach(async y =>
+            {
+                if (y.ConnectionId1 == Context.ConnectionId || y.ConnectionId2 == Context.ConnectionId)
+                {
+                    await LeaveWaitingRoom(y.Id);
+                }
+            });
         }
 
     }

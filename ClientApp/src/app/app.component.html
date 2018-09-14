@@ -1,7 +1,13 @@
 <div class='container-fluid'>
   <div class='row'>
-    <div class='col-sm-12'>
+    <div class='col-8'>
       <router-outlet></router-outlet>
+    </div>
+    <div class="col-4 fill-viewport-max-100 scrollable-div-y">
+      <h3>Available players:</h3>
+      <p *ngFor="let player of players">{{player}}</p>
+      <h3>Available games:</h3>
+      <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" [hidden]="activatedRoom?.id==waitingRoom.id" (click)="joinWaitingRoom(waitingRoom.id)">{{waitingRoom.id.slice(0,8)}}</button>
     </div>
   </div>
 </div>

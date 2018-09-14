@@ -2,31 +2,32 @@ import { WaitingRoom } from './../_models/waitingRoom';
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
-  private _waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
-  private _playersObservable = new BehaviorSubject<string[]>(null);
-  private _activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
+   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
+   playersObservable = new BehaviorSubject<string[]>(null);
+   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
 
-  constructor() {
+  constructor(private _router: Router) {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       this._hubConnection.invoke('AllWaitingRoomsUpdate');
     });
 
     this._hubConnection.on('AllWaitingRoomsUpdate', (waitingRooms: WaitingRoom[]) => {
-      this._waitingRoomsObservable.next(waitingRooms);
+      this.waitingRoomsObservable.next(waitingRooms);
     });
 
     this._hubConnection.on('GetAllPlayers', (players: string[]) => {
-      this._playersObservable.next(players);
+      this.playersObservable.next(players);
     });
 
     this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
-      this._activeWaitingRoomObservable.next(waitingRoom);
+      this.activeWaitingRoomObservable.next(waitingRoom);
     });
   }
 
@@ -35,25 +36,30 @@ export class HubService {
   }
 
   CreateWaitingRoom() {
-    this._hubConnection.invoke('CreateWaitingRoom');
+    this._hubConnection.invoke('CreateWaitingRoom').then(() => {
+      this._router.navigateByUrl('waitingRoom');
+    });
   }
 
   JoinWaitingRoom(id: string) {
-    this._hubConnection.invoke('JoinWaitingRoom', id);
+    this._hubConnection.invoke('JoinWaitingRoom', id).then(() => {
+      this._router.navigateByUrl('waitingRoom');
+    });
   }
 
-  LeaveWaitingRoom(id: string) {
-    this._activeWaitingRoomObservable.next(null);
-    this._hubConnection.invoke('LeaveWaitingRoom', id);
+  LeaveWaitingRoom() {
+    this._hubConnection.invoke('LeaveWaitingRoom', this.activeWaitingRoomObservable.getValue().id);
+    this.activeWaitingRoomObservable.next(null);
+    this._router.navigateByUrl('/');
   }
 
   get Players() {
-    return this._playersObservable.asObservable();
+    return this.playersObservable.asObservable();
   }
   get WaitingRooms() {
-    return this._waitingRoomsObservable.asObservable();
+    return this.waitingRoomsObservable.asObservable();
   }
   get ActiveWaitingRoom() {
-    return this._activeWaitingRoomObservable.asObservable();
+    return this.activeWaitingRoomObservable.asObservable();
   }
 }
