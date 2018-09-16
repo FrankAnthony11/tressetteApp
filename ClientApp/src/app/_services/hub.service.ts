@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
+  connectionId: string;
+
   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
   playersObservable = new BehaviorSubject<string[]>(null);
   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
@@ -22,6 +24,10 @@ export class HubService {
 
     this._hubConnection.on('AllWaitingRoomsUpdate', (waitingRooms: WaitingRoom[]) => {
       this.waitingRoomsObservable.next(waitingRooms);
+    });
+
+    this._hubConnection.on('GetConnectionId', (connectionId: string) => {
+      this.connectionId = connectionId;
     });
 
     this._hubConnection.on('GetAllPlayers', (players: string[]) => {
@@ -38,7 +44,7 @@ export class HubService {
 
     this._hubConnection.on('GameStarted', (game: Game) => {
       this.activeGameObservable.next(game);
-      this._router.navigateByUrl("game");
+      this._router.navigateByUrl('game');
     });
   }
 
@@ -66,6 +72,10 @@ export class HubService {
 
   CreateGame() {
     this._hubConnection.invoke('CreateGame', this.activeWaitingRoomObservable.getValue().id);
+  }
+
+  MakeMove(card) {
+    this._hubConnection.invoke('MakeMove', this.activeGameObservable.getValue().id, card);
   }
 
   get Players() {

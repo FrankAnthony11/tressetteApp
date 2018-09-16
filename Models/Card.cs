@@ -8,7 +8,7 @@ namespace TresetaApp.Models
         {
             Color = color;
             Number = number;
-            ImageUrl=$"/images/{(int)color}/{(int)number}.jpg";
+            ImageUrl = $"/images/{(int)color}/{(int)number}.jpg";
         }
         public string ImageUrl { get; set; }
         public CardColor Color { get; set; }

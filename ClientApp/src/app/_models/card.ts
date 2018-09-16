@@ -1,3 +1,3 @@
-export interface Card{
-    
+export interface Card {
+  imageUrl: string;
 }

@@ -1,0 +1,21 @@
+.player-hand-card {
+  width: 10%;
+  margin-left: -20px;
+}
+.player-hand-card:hover {
+  margin-top: -20px;
+}
+
+.deck {
+  width: 150px;
+}
+.deck:first {
+  margin-left: 0;
+}
+.played-card{
+    width:150px;
+    margin-left: -80px;
+}
+.first-played-card{
+  margin-left: 0;
+}

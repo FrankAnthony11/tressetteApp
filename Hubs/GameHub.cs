@@ -17,6 +17,7 @@ namespace TresetaApp.Hubs
         {
             _players.Add(Context.ConnectionId);
             await GetAllPlayers();
+            await Clients.Client(Context.ConnectionId).SendAsync("GetConnectionId",Context.ConnectionId);
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(System.Exception exception)

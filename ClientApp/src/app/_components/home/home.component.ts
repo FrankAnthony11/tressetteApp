@@ -10,6 +10,6 @@ export class HomeComponent {
   constructor(private _hubService: HubService) {}
 
   createNewWaitingRoom() {
-    this._hubService.CreateWaitingRoom();
+    this._hubService.CreateWaitingRoom();    
   }
 }
