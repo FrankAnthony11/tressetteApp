@@ -16,12 +16,14 @@ namespace TresetaApp.Models
             Player1 = new Player(Deck.GetAndRemove(0, 10), player1ConnectionId);
             Player2 = new Player(Deck.GetAndRemove(0, 10), player2ConnectionId);
             CardsPlayed = new List<Card>();
+            CardsDrew = new List<Card>();
             _turnToPlay = player1ConnectionId;
         }
         public string Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public List<Card> CardsPlayed { get; set; }
+        public List<Card> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
         public bool GameEnded { get; set; } = false;
 
@@ -39,6 +41,11 @@ namespace TresetaApp.Models
                 CardsPlayed.Clear();
             }
 
+            if (CardsDrew.Count == 2)
+            {
+                CardsDrew.Clear();
+            }
+
             if (CardsPlayed.Count == 0)
             {
                 CardsPlayed.Add(card);
@@ -49,11 +56,17 @@ namespace TresetaApp.Models
             {
                 var lastCardPlayed = CardsPlayed.FirstOrDefault();
 
+                var isLastPoint = !Deck.Any() && !opponent.Cards.Any();
+
                 if (card.Color != lastCardPlayed.Color)
                 {
                     if (player.Cards.Any(x => x.Color == lastCardPlayed.Color))
                         return false;
                     opponent.Points += card.Value + lastCardPlayed.Value;
+                    if (isLastPoint)
+                    {
+                        opponent.Points += 3;
+                    }
                     ChangePlayersTurn();
                 }
                 else
@@ -61,10 +74,18 @@ namespace TresetaApp.Models
                     if (card.Number > lastCardPlayed.Number)
                     {
                         player.Points += card.Value + lastCardPlayed.Value;
+                        if (isLastPoint)
+                        {
+                            player.Points += 3;
+                        }
                     }
                     else
                     {
                         opponent.Points += card.Value + lastCardPlayed.Value;
+                        if (isLastPoint)
+                        {
+                            opponent.Points += 3;
+                        }
                         ChangePlayersTurn();
                     }
                 }
@@ -124,10 +145,12 @@ namespace TresetaApp.Models
                     GameEnded = true;
                 return;
             }
-            // var card1 = Deck.GetAndRemove(0, 1);
-            // var card2 = Deck.GetAndRemove(0, 1);
-            Player1.Cards.AddRange(Deck.GetAndRemove(0, 1));
-            Player2.Cards.AddRange(Deck.GetAndRemove(0, 1));
+            var card1 = Deck.GetAndRemove(0, 1).First();
+            var card2 = Deck.GetAndRemove(0, 1).First();
+            Player1.Cards.Add(card1);
+            Player2.Cards.Add(card2);
+            CardsDrew.Add(card1);
+            CardsDrew.Add(card2);
         }
 
 

@@ -8,4 +8,5 @@ export interface Game {
   gameEnded: boolean;
   deck: Card[];
   cardsPlayed: Card[];
+  cardsDrew: Card[];
 }
