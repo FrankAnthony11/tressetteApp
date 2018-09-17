@@ -1,36 +1,32 @@
+<div class="row p-5">
+  <div class="col-12">
+    <p><strong>Playing until:</strong> {{game.playUntilPoints}}</p>
+    <p><strong>Your points:</strong> {{getPlayer().calculatedPoints}}</p>
+    <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
+  </div>
+</div>
 <div class="row">
-  <div class="col-sm-12 p-5">
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="row">
-          <div class="col-sm-3">
-            <p>Your points: {{getPlayer().calculatedPoints}}</p>
-            <p>Opponent's points: {{getOpponent().calculatedPoints}}</p>
-          </div>
-          <div class="col-sm-9">
-              <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
-              class="played-card" alt="">
-          </div>
-        </div>
- 
-      </div>
-      <div class="col-sm-6">
-        <div [hidden]="cardsDrew.length==0">
-          <img *ngFor="let card of cardsDrew" [src]="card.imageUrl" class="deck" alt="">
-        </div>
-        <div [hidden]="cardsDrew.length==2">
-          <div class="card deck" [hidden]="game.deck.length==0">
-            <img class="card-img-top" src="/images/background.jpg">
-            <div class="card-body">
-              <h5 class="card-title text-center">{{game.deck.length/2}}</h5>
-            </div>
-          </div>
+  <div class="col-9">
+    <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
+      class="played-card" alt="">
+  </div>
+  <div class="col-3">
+    <div [hidden]="cardsDrew.length==0">
+      <img *ngFor="let card of cardsDrew" [src]="card.imageUrl" class="deck" alt="">
+    </div>
+    <div [hidden]="cardsDrew.length==2">
+      <div class="card deck" [hidden]="game.deck.length==0">
+        <img class="card-img-top" src="/images/background.jpg">
+        <div class="card-body">
+          <h5 class="card-title text-center">{{game.deck.length/2}}</h5>
         </div>
       </div>
     </div>
   </div>
+</div>
+<div class="row">
   <div class="col-12 p5">
-    <img *ngFor="let card of getPlayer().cards" (click)="makeMove(card)" [src]="card.imageUrl" class="player-hand-card animate"
-      alt="">
+    <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
+      [src]="card.imageUrl" class="player-hand-card animate">
   </div>
 </div>

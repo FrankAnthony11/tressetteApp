@@ -52,8 +52,8 @@ export class HubService {
     this._hubConnection.stop();
   }
 
-  CreateWaitingRoom() {
-    this._hubConnection.invoke('CreateWaitingRoom').then(() => {
+  CreateWaitingRoom(playUntilPoints:number) {
+    this._hubConnection.invoke('CreateWaitingRoom', playUntilPoints).then(() => {
       this._router.navigateByUrl('waitingRoom');
     });
   }

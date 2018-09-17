@@ -1,21 +1,24 @@
 .player-hand-card {
   width: 10%;
-  margin-left: -20px;
+  margin-left: -2%;
 }
 .player-hand-card:hover {
   margin-top: -20px;
 }
 
 .deck {
-  width: 150px;
+  max-width: 75px;
 }
 .deck:first {
   margin-left: 0;
 }
-.played-card{
-    width:150px;
-    margin-left: -80px;
+.played-card {
+  max-width: 75px;
+  margin-left: -5%;
 }
-.first-played-card{
+.first-played-card {
   margin-left: 0;
+}
+.card-body{
+  padding:0;
 }

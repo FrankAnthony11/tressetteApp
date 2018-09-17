@@ -9,7 +9,7 @@ import { HubService } from '../../_services/hub.service';
 export class HomeComponent {
   constructor(private _hubService: HubService) {}
 
-  createNewWaitingRoom() {
-    this._hubService.CreateWaitingRoom();    
+  createNewWaitingRoom(playUntilPoints:number) {
+    this._hubService.CreateWaitingRoom(playUntilPoints);    
   }
 }

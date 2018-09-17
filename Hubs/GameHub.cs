@@ -17,7 +17,7 @@ namespace TresetaApp.Hubs
         {
             _players.Add(Context.ConnectionId);
             await GetAllPlayers();
-            await Clients.Client(Context.ConnectionId).SendAsync("GetConnectionId",Context.ConnectionId);
+            await Clients.Client(Context.ConnectionId).SendAsync("GetConnectionId", Context.ConnectionId);
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(System.Exception exception)
@@ -41,9 +41,9 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms.Where(y => string.IsNullOrEmpty(y.ConnectionId2)));
         }
 
-        public async Task CreateWaitingRoom()
+        public async Task CreateWaitingRoom(int playUntilPoints)
         {
-            var waitingRoom = new WaitingRoom(Context.ConnectionId);
+            var waitingRoom = new WaitingRoom(Context.ConnectionId, playUntilPoints);
             _waitingRooms.Add(waitingRoom);
             await UpdateSingleWaitingRoom(waitingRoom);
             await AllWaitingRoomsUpdate();
@@ -51,13 +51,13 @@ namespace TresetaApp.Hubs
 
         public async Task JoinWaitingRoom(string id)
         {
-           // await CleanupPlayerFromWaitingRooms();
+            // await CleanupPlayerFromWaitingRooms();
 
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
 
             if (waitingRoom == null)
             {
-                await CreateWaitingRoom();
+                return;
             }
             else
             {
@@ -92,10 +92,10 @@ namespace TresetaApp.Hubs
         {
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == waitingRoomId);
 
-            if (string.IsNullOrEmpty(waitingRoom.ConnectionId1) || string.IsNullOrEmpty(waitingRoom.ConnectionId2))
+            if (string.IsNullOrEmpty(waitingRoom.ConnectionId1) || string.IsNullOrEmpty(waitingRoom.ConnectionId2) || (waitingRoom.PlayUntilPoints != 21 && waitingRoom.PlayUntilPoints != 41))
                 return;
 
-            var game = new Game(waitingRoom.ConnectionId1, waitingRoom.ConnectionId2);
+            var game = new Game(new Player(waitingRoom.ConnectionId1), new Player(waitingRoom.ConnectionId2), waitingRoom.PlayUntilPoints);
             _games.Add(game);
             await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("GameStarted", game);
             await RemoveWaitingRoom(waitingRoomId);

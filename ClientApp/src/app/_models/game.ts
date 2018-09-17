@@ -9,4 +9,5 @@ export interface Game {
   deck: Card[];
   cardsPlayed: Card[];
   cardsDrew: Card[];
+  playUntilPoints:number;
 }

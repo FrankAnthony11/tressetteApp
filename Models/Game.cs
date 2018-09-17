@@ -9,15 +9,14 @@ namespace TresetaApp.Models
     public class Game
     {
         private string _turnToPlay;
-        public Game(string player1ConnectionId, string player2ConnectionId)
+        public Game(Player player1, Player player2, int playUntilPoints)
         {
             Id = Guid.NewGuid().ToString();
-            Deck = GenerateDeck();
-            Player1 = new Player(Deck.GetAndRemove(0, 10), player1ConnectionId);
-            Player2 = new Player(Deck.GetAndRemove(0, 10), player2ConnectionId);
-            CardsPlayed = new List<Card>();
-            CardsDrew = new List<Card>();
-            _turnToPlay = player1ConnectionId;
+            Player1 = player1;
+            Player2 = player2;
+            PlayUntilPoints = playUntilPoints;
+
+            InitializeNewGame();
         }
         public string Id { get; set; }
         public Player Player1 { get; set; }
@@ -25,6 +24,7 @@ namespace TresetaApp.Models
         public List<Card> CardsPlayed { get; set; }
         public List<Card> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
+        public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
 
         public bool MakeMove(string playerConnectionId, Card card)
@@ -96,7 +96,7 @@ namespace TresetaApp.Models
             return true;
         }
 
-        // ------------------------------ private
+        // ------------------------------ private----------------------------------------------------//
 
         private List<Card> GenerateDeck()
         {
@@ -139,12 +139,11 @@ namespace TresetaApp.Models
 
         private void DrawCards()
         {
-            if (!Deck.Any())
-            {
-                if (!Player1.Cards.Any() && !Player2.Cards.Any())
-                    GameEnded = true;
+
+            var roundEnded = DetectIfRoundEnded();
+            if (roundEnded)
                 return;
-            }
+
             var card1 = Deck.GetAndRemove(0, 1).First();
             var card2 = Deck.GetAndRemove(0, 1).First();
             Player1.Cards.Add(card1);
@@ -153,11 +152,45 @@ namespace TresetaApp.Models
             CardsDrew.Add(card2);
         }
 
+        private bool DetectIfRoundEnded()
+        {
+            if (!Deck.Any() && !Player1.Cards.Any() && !Player2.Cards.Any())
+            {
+                Player1.CalculatedPoints += Player1.Points / 3;
+                Player2.CalculatedPoints += Player2.Points / 3;
+
+                if (Player1.CalculatedPoints >= PlayUntilPoints && Player2.CalculatedPoints >= PlayUntilPoints)
+                {
+                    PlayUntilPoints += 10;
+                    InitializeNewGame();
+                }
+                else if (Player1.CalculatedPoints >= PlayUntilPoints || Player2.CalculatedPoints >= PlayUntilPoints)
+                {
+                    GameEnded = true;
+                }
+                else
+                {
+                    InitializeNewGame();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private void InitializeNewGame()
+        {
+            Deck = GenerateDeck();
+            Player1.Cards = Deck.GetAndRemove(0, 10);
+            Player2.Cards = Deck.GetAndRemove(0, 10);
+            CardsPlayed = new List<Card>();
+            CardsDrew = new List<Card>();
+            _turnToPlay = Player1.ConnectionId; ;
+        }
 
         private void ChangePlayersTurn()
         {
             _turnToPlay = Player1.ConnectionId == _turnToPlay ? Player2.ConnectionId : Player1.ConnectionId;
         }
-    }
 
+    }
 }

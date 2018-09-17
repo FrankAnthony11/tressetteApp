@@ -6,9 +6,8 @@ namespace TresetaApp.Models
     public class Player
     {
         private List<Card> _cards;
-        public Player(List<Card> cards, string connectionId)
+        public Player(string connectionId)
         {
-            Cards = cards;
             ConnectionId = connectionId;
         }
 
@@ -23,9 +22,7 @@ namespace TresetaApp.Models
         }
         public string ConnectionId { get; set; }
         public int Points { get; set; } = 0;
-        public int CalculatedPoints
-        {
-            get { return Points / 3; }
-        }
+        public int CalculatedPoints { get; set; }
+    
     }
 }
