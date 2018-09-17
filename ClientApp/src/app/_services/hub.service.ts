@@ -4,17 +4,20 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { ChatMessage } from '../_models/chatMessage';
 
 @Injectable()
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
-  connectionId: string;
+  private _messages: ChatMessage[] = [];
 
   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
   playersObservable = new BehaviorSubject<string[]>(null);
   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
   activeGameObservable = new BehaviorSubject<Game>(null);
+  messagesObservable = new BehaviorSubject<ChatMessage[]>(this._messages);
+  connectionIdObservable = new BehaviorSubject<string>(null);
 
   constructor(private _router: Router) {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
@@ -27,7 +30,7 @@ export class HubService {
     });
 
     this._hubConnection.on('GetConnectionId', (connectionId: string) => {
-      this.connectionId = connectionId;
+      this.connectionIdObservable.next(connectionId);
     });
 
     this._hubConnection.on('GetAllPlayers', (players: string[]) => {
@@ -46,13 +49,24 @@ export class HubService {
       this.activeGameObservable.next(game);
       this._router.navigateByUrl('game');
     });
+
+    this._hubConnection.on('AddNewMessage', (message: ChatMessage) => {
+      this._messages.unshift(message);
+      this.messagesObservable.next(this._messages);
+    });
+
+    this._hubConnection.on('ExitGame', () => {
+      alert('Game exits. One of the players has left the game');
+      this._router.navigateByUrl('/');
+      //   this.activeGameObservable.next(null);
+    });
   }
 
   StopConnection() {
     this._hubConnection.stop();
   }
 
-  CreateWaitingRoom(playUntilPoints:number) {
+  CreateWaitingRoom(playUntilPoints: number) {
     this._hubConnection.invoke('CreateWaitingRoom', playUntilPoints).then(() => {
       this._router.navigateByUrl('waitingRoom');
     });
@@ -62,6 +76,10 @@ export class HubService {
     this._hubConnection.invoke('JoinWaitingRoom', id).then(() => {
       this._router.navigateByUrl('waitingRoom');
     });
+  }
+
+  ExitGame(): any {
+    this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().id);
   }
 
   LeaveWaitingRoom() {
@@ -78,6 +96,10 @@ export class HubService {
     this._hubConnection.invoke('MakeMove', this.activeGameObservable.getValue().id, card);
   }
 
+  SendMessage(message: string): any {
+    this._hubConnection.invoke('AddNewMessage', message);
+  }
+
   get Players() {
     return this.playersObservable.asObservable();
   }
@@ -89,5 +111,11 @@ export class HubService {
   }
   get ActiveGame() {
     return this.activeGameObservable.asObservable();
+  }
+  get Messages() {
+    return this.messagesObservable.asObservable();
+  }
+  get ConnectionId() {
+    return this.connectionIdObservable.asObservable();
   }
 }

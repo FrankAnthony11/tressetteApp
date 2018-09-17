@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
+
+  private _connectionId="";
+
   game: Game;
   cardsDrew: Card[] = new Array();
 
@@ -26,28 +29,28 @@ export class GameComponent implements OnInit {
       }
       if (game.gameEnded) {
         setTimeout(() => {
-          let gameOutput = '';
-          if (this.getPlayer().calculatedPoints > this.getOpponent().calculatedPoints) {
-            gameOutput = 'Won';
-          } else {
-            gameOutput = 'Lost';
-          }
-          alert(`You ${gameOutput}! Your points: ${this.getPlayer().calculatedPoints}, Opponent: ${this.getOpponent().calculatedPoints}`);
-          this._router.navigateByUrl('/');
+          alert(
+            `You ${this.getPlayer().calculatedPoints > this.getOpponent().calculatedPoints ? 'Won' : 'Lost'}! Your points: ${
+              this.getPlayer().calculatedPoints
+            }, Opponent: ${this.getOpponent().calculatedPoints}`
+          );
         }, 500);
       }
     });
+    this._hubService.ConnectionId.subscribe(connectionId=>{
+      this._connectionId=connectionId;
+    })
   }
 
   getPlayer() {
-    if (this._hubService.connectionId == this.game.player1.connectionId) {
+    if (this._connectionId == this.game.player1.connectionId) {
       return this.game.player1;
     } else {
       return this.game.player2;
     }
   }
   getOpponent() {
-    if (this._hubService.connectionId != this.game.player1.connectionId) {
+    if (this._connectionId != this.game.player1.connectionId) {
       return this.game.player1;
     } else {
       return this.game.player2;
@@ -56,5 +59,12 @@ export class GameComponent implements OnInit {
 
   makeMove(card) {
     this._hubService.MakeMove(card);
+  }
+
+  exitGame() {
+    var cfrm = confirm('Really exit game?');
+    if (cfrm) {
+      this._hubService.ExitGame();
+    }
   }
 }

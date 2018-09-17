@@ -1,12 +1,29 @@
 <div class="row">
-  <div class="col-sm-8 text-center">
-      <div ngbDropdown>
+  <div class="col-sm-8">
+    <div class="row">
+      <div class="col-12" style="height:20vh;">
+        <div ngbDropdown>
           <button class="btn btn-primary my-5" ngbDropdownToggle> Create new waiting room</button>
           <div ngbDropdownMenu>
-              <button class="dropdown-item" (click)="createNewWaitingRoom(21)">Until 21</button>
-              <button class="dropdown-item" (click)="createNewWaitingRoom(41)">Until 41</button>
+            <button class="dropdown-item" (click)="createNewWaitingRoom(21)">Until 21</button>
+            <button class="dropdown-item" (click)="createNewWaitingRoom(41)">Until 41</button>
           </div>
         </div>
+      </div>
+      <div class="col-12 scrollable-div-y" style="height:80vh;">
+        <p>Your username: <strong>{{connectionId}}</strong></p>
+        <form novalidate name="newMessageForm" (ngSubmit)="sendMessage()">
+          <input type="text" name="newMessage" autofocus autocomplete="off" class="form-control" placeholder="New Message"
+            [(ngModel)]="newMessage">
+        </form>
+        <div class="card bg-faded p-3">
+          <div class="card-block">
+            <p [hidden]="messages.length>0">No messages</p>
+            <p *ngFor="let message of messages"><strong> {{message.player}}</strong> {{message.text}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-sm-4">
     <app-sidebar></app-sidebar>

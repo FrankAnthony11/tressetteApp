@@ -1,8 +1,6 @@
 <div class="row">
   <div class="col-sm-12">
-    <div class="clearfix">
-      <button class="btn btn-danger float-right" (click)="leaveWaitingRoom()">Leave waiting room</button>
-    </div>
+    <button class="btn btn-danger" (click)="leaveWaitingRoom()">Leave waiting room</button>
     <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
     <div [hidden]="activatedWaitingRoom.connectionId2">
       <h3>Waiting for another player....</h3>

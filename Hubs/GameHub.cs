@@ -67,6 +67,19 @@ namespace TresetaApp.Hubs
             }
         }
 
+        public async Task ExitGame(string gameid)
+        {
+            var game = _games.SingleOrDefault(x => x.Id == gameid);
+            await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("ExitGame");
+            _games.Remove(game);
+        }
+
+        public async Task AddNewMessage(string message)
+        {
+            var msg=new ChatMessage(Context.ConnectionId,message);
+            await Clients.All.SendAsync("AddNewMessage", msg);
+        }
+
         public async Task LeaveWaitingRoom(string id)
         {
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
