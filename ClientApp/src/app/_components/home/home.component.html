@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-12 text-center">
+  <div class="col-sm-8 text-center">
       <div ngbDropdown>
           <button class="btn btn-primary my-5" ngbDropdownToggle> Create new waiting room</button>
           <div ngbDropdownMenu>
@@ -7,5 +7,8 @@
               <button class="dropdown-item" (click)="createNewWaitingRoom(41)">Until 41</button>
           </div>
         </div>
+  </div>
+  <div class="col-sm-4">
+    <app-sidebar></app-sidebar>
   </div>
 </div>
