@@ -25,6 +25,7 @@ namespace TresetaApp.Hubs
             _players.Remove(Context.ConnectionId);
 
             await CleanupPlayerFromWaitingRooms();
+            await CleanupPlayerFromGames();
             await GetAllPlayers();
             await base.OnDisconnectedAsync(exception);
         }
@@ -76,7 +77,7 @@ namespace TresetaApp.Hubs
 
         public async Task AddNewMessage(string message)
         {
-            var msg=new ChatMessage(Context.ConnectionId,message);
+            var msg = new ChatMessage(Context.ConnectionId, message);
             await Clients.All.SendAsync("AddNewMessage", msg);
         }
 
@@ -136,6 +137,16 @@ namespace TresetaApp.Hubs
         private async Task GameUpdated(Game game)
         {
             await Clients.Clients(game.Player1.ConnectionId, game.Player2.ConnectionId).SendAsync("GameUpdate", game);
+        }
+
+        private async Task CleanupPlayerFromGames()
+        {
+            var games = _games.Where(x => x.Player1.ConnectionId == Context.ConnectionId || x.Player2.ConnectionId == Context.ConnectionId).ToList();
+
+            foreach (var game in games)
+            {
+                await ExitGame(game.Id);
+            }
         }
 
         private async Task UpdateSingleWaitingRoom(WaitingRoom waitingRoom)
