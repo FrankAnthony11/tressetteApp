@@ -8,19 +8,19 @@
   <div class="col-4">
     <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
   </div>
-  <div class="col-9 text-center">
+  <div class="col-6 text-center">
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
       class="played-card" alt="">
   </div>
-  <div class="col-3 text-center">
+  <div class="col-6 d-flex justify-content-center">
     <div [hidden]="cardsDrew.length==0">
-      <img *ngFor="let card of cardsDrew" [src]="card.imageUrl" class="deck" alt="">
+      <img *ngFor="let card of cardsDrew" [src]="card.imageUrl" class="deck-image animate" alt="">
     </div>
     <div [hidden]="cardsDrew.length==2">
-      <div class="card deck" [hidden]="game.deck.length==0">
+      <div class="card"  [hidden]="game.deck.length==0">
         <img class="card-img-top" src="/images/background.jpg">
         <div class="card-body">
-          <h5 class="card-title text-center">{{game.deck.length/2}}</h5>
+          <p class="card-title text-center">{{game.deck.length/2}}</p>
         </div>
       </div>
     </div>
@@ -28,6 +28,12 @@
 </div>
 <div class="row fill-viewport-min-50">
   <div class="col-12 p5">
+    <!-- rounder card hand -->
+    <!-- <ul class='circle-container'>
+      <li *ngFor="let card of getPlayer().cards" (click)="makeMove(card)">
+         <img [src]="card.imageUrl" class="animate">
+      </li>
+    </ul> -->
     <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
       [src]="card.imageUrl" class="player-hand-card animate">
   </div>

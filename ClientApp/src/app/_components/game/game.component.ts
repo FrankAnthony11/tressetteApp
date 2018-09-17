@@ -22,7 +22,7 @@ export class GameComponent implements OnInit {
         this.cardsDrew = game.cardsDrew;
         setTimeout(() => {
           this.cardsDrew = [];
-        }, 1500);
+        }, 3000);
       }
       if (game.gameEnded) {
         setTimeout(() => {
