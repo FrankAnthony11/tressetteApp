@@ -1,3 +1,4 @@
+import { User } from './../../_models/user';
 import { Component, OnInit } from '@angular/core';
 import { WaitingRoom } from '../../_models/waitingRoom';
 import { HubService } from '../../_services/hub.service';
@@ -9,7 +10,7 @@ import { ChatMessage } from '../../_models/chatMessage';
 })
 export class HomeComponent implements OnInit {
   messages: ChatMessage[]
-  connectionId = '';
+  currentUser:User;
   newMessage = '';
 
   constructor(private _hubService: HubService) {}
@@ -18,8 +19,8 @@ export class HomeComponent implements OnInit {
     this._hubService.Messages.subscribe(nn => {
         this.messages = nn;
     });
-    this._hubService.ConnectionId.subscribe(connectionId => {
-      this.connectionId = connectionId;
+    this._hubService.CurrentUser.subscribe(user => {
+      this.currentUser = user;
     });
   }
 

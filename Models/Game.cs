@@ -118,14 +118,14 @@ namespace TresetaApp.Models
 
         private Player GetPlayerFromConnectionId(string playerConnectionId)
         {
-            if (Player1.ConnectionId == playerConnectionId)
+            if (Player1.User.ConnectionId == playerConnectionId)
                 return Player1;
             return Player2;
         }
 
         private Player GetOpponentFromConnectionId(string playerConnectionId)
         {
-            if (Player1.ConnectionId == playerConnectionId)
+            if (Player1.User.ConnectionId == playerConnectionId)
                 return Player2;
             return Player1;
         }
@@ -144,15 +144,17 @@ namespace TresetaApp.Models
             if (roundEnded)
                 return;
 
+            if(Deck.Any()){
             var card1 = Deck.GetAndRemove(0, 1).First();
             var card2 = Deck.GetAndRemove(0, 1).First();
             Player1.Cards.Add(card1);
             Player2.Cards.Add(card2);
             CardsDrew.Add(card1);
             CardsDrew.Add(card2);
+            }
         }
 
-        private bool DetectIfRoundEnded()
+        private bool DetectIfRoundEnded() 
         {
             if (!Deck.Any() && !Player1.Cards.Any() && !Player2.Cards.Any())
             {
@@ -182,14 +184,16 @@ namespace TresetaApp.Models
             Deck = GenerateDeck();
             Player1.Cards = Deck.GetAndRemove(0, 10);
             Player2.Cards = Deck.GetAndRemove(0, 10);
+            Player1.Points=0;
+            Player2.Points=0;
             CardsPlayed = new List<Card>();
             CardsDrew = new List<Card>();
-            _turnToPlay = Player1.ConnectionId; ;
+            _turnToPlay = Player1.User.ConnectionId; ;
         }
 
         private void ChangePlayersTurn()
         {
-            _turnToPlay = Player1.ConnectionId == _turnToPlay ? Player2.ConnectionId : Player1.ConnectionId;
+            _turnToPlay = Player1.User.ConnectionId == _turnToPlay ? Player2.User.ConnectionId : Player1.User.ConnectionId;
         }
 
     }

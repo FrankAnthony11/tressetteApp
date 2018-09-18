@@ -3,6 +3,7 @@ import { Game } from './../../_models/game';
 import { HubService } from './../../_services/hub.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from '../../_models/user';
 
 @Component({
   selector: 'app-game',
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class GameComponent implements OnInit {
 
-  private _connectionId="";
+   currentUser:User;
 
   game: Game;
   cardsDrew: Card[] = new Array();
@@ -37,20 +38,20 @@ export class GameComponent implements OnInit {
         }, 500);
       }
     });
-    this._hubService.ConnectionId.subscribe(connectionId=>{
-      this._connectionId=connectionId;
+    this._hubService.CurrentUser.subscribe(user=>{
+      this.currentUser=user;
     })
   }
 
   getPlayer() {
-    if (this._connectionId == this.game.player1.connectionId) {
+    if (this.currentUser.connectionId == this.game.player1.user.connectionId) {
       return this.game.player1;
     } else {
       return this.game.player2;
     }
   }
   getOpponent() {
-    if (this._connectionId != this.game.player1.connectionId) {
+    if (this.currentUser.connectionId != this.game.player1.user.connectionId) {
       return this.game.player1;
     } else {
       return this.game.player2;

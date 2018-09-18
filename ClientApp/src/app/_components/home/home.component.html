@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="col-12 scrollable-div-y" style="height:80vh;">
-        <p>Your username: <strong>{{connectionId}}</strong></p>
+        <p>Your username: <strong>{{currentUser?.name}}</strong></p>
         <form novalidate name="newMessageForm" (ngSubmit)="sendMessage()">
           <input type="text" name="newMessage" autofocus autocomplete="off" class="form-control" placeholder="New Message"
             [(ngModel)]="newMessage">
@@ -21,7 +21,7 @@
             <p [hidden]="messages.length>0">No messages</p>
             <p *ngFor="let message of messages"><strong> {{message.player}}</strong> {{message.text}}</p>
           </div>
-        </div>
+        </div> 
       </div>
     </div>
   </div>

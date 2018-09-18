@@ -1,7 +1,8 @@
 import { Card } from './card';
+import { User } from './user';
 
 export interface Player {
   cards: Card[];
-  connectionId: string;
+  user:User;
   calculatedPoints: number;
 }

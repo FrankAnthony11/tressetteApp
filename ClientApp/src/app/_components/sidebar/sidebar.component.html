@@ -3,11 +3,11 @@
     <div class="alert alert-primary">
       <h3>Available players:</h3>
     </div>
-    <p *ngFor="let player of players">{{player}}</p>
+    <p *ngFor="let user of users">{{user.name}}</p>
     <div class="alert alert-primary">
       <h3>Available games:</h3>
     </div>
     <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" [hidden]="activatedRoom?.id==waitingRoom.id"
-      (click)="joinWaitingRoom(waitingRoom.id)">{{waitingRoom.connectionId1}}</button>
+      (click)="joinWaitingRoom(waitingRoom.id)">{{waitingRoom.user1.name}}</button>
   </div>
-</div>
+</div> 

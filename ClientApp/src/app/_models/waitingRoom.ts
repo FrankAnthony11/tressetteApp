@@ -1,6 +1,8 @@
+import { User } from "./user";
+
 export interface WaitingRoom {
   id: string;
-  connectionId1: string;
-  connectionId2: string;
+  user1:User;
+  user2:User;
   playUntilPoints:number;
 }

@@ -5,6 +5,7 @@ import * as signalR from '@aspnet/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { ChatMessage } from '../_models/chatMessage';
+import { User } from '../_models/user';
 
 @Injectable()
 export class HubService {
@@ -13,28 +14,36 @@ export class HubService {
   private _messages: ChatMessage[] = [];
 
   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
-  playersObservable = new BehaviorSubject<string[]>(null);
+  usersObservable = new BehaviorSubject<User[]>(null);
   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
   activeGameObservable = new BehaviorSubject<Game>(null);
   messagesObservable = new BehaviorSubject<ChatMessage[]>(this._messages);
-  connectionIdObservable = new BehaviorSubject<string>(null);
+  currentUserObservable = new BehaviorSubject<User>(null);
 
   constructor(private _router: Router) {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
-      this._hubConnection.invoke('AllWaitingRoomsUpdate');
+      let name;
+      do {
+        name = prompt('Input your name');
+      } while (!name);
+    
+      name = name+Math.floor((Math.random() * 100) + 1);;
+      // var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
+      // name = myArray[Math.floor(Math.random() * myArray.length)]+Math.floor((Math.random() * 100) + 1);;
+      this._hubConnection.invoke('AddUser', name);
     });
 
     this._hubConnection.on('AllWaitingRoomsUpdate', (waitingRooms: WaitingRoom[]) => {
       this.waitingRoomsObservable.next(waitingRooms);
     });
 
-    this._hubConnection.on('GetConnectionId', (connectionId: string) => {
-      this.connectionIdObservable.next(connectionId);
+    this._hubConnection.on('GetCurrentUser', (user: User) => {
+      this.currentUserObservable.next(user);
     });
 
-    this._hubConnection.on('GetAllPlayers', (players: string[]) => {
-      this.playersObservable.next(players);
+    this._hubConnection.on('GetAllPlayers', (users: User[]) => {
+      this.usersObservable.next(users);
     });
 
     this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
@@ -100,8 +109,8 @@ export class HubService {
     this._hubConnection.invoke('AddNewMessage', message);
   }
 
-  get Players() {
-    return this.playersObservable.asObservable();
+  get Users() {
+    return this.usersObservable.asObservable();
   }
   get WaitingRooms() {
     return this.waitingRoomsObservable.asObservable();
@@ -115,7 +124,7 @@ export class HubService {
   get Messages() {
     return this.messagesObservable.asObservable();
   }
-  get ConnectionId() {
-    return this.connectionIdObservable.asObservable();
+  get CurrentUser() {
+    return this.currentUserObservable.asObservable();
   }
 }

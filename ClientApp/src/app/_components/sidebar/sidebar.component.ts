@@ -1,3 +1,4 @@
+import { User } from './../../_models/user';
 import { Component, OnInit } from '@angular/core';
 import { WaitingRoom } from '../../_models/waitingRoom';
 import { HubService } from '../../_services/hub.service';
@@ -9,15 +10,15 @@ import { HubService } from '../../_services/hub.service';
 })
 export class SidebarComponent implements OnInit {
 
-  players: string[];
+  users: User[];
   waitingRooms: WaitingRoom[];
   activatedRoom: WaitingRoom;
 
   constructor(private _hubService: HubService) {}
   
   ngOnInit(): void {
-    this._hubService.Players.subscribe((players: string[]) => {
-      this.players = players;
+    this._hubService.Users.subscribe((users: User[]) => {
+      this.users = users;
     });
 
     this._hubService.WaitingRooms.subscribe((waitingRooms:WaitingRoom[]) => {
