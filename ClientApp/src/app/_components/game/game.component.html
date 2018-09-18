@@ -11,6 +11,9 @@
   <div class="col-4">
     <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
   </div>
+  <div class="col-12">
+    <div class="alert alert-primary">Turn to play: {{game.userTurnToPlay.name}}</div>
+  </div>
   <div class="col-6 text-center">
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
       class="played-card" alt="">

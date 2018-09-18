@@ -8,7 +8,6 @@ namespace TresetaApp.Models
 {
     public class Game
     {
-        private string _turnToPlay;
         public Game(Player player1, Player player2, int playUntilPoints)
         {
             Id = Guid.NewGuid().ToString();
@@ -21,6 +20,7 @@ namespace TresetaApp.Models
         public string Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
+        public User UserTurnToPlay { get; set; }
         public List<Card> CardsPlayed { get; set; }
         public List<Card> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
@@ -32,7 +32,7 @@ namespace TresetaApp.Models
             var player = GetPlayerFromConnectionId(playerConnectionId);
             var opponent = GetOpponentFromConnectionId(playerConnectionId);
 
-            if (playerConnectionId != _turnToPlay)
+            if (playerConnectionId != UserTurnToPlay.ConnectionId)
                 return false;
 
 
@@ -188,12 +188,12 @@ namespace TresetaApp.Models
             Player2.Points=0;
             CardsPlayed = new List<Card>();
             CardsDrew = new List<Card>();
-            _turnToPlay = Player1.User.ConnectionId; ;
+            UserTurnToPlay = Player1.User; ;
         }
 
         private void ChangePlayersTurn()
         {
-            _turnToPlay = Player1.User.ConnectionId == _turnToPlay ? Player2.User.ConnectionId : Player1.User.ConnectionId;
+            UserTurnToPlay = Player1.User.ConnectionId == UserTurnToPlay.ConnectionId ? Player2.User : Player1.User;
         }
 
     }
