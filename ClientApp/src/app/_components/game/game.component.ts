@@ -11,8 +11,7 @@ import { User } from '../../_models/user';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-
-   currentUser:User;
+  currentUser: User;
 
   game: Game;
 
@@ -24,8 +23,8 @@ export class GameComponent implements OnInit {
       if (this.game.cardsDrew.length == 2) {
         setTimeout(() => {
           this.game.cardsDrew = [];
-          this.game.cardsPlayed=[];
-        }, 30000000);
+          this.game.cardsPlayed = [];
+        }, 3000);
       }
       if (this.game.gameEnded) {
         setTimeout(() => {
@@ -37,23 +36,23 @@ export class GameComponent implements OnInit {
         }, 500);
       }
     });
-    this._hubService.CurrentUser.subscribe(user=>{
-      this.currentUser=user;
-    })
+    this._hubService.CurrentUser.subscribe(user => {
+      this.currentUser = user;
+    });
   }
 
   getPlayer() {
-    if (this.currentUser.connectionId == this.game.player1.user.connectionId) {
-      return this.game.player1;
+    if (this.currentUser.connectionId == this.game.players[0].user.connectionId) {
+      return this.game.players[0];
     } else {
-      return this.game.player2;
+      return this.game.players[1];
     }
   }
   getOpponent() {
-    if (this.currentUser.connectionId != this.game.player1.user.connectionId) {
-      return this.game.player1;
+    if (this.currentUser.connectionId != this.game.players[0].user.connectionId) {
+      return this.game.players[0];
     } else {
-      return this.game.player2;
+      return this.game.players[1];
     }
   }
 

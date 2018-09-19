@@ -50,7 +50,7 @@ namespace TresetaApp
                 x.MapHub<GameHub>("/gamehub");
             });
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

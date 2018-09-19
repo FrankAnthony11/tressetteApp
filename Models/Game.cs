@@ -8,18 +8,16 @@ namespace TresetaApp.Models
 {
     public class Game
     {
-        public Game(Player player1, Player player2, int playUntilPoints)
+        public Game(List<Player> players, int playUntilPoints)
         {
             Id = Guid.NewGuid().ToString();
-            Player1 = player1;
-            Player2 = player2;
+            Players = players;
             PlayUntilPoints = playUntilPoints;
 
             InitializeNewGame();
         }
         public string Id { get; set; }
-        public Player Player1 { get; set; }
-        public Player Player2 { get; set; }
+        public List<Player> Players { get; set; }
         public User UserTurnToPlay { get; set; }
         public List<Card> CardsPlayed { get; set; }
         public List<Card> CardsDrew { get; set; }
@@ -36,12 +34,12 @@ namespace TresetaApp.Models
                 return false;
 
 
-            if (CardsPlayed.Count == 2)
+            if (CardsPlayed.Count == Players.Count)
             {
                 CardsPlayed.Clear();
             }
 
-            if (CardsDrew.Count == 2)
+            if (CardsDrew.Count == Players.Count)
             {
                 CardsDrew.Clear();
             }
@@ -118,16 +116,12 @@ namespace TresetaApp.Models
 
         private Player GetPlayerFromConnectionId(string playerConnectionId)
         {
-            if (Player1.User.ConnectionId == playerConnectionId)
-                return Player1;
-            return Player2;
+            return Players.SingleOrDefault(x => x.User.ConnectionId == playerConnectionId);
         }
 
         private Player GetOpponentFromConnectionId(string playerConnectionId)
         {
-            if (Player1.User.ConnectionId == playerConnectionId)
-                return Player2;
-            return Player1;
+            return Players.SingleOrDefault(x => x.User.ConnectionId != playerConnectionId);
         }
 
         private void RemoveCardFromHand(Player player, Card card)
@@ -144,36 +138,45 @@ namespace TresetaApp.Models
             if (roundEnded)
                 return;
 
-            if(Deck.Any()){
-            var card1 = Deck.GetAndRemove(0, 1).First();
-            var card2 = Deck.GetAndRemove(0, 1).First();
-            Player1.Cards.Add(card1);
-            Player2.Cards.Add(card2);
-            CardsDrew.Add(card1);
-            CardsDrew.Add(card2);
+            if (Deck.Any())
+            {
+                foreach (var player in Players)
+                {
+                    var card = Deck.GetAndRemove(0, 1).First();
+                    player.Cards.Add(card);
+                    CardsDrew.Add(card);
+                }
             }
         }
 
-        private bool DetectIfRoundEnded() 
+        private bool DetectIfRoundEnded()
         {
-            if (!Deck.Any() && !Player1.Cards.Any() && !Player2.Cards.Any())
+            if (!Deck.Any() && Players.Where(x => x.Cards.Any()).Count() == 0)
             {
-                Player1.CalculatedPoints += Player1.Points / 3;
-                Player2.CalculatedPoints += Player2.Points / 3;
 
-                if (Player1.CalculatedPoints >= PlayUntilPoints && Player2.CalculatedPoints >= PlayUntilPoints)
+                foreach (var player in Players)
+                {
+                    player.CalculatedPoints += player.Points / 3;
+                }
+
+                var allPlayersExceeded = Players.Where(y => y.CalculatedPoints < PlayUntilPoints).Count() == 0;
+
+                if (allPlayersExceeded)
                 {
                     PlayUntilPoints += 10;
                     InitializeNewGame();
+                    return true;
                 }
-                else if (Player1.CalculatedPoints >= PlayUntilPoints || Player2.CalculatedPoints >= PlayUntilPoints)
+
+                var atLeastOnePlayerExceeded = Players.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
+
+                if (atLeastOnePlayerExceeded)
                 {
                     GameEnded = true;
+                    return true;
                 }
-                else
-                {
-                    InitializeNewGame();
-                }
+
+                InitializeNewGame();
                 return true;
             }
             return false;
@@ -182,18 +185,31 @@ namespace TresetaApp.Models
         private void InitializeNewGame()
         {
             Deck = GenerateDeck();
-            Player1.Cards = Deck.GetAndRemove(0, 10);
-            Player2.Cards = Deck.GetAndRemove(0, 10);
-            Player1.Points=0;
-            Player2.Points=0;
+            foreach (var player in Players)
+            {
+                player.Cards = Deck.GetAndRemove(0, 10);
+                player.Points = 0;
+            }
             CardsPlayed = new List<Card>();
             CardsDrew = new List<Card>();
-            UserTurnToPlay = Player1.User; ;
+            UserTurnToPlay = Players.First().User; ;
         }
 
         private void ChangePlayersTurn()
         {
-            UserTurnToPlay = Player1.User.ConnectionId == UserTurnToPlay.ConnectionId ? Player2.User : Player1.User;
+            var currentPlayerToPlay = Players.SingleOrDefault(x => x.User.ConnectionId == UserTurnToPlay.ConnectionId);
+
+            var index = Players.IndexOf(currentPlayerToPlay);
+
+            if (index == Players.Count - 1)
+            {
+                UserTurnToPlay = Players.First().User;
+            }
+            else
+            {
+                UserTurnToPlay = Players[index + 1].User;
+            }
+
         }
 
     }

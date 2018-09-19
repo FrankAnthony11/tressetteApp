@@ -85,7 +85,9 @@ namespace TresetaApp.Hubs
         public async Task ExitGame(string gameid)
         {
             var game = _games.SingleOrDefault(x => x.Id == gameid);
-            await Clients.Clients(game.Player1.User.ConnectionId, game.Player2.User.ConnectionId).SendAsync("ExitGame");
+
+            var allConnectionIdsFromTheGame = game.Players.Select(y => y.User.ConnectionId).ToList();
+            await Clients.Clients(allConnectionIdsFromTheGame).SendAsync("ExitGame");
             _games.Remove(game);
         }
 
@@ -105,7 +107,7 @@ namespace TresetaApp.Hubs
             if (waitingRoom.User1 == user)
             {
                 waitingRoom.User1 = waitingRoom.User2;
-            } 
+            }
             waitingRoom.User2 = null;
 
             if (waitingRoom.User1 == null)
@@ -126,9 +128,17 @@ namespace TresetaApp.Hubs
             if (waitingRoom.User1 == null || waitingRoom.User2 == null)
                 return;
 
-            var game = new Game(new Player(waitingRoom.User1), new Player(waitingRoom.User2), waitingRoom.PlayUntilPoints);
+
+            var players = new List<Player>() {
+                new Player(waitingRoom.User1),
+                new Player(waitingRoom.User2)
+            };
+
+
+            var game = new Game(players, waitingRoom.PlayUntilPoints);
             _games.Add(game);
-            await Clients.Clients(game.Player1.User.ConnectionId, game.Player2.User.ConnectionId).SendAsync("GameStarted", game);
+            var allConnectionIdsFromTheGame = game.Players.Select(y => y.User.ConnectionId).ToList();
+            await Clients.Clients(allConnectionIdsFromTheGame).SendAsync("GameStarted", game);
             await RemoveWaitingRoom(waitingRoomId);
         }
 
@@ -153,7 +163,8 @@ namespace TresetaApp.Hubs
 
         private async Task GameUpdated(Game game)
         {
-            await Clients.Clients(game.Player1.User.ConnectionId, game.Player2.User.ConnectionId).SendAsync("GameUpdate", game);
+            var allConnectionIdsFromTheGame = game.Players.Select(y => y.User.ConnectionId).ToList();
+            await Clients.Clients(allConnectionIdsFromTheGame).SendAsync("GameUpdate", game);
         }
 
 
@@ -186,7 +197,7 @@ namespace TresetaApp.Hubs
 
         private async Task CleanupUserFromGames()
         {
-            List<Game> games = _games.Where(x => x.Player1.User.ConnectionId == Context.ConnectionId || (x.Player2.User != null && x.Player2.User.ConnectionId == Context.ConnectionId)).ToList();
+            List<Game> games = _games.Where(x => x.Players.Where(y => y.User.ConnectionId == Context.ConnectionId).Count() > 0).ToList();
 
             foreach (var game in games)
             {
