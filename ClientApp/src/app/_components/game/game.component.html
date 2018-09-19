@@ -18,13 +18,13 @@
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
       class="played-card" alt="">
   </div>
-  <div class="col-6 d-flex justify-content-center"> 
+  <div class="col-6 d-flex justify-content-center">
     <div [hidden]="game.cardsDrew.length==0" class="cards-drew-div">
       <img *ngFor="let card of game.cardsDrew" [src]="card.imageUrl" class="deck-image animate" alt="">
     </div>
     <div [hidden]="game.cardsDrew.length==2">
-      <div class="card"  [hidden]="game.deck.length==0">
-        <img class="card-img-top" src="/images/background.jpg"> 
+      <div class="card" [hidden]="game.deck.length==0">
+        <img class="card-img-top" src="/images/background.jpg">
         <div class="card-body">
           <p class="card-title text-center">{{game.deck.length/2}}</p>
         </div>
@@ -36,11 +36,14 @@
   <div class="col-12 p5">
     <!-- rounder card hand -->
     <!-- <ul class='circle-container'>
-      <li *ngFor="let card of getPlayer().cards" (click)="makeMove(card)">
-         <img [src]="card.imageUrl" class="animate">
-      </li>
-    </ul> -->
+              <li *ngFor="let card of getPlayer().cards" (click)="makeMove(card)">
+                 <img [src]="card.imageUrl" class="animate">
+              </li>
+            </ul> -->
     <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
       [src]="card.imageUrl" class="player-hand-card animate">
+  </div>
+  <div class="col-12">
+    <app-game-chat></app-game-chat>
   </div>
 </div>

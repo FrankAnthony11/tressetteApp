@@ -11,13 +11,15 @@ import { User } from '../_models/user';
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
-  private _messages: ChatMessage[] = [];
+  private _allChatMessages: ChatMessage[] = [];
+  private _gameChatMessages: ChatMessage[] = [];
 
   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
   usersObservable = new BehaviorSubject<User[]>(null);
   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
   activeGameObservable = new BehaviorSubject<Game>(null);
-  messagesObservable = new BehaviorSubject<ChatMessage[]>(this._messages);
+  allChatMessagesObservable = new BehaviorSubject<ChatMessage[]>(this._allChatMessages);
+  gameChatMessagesObservable = new BehaviorSubject<ChatMessage[]>(this._gameChatMessages);
   currentUserObservable = new BehaviorSubject<User>(null);
 
   constructor(private _router: Router) {
@@ -58,15 +60,21 @@ export class HubService {
       this._router.navigateByUrl('game');
     });
 
-    this._hubConnection.on('AddNewMessage', (message: ChatMessage) => {
-      this._messages.unshift(message);
-      this.messagesObservable.next(this._messages);
+    this._hubConnection.on('AddNewMessageToAllChat', (message: ChatMessage) => {
+      this._allChatMessages.unshift(message);
+      this.allChatMessagesObservable.next(this._allChatMessages);
+    });
+
+    this._hubConnection.on('AddNewMessageToGameChat', (message: ChatMessage) => {
+      this._gameChatMessages.unshift(message);
+      this.gameChatMessagesObservable.next(this._gameChatMessages);
     });
 
     this._hubConnection.on('ExitGame', () => {
       alert('Game exits. One of the players has left the game');
+      this._gameChatMessages = [];
+      this.gameChatMessagesObservable.next(this._gameChatMessages);
       this._router.navigateByUrl('/');
-      //   this.activeGameObservable.next(null);
     });
   }
 
@@ -104,8 +112,12 @@ export class HubService {
     this._hubConnection.invoke('MakeMove', this.activeGameObservable.getValue().id, card);
   }
 
-  SendMessage(message: string): any {
-    this._hubConnection.invoke('AddNewMessage', message);
+  AddNewMessageToAllChat(message: string): any {
+    this._hubConnection.invoke('AddNewMessageToAllChat', message);
+  }
+
+  AddNewMessageToGameChat(message: string): any {
+    this._hubConnection.invoke('AddNewMessageToGameChat', this.activeGameObservable.getValue().id, message);
   }
 
   get Users() {
@@ -120,8 +132,11 @@ export class HubService {
   get ActiveGame() {
     return this.activeGameObservable.asObservable();
   }
-  get Messages() {
-    return this.messagesObservable.asObservable();
+  get AllChatMessages() {
+    return this.allChatMessagesObservable.asObservable();
+  }
+  get GameChatMessages() {
+    return this.gameChatMessagesObservable.asObservable();
   }
   get CurrentUser() {
     return this.currentUserObservable.asObservable();

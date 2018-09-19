@@ -1,3 +1,4 @@
+import { GameChatComponent } from './_components/game-chat/game-chat.component';
 import { SidebarComponent } from './_components/sidebar/sidebar.component';
 import { GameGuard } from './_guards/game.guard';
 import { GameComponent } from './_components/game/game.component';
@@ -15,7 +16,7 @@ import { WaitingRoomComponent } from './_components/waiting-room/waiting-room.co
 import { WaitingRoomGuard } from './_guards/waiting-room.guard';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, GameComponent, WaitingRoomComponent, SidebarComponent],
+  declarations: [AppComponent, HomeComponent, GameComponent, WaitingRoomComponent, SidebarComponent, GameChatComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,

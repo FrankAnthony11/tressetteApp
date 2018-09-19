@@ -90,11 +90,24 @@ namespace TresetaApp.Hubs
             _games.Remove(game);
         }
 
-        public async Task AddNewMessage(string message)
+        public async Task AddNewMessageToAllChat(string message)
         {
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var msg = new ChatMessage(user.Name, message);
-            await Clients.All.SendAsync("AddNewMessage", msg);
+            await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
+        }
+
+        public async Task AddNewMessageToGameChat(string gameid, string message)
+        {
+            //todo
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var msg = new ChatMessage(user.Name, message);
+
+            var game=_games.FirstOrDefault(x=>x.Id==gameid);
+
+            var allConnectionIds=game.Players.Select(y=>y.User.ConnectionId).ToList();
+
+            await Clients.Clients(allConnectionIds).SendAsync("AddNewMessageToGameChat", msg);
         }
 
         public async Task LeaveWaitingRoom(string id)

@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   constructor(private _hubService: HubService) {}
 
   ngOnInit(): void {
-    this._hubService.Messages.subscribe(nn => {
+    this._hubService.AllChatMessages.subscribe(nn => {
       this.messages = nn;
     });
     this._hubService.CurrentUser.subscribe(user => {
@@ -28,9 +28,9 @@ export class HomeComponent implements OnInit {
     this._hubService.CreateWaitingRoom(playUntilPoints, expectedNumberOfPlayers);
   }
 
-  sendMessage() {
+  sendMessageAllChat() {
     if (!this.newMessage) return;
-    this._hubService.SendMessage(this.newMessage);
+    this._hubService.AddNewMessageToAllChat(this.newMessage);
     this.newMessage = '';
   }
 }
