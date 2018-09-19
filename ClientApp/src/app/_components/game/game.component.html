@@ -12,17 +12,17 @@
     <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
   </div>
   <div class="col-12">
-    <div class="alert alert-primary">Turn to play: {{game.userTurnToPlay.name}}</div>
+    <div class="alert alert-primary">Turn to play: <strong>{{game.userTurnToPlay.name}}</strong></div>
   </div>
   <div class="col-6 text-center">
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
       class="played-card" alt="">
   </div>
-  <div class="col-6 d-flex justify-content-center">
-    <div [hidden]="cardsDrew.length==0">
-      <img *ngFor="let card of cardsDrew" [src]="card.imageUrl" class="deck-image animate" alt="">
+  <div class="col-6 d-flex justify-content-center"> 
+    <div [hidden]="game.cardsDrew.length==0" class="cards-drew-div">
+      <img *ngFor="let card of game.cardsDrew" [src]="card.imageUrl" class="deck-image animate" alt="">
     </div>
-    <div [hidden]="cardsDrew.length==2">
+    <div [hidden]="game.cardsDrew.length==2">
       <div class="card"  [hidden]="game.deck.length==0">
         <img class="card-img-top" src="/images/background.jpg"> 
         <div class="card-body">

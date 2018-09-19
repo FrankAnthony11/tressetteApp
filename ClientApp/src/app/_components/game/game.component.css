@@ -1,19 +1,23 @@
 .player-hand-card {
   width: 10%;
 }
-.card{
-  width:100%;
-  margin:auto;
+.card {
+  width: 100%;
+  margin: auto;
 }
 .played-card {
   width: 200px;
-  margin-left: -10%;
+  margin-left: -15%;
 }
 .player-hand-card:hover {
   margin-top: -5%;
 }
 .deck-image {
   width: 50%;
+}
+
+.cards-drew-div {
+  border: 3px solid black;
 }
 
 .first-played-card {
@@ -26,15 +30,14 @@
   .player-hand-card {
     width: 20%;
   }
-  .card{
-    width:50%;
+  .card {
+    width: 50%;
   }
   .played-card {
     width: 50%;
     margin-left: -10%;
   }
 }
-
 
 /* rounder card hand */
 /* 

@@ -15,20 +15,19 @@ export class GameComponent implements OnInit {
    currentUser:User;
 
   game: Game;
-  cardsDrew: Card[] = new Array();
 
   constructor(private _hubService: HubService, private _router: Router) {}
 
   ngOnInit() {
     this._hubService.ActiveGame.subscribe(game => {
       this.game = game;
-      if (game.cardsDrew.length == 2) {
-        this.cardsDrew = game.cardsDrew;
+      if (this.game.cardsDrew.length == 2) {
         setTimeout(() => {
-          this.cardsDrew = [];
-        }, 3000);
+          this.game.cardsDrew = [];
+          this.game.cardsPlayed=[];
+        }, 30000000);
       }
-      if (game.gameEnded) {
+      if (this.game.gameEnded) {
         setTimeout(() => {
           alert(
             `You ${this.getPlayer().calculatedPoints > this.getOpponent().calculatedPoints ? 'Won' : 'Lost'}! Your points: ${

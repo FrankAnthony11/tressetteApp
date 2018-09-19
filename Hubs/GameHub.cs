@@ -91,7 +91,8 @@ namespace TresetaApp.Hubs
 
         public async Task AddNewMessage(string message)
         {
-            var msg = new ChatMessage(Context.ConnectionId, message);
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var msg = new ChatMessage(user.Name, message);
             await Clients.All.SendAsync("AddNewMessage", msg);
         }
 
@@ -104,7 +105,7 @@ namespace TresetaApp.Hubs
             if (waitingRoom.User1 == user)
             {
                 waitingRoom.User1 = waitingRoom.User2;
-            }
+            } 
             waitingRoom.User2 = null;
 
             if (waitingRoom.User1 == null)
