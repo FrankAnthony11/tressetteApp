@@ -12,8 +12,8 @@ import { User } from '../../_models/user';
 })
 export class GameComponent implements OnInit {
   currentUser: User;
-
   game: Game;
+  hasUnreadMessages: boolean;
 
   constructor(private _hubService: HubService, private _router: Router) {}
 
@@ -38,6 +38,9 @@ export class GameComponent implements OnInit {
     });
     this._hubService.CurrentUser.subscribe(user => {
       this.currentUser = user;
+    });
+    this._hubService.GameChatMessages.subscribe(messages => {
+      this.hasUnreadMessages=true;
     });
   }
 
@@ -65,5 +68,8 @@ export class GameComponent implements OnInit {
     if (cfrm) {
       this._hubService.ExitGame();
     }
+  }
+  markMessagesAsRead(){
+    this.hasUnreadMessages=false;
   }
 }

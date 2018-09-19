@@ -12,7 +12,13 @@
     <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
   </div>
   <div class="col-12">
-    <div class="alert alert-primary">Turn to play: <strong>{{game.userTurnToPlay.name}}</strong></div>
+    <div class="alert alert-primary clearfix">
+      Turn to play: <strong>{{game.userTurnToPlay.name}}</strong>
+      <button type="button" class="btn chat-button  btn-primary" placement="bottom" [ngClass]="{'chat-button-has-new-message': hasUnreadMessages}" (click)="markMessagesAsRead();"
+        [autoClose]="false" [ngbPopover]="popContent">
+        Chat
+      </button>
+    </div>
   </div>
   <div class="col-6 text-center">
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
@@ -43,7 +49,10 @@
     <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
       [src]="card.imageUrl" class="player-hand-card animate">
   </div>
-  <div class="col-12">
+
+  <ng-template #popContent>
     <app-game-chat></app-game-chat>
-  </div>
+  </ng-template>
+
+
 </div>
