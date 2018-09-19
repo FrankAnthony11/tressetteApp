@@ -2,7 +2,7 @@ import { User } from "./user";
 
 export interface WaitingRoom {
   id: string;
-  user1:User;
-  user2:User;
+  users:User[];
   playUntilPoints:number;
+  expectedNumberOfPlayers:number;
 }

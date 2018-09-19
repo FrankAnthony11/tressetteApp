@@ -24,18 +24,17 @@ namespace TresetaApp.Hubs
             if (user != null)
                 _users.Remove(user);
 
+       
             await CleanupUserFromWaitingRooms();
             await CleanupUserFromGames();
+            await CleanupUserFromUsersList();
+
             await GetAllPlayers();
             await base.OnDisconnectedAsync(exception);
         }
 
         public async Task AddUser(string name)
         {
-
-            await CleanupUserFromWaitingRooms();
-            await CleanupUserFromGames();
-            await CleanupUserFromUsersList();
             var user = new User(Context.ConnectionId, name);
 
             _users.Add(user);
@@ -51,13 +50,13 @@ namespace TresetaApp.Hubs
 
         public async Task AllWaitingRoomsUpdate()
         {
-            await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms.Where(y => y.User2 == null));
+            await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms.Where(y => y.Users.Count < y.ExpectedNumberOfPlayers));
         }
 
-        public async Task CreateWaitingRoom(int playUntilPoints)
+        public async Task CreateWaitingRoom(int playUntilPoints, int expectedNumberOfPlayers)
         {
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var waitingRoom = new WaitingRoom(user, playUntilPoints);
+            var waitingRoom = new WaitingRoom(user, playUntilPoints, expectedNumberOfPlayers);
             _waitingRooms.Add(waitingRoom);
             await UpdateSingleWaitingRoom(waitingRoom);
             await AllWaitingRoomsUpdate();
@@ -76,7 +75,7 @@ namespace TresetaApp.Hubs
             }
             else
             {
-                waitingRoom.User2 = user; ;
+                waitingRoom.Users.Add(user);
                 await UpdateSingleWaitingRoom(waitingRoom);
                 await AllWaitingRoomsUpdate();
             }
@@ -104,13 +103,12 @@ namespace TresetaApp.Hubs
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
-            if (waitingRoom.User1 == user)
+            if (waitingRoom.Users.Contains(user))
             {
-                waitingRoom.User1 = waitingRoom.User2;
+                waitingRoom.Users.Remove(user);
             }
-            waitingRoom.User2 = null;
 
-            if (waitingRoom.User1 == null)
+            if (waitingRoom.Users.Count == 0)
             {
                 await RemoveWaitingRoom(id);
             }
@@ -125,15 +123,19 @@ namespace TresetaApp.Hubs
         {
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == waitingRoomId);
 
-            if (waitingRoom.User1 == null || waitingRoom.User2 == null)
+
+
+            if (waitingRoom.Users.Count != waitingRoom.ExpectedNumberOfPlayers)
                 return;
 
 
-            var players = new List<Player>() {
-                new Player(waitingRoom.User1),
-                new Player(waitingRoom.User2)
-            };
+            var players = new List<Player>();
 
+            waitingRoom.Users.ForEach(x =>
+             {
+                 players.Add(new Player(x));
+
+             });
 
             var game = new Game(players, waitingRoom.PlayUntilPoints);
             _games.Add(game);
@@ -171,26 +173,17 @@ namespace TresetaApp.Hubs
 
         private async Task UpdateSingleWaitingRoom(WaitingRoom waitingRoom)
         {
-            await Clients.Clients(waitingRoom.User1.ConnectionId, waitingRoom.User2 == null ? "" : waitingRoom.User2.ConnectionId).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
+            var allConnectionIds = waitingRoom.Users.Select(x => x.ConnectionId).ToList();
+            await Clients.Clients(allConnectionIds).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
         }
 
         private async Task CleanupUserFromWaitingRooms()
         {
             _waitingRooms.ForEach(async y =>
             {
-                if (y.User1 != null)
+                if (y.Users.Any(x => x.ConnectionId == Context.ConnectionId))
                 {
-                    if (y.User1.ConnectionId == Context.ConnectionId)
-                    {
-                        await LeaveWaitingRoom(y.Id);
-                    }
-                }
-                if (y.User2 != null)
-                {
-                    if (y.User2.ConnectionId == Context.ConnectionId)
-                    {
-                        await LeaveWaitingRoom(y.Id);
-                    }
+                    await LeaveWaitingRoom(y.Id);
                 }
             });
         }

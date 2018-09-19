@@ -5,8 +5,13 @@
         <div ngbDropdown>
           <button class="btn btn-primary my-5" ngbDropdownToggle> Create new waiting room</button>
           <div ngbDropdownMenu>
-            <button class="dropdown-item" (click)="createNewWaitingRoom(21)">Until 21</button>
-            <button class="dropdown-item" (click)="createNewWaitingRoom(41)">Until 41</button>
+            <h5 class="dropdown-header">2 players</h5>
+            <button class="dropdown-item" (click)="createNewWaitingRoom(21,2)">Until 21</button>
+            <button class="dropdown-item" (click)="createNewWaitingRoom(41,2)">Until 41</button>
+            <div class="dropdown-divider"></div>
+            <h5 class="dropdown-header">4 players players</h5>
+            <button class="dropdown-item">//TODO</button>
+            <button class="dropdown-item">//TODO</button>
           </div>
         </div>
       </div>
@@ -21,7 +26,7 @@
             <p [hidden]="messages.length>0">No messages</p>
             <p *ngFor="let message of messages"><strong> {{message.player}}</strong> {{message.text}}</p>
           </div>
-        </div> 
+        </div>
       </div>
     </div>
   </div>

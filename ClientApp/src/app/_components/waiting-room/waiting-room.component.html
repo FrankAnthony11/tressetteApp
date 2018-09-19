@@ -1,17 +1,21 @@
 <div class="row">
   <div class="col-sm-12">
     <button class="btn btn-danger" (click)="leaveWaitingRoom()">Leave waiting room</button>
+
     <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
-    <div [hidden]="activatedWaitingRoom.user2">
+    <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
+
+    <div [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
       <h3>Waiting for another player....</h3>
     </div>
-    <div [hidden]="!activatedWaitingRoom.user2">
-      <h3>Two players currently joined!</h3>
+
+    <div [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
+      <h3>{{activatedWaitingRoom.expectedNumberOfPlayers}} players currently joined!</h3>
       <ul>
-        <li>{{activatedWaitingRoom.user1.name}}</li>
-        <li>{{activatedWaitingRoom.user2?.name}}</li>
+        <li *ngFor="let user of activatedWaitingRoom.users">{{user.name}}</li>
       </ul>
       <button class="btn btn-success" (click)="CreateGame()">Start game!</button>
     </div>
+
   </div>
-</div> 
+</div>

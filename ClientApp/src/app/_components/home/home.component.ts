@@ -9,23 +9,23 @@ import { ChatMessage } from '../../_models/chatMessage';
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-  messages: ChatMessage[]
-  currentUser:User;
+  messages: ChatMessage[];
+  currentUser: User;
   newMessage = '';
 
   constructor(private _hubService: HubService) {}
 
   ngOnInit(): void {
     this._hubService.Messages.subscribe(nn => {
-        this.messages = nn;
+      this.messages = nn;
     });
     this._hubService.CurrentUser.subscribe(user => {
       this.currentUser = user;
     });
   }
 
-  createNewWaitingRoom(playUntilPoints: number) {
-    this._hubService.CreateWaitingRoom(playUntilPoints);
+  createNewWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {
+    this._hubService.CreateWaitingRoom(playUntilPoints, expectedNumberOfPlayers);
   }
 
   sendMessage() {
