@@ -1,4 +1,6 @@
+import { User } from "./user";
+
 export interface ChatMessage{
-    player:string;
+    user:User;
     text:string;
 }

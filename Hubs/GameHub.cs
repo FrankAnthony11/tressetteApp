@@ -24,7 +24,7 @@ namespace TresetaApp.Hubs
             if (user != null)
                 _users.Remove(user);
 
-       
+
             await CleanupUserFromWaitingRooms();
             await CleanupUserFromGames();
             await CleanupUserFromUsersList();
@@ -93,20 +93,28 @@ namespace TresetaApp.Hubs
         public async Task AddNewMessageToAllChat(string message)
         {
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var msg = new ChatMessage(user.Name, message);
+            var msg = new ChatMessage(user, message);
             await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
         }
 
-        public async Task AddNewMessageToGameChat(string gameid, string message)
+        public async Task AddNewMessageToGameChat(string gameOrWaitingRoomId, string message)
         {
             //todo
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var msg = new ChatMessage(user.Name, message);
+            var msg = new ChatMessage(user, message);
 
-            var game=_games.FirstOrDefault(x=>x.Id==gameid);
+            var allConnectionIds = new List<string>();
 
-            var allConnectionIds=game.Players.Select(y=>y.User.ConnectionId).ToList();
-
+            var game = _games.FirstOrDefault(x => x.Id == gameOrWaitingRoomId);
+            if (game != null)
+            {
+                allConnectionIds = game.Players.Select(y => y.User.ConnectionId).ToList();
+            }
+            else
+            {
+                var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == gameOrWaitingRoomId);
+                allConnectionIds = waitingRoom.Users.Select(y => y.ConnectionId).ToList();
+            }
             await Clients.Clients(allConnectionIds).SendAsync("AddNewMessageToGameChat", msg);
         }
 
@@ -150,7 +158,7 @@ namespace TresetaApp.Hubs
 
              });
 
-            var game = new Game(players, waitingRoom.PlayUntilPoints);
+            var game = new Game(waitingRoom.Id, players, waitingRoom.PlayUntilPoints);
             _games.Add(game);
             var allConnectionIdsFromTheGame = game.Players.Select(y => y.User.ConnectionId).ToList();
             await Clients.Clients(allConnectionIdsFromTheGame).SendAsync("GameStarted", game);

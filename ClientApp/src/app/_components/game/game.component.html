@@ -1,25 +1,22 @@
 <div class="row fill-viewport-min-50">
-  <div class="col-12">
+  <div class="col-4">
     <button class="btn btn-danger btn-block" (click)="exitGame()">Exit game</button>
   </div>
   <div class="col-4">
-    <p><strong>Playing until:</strong> {{game.playUntilPoints}}</p>
+    <button type="button" class="btn btn-block  btn-primary" (click)="gameInfoPopover.open()">
+      Game Info
+    </button>
   </div>
   <div class="col-4">
-    <p><strong>Your points:</strong> {{getPlayer().calculatedPoints}}</p>
+    <button type="button" class="btn btn-block  btn-success" [ngClass]="{'chat-button-has-new-message': numberUnreadMessages>0}"
+      (click)="markMessagesAsRead();gameChatPopover.open()">
+      Chat
+      <span [hidden]="numberUnreadMessages==0" class="badge badge-light">{{numberUnreadMessages}}</span>
+    </button>
   </div>
-  <div class="col-4">
-    <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
-  </div>
-  <div class="col-12">
-    <div class="alert alert-primary clearfix">
-      Turn to play: <strong>{{game.userTurnToPlay.name}}</strong>
-      <button type="button" class="btn chat-button  btn-primary" placement="bottom" [ngClass]="{'chat-button-has-new-message': hasUnreadMessages}" (click)="markMessagesAsRead();"
-        [autoClose]="false" [ngbPopover]="popContent">
-        Chat
-      </button>
-    </div>
-  </div>
+  <div class="col-12" #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate"></div>
+  <div class="col-12" #gameInfoPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameInfoTemplate"></div>
+  <br>
   <div class="col-6 text-center">
     <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
       class="played-card" alt="">
@@ -50,8 +47,17 @@
       [src]="card.imageUrl" class="player-hand-card animate">
   </div>
 
-  <ng-template #popContent>
+  <ng-template #gameChatTemplate>
     <app-game-chat></app-game-chat>
+  </ng-template>
+
+  <ng-template #gameInfoTemplate>
+    <p><strong>Playing until:</strong> {{game.playUntilPoints}}</p>
+    <p><strong>Your points:</strong> {{getPlayer().calculatedPoints}}</p>
+    <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
+    <div class="alert alert-primary">
+      Turn to play: <strong>{{game.userTurnToPlay.name}}fsafasfasf</strong>
+    </div>
   </ng-template>
 
 

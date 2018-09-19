@@ -8,9 +8,9 @@ namespace TresetaApp.Models
 {
     public class Game
     {
-        public Game(List<Player> players, int playUntilPoints)
+        public Game(string id, List<Player> players, int playUntilPoints)
         {
-            Id = Guid.NewGuid().ToString();
+            Id = id;
             Players = players;
             PlayUntilPoints = playUntilPoints;
 

@@ -1,14 +1,14 @@
-<div class="row">
+<div class="row mb-3">
   <div class="col-sm-12">
-    <button class="btn btn-danger" (click)="leaveWaitingRoom()">Leave waiting room</button>
-
-    <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
-    <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
-
-    <div [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
-      <h3>Waiting for another player....</h3>
+    <button class="btn btn-danger btn-block mb-2" (click)="leaveWaitingRoom()">Leave waiting room</button>
+    <div class="alert alert-primary">
+      <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
+      <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
     </div>
-
+    <div [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
+      <h3>Waiting for {{activatedWaitingRoom.expectedNumberOfPlayers - activatedWaitingRoom.users.length}} more
+        player(s)</h3>
+    </div>
     <div [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
       <h3>{{activatedWaitingRoom.expectedNumberOfPlayers}} players currently joined!</h3>
       <ul>
@@ -16,6 +16,6 @@
       </ul>
       <button class="btn btn-success" (click)="CreateGame()">Start game!</button>
     </div>
-
   </div>
 </div>
+<app-game-chat></app-game-chat>

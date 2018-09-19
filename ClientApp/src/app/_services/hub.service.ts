@@ -11,6 +11,8 @@ import { User } from '../_models/user';
 export class HubService {
   private _hubConnection: signalR.HubConnection;
 
+  private _gameOrWaitingRoomId: string;
+
   private _allChatMessages: ChatMessage[] = [];
   private _gameChatMessages: ChatMessage[] = [];
 
@@ -26,13 +28,14 @@ export class HubService {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
-      // do {
-      //   name = prompt('Input your name');
-      // } while (!name);
-      // name = name+Math.floor((Math.random() * 100) + 1);;
-      var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
-      name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
+      do {
+        name = prompt('Input your name');
+      } while (!name);
+      name = name+Math.floor((Math.random() * 100) + 1);;
+      // var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
+      // name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
       this._hubConnection.invoke('AddUser', name);
+      this._hubConnection.invoke('AllWaitingRoomsUpdate');
     });
 
     this._hubConnection.on('AllWaitingRoomsUpdate', (waitingRooms: WaitingRoom[]) => {
@@ -48,6 +51,7 @@ export class HubService {
     });
 
     this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
+      this._gameOrWaitingRoomId = waitingRoom.id;
       this.activeWaitingRoomObservable.next(waitingRoom);
     });
 
@@ -72,8 +76,6 @@ export class HubService {
 
     this._hubConnection.on('ExitGame', () => {
       alert('Game exits. One of the players has left the game');
-      this._gameChatMessages = [];
-      this.gameChatMessagesObservable.next(this._gameChatMessages);
       this._router.navigateByUrl('/');
     });
   }
@@ -83,12 +85,19 @@ export class HubService {
   }
 
   CreateWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {
+    this._gameChatMessages = [];
+    this.gameChatMessagesObservable.next(this._gameChatMessages);
+
     this._hubConnection.invoke('CreateWaitingRoom', playUntilPoints, expectedNumberOfPlayers).then(() => {
       this._router.navigateByUrl('waitingRoom');
     });
   }
 
   JoinWaitingRoom(id: string) {
+    this._gameOrWaitingRoomId = id;
+    this._gameChatMessages = [];
+    this.gameChatMessagesObservable.next(this._gameChatMessages);
+
     this._hubConnection.invoke('JoinWaitingRoom', id).then(() => {
       this._router.navigateByUrl('waitingRoom');
     });
@@ -117,7 +126,7 @@ export class HubService {
   }
 
   AddNewMessageToGameChat(message: string): any {
-    this._hubConnection.invoke('AddNewMessageToGameChat', this.activeGameObservable.getValue().id, message);
+    this._hubConnection.invoke('AddNewMessageToGameChat', this._gameOrWaitingRoomId, message);
   }
 
   get Users() {

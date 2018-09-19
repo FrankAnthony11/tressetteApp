@@ -5,11 +5,23 @@
 .fill-viewport-min-100 {
   min-height: 100vh;
 }
+.fill-viewport-max-70 {
+  max-height: 70vh;
+}
+.fill-viewport-min-70 {
+  min-height: 70vh;
+}
 .fill-viewport-max-50 {
   max-height: 50vh;
 }
 .fill-viewport-min-50 {
   min-height: 50vh;
+}
+.fill-viewport-max-20 {
+  max-height: 20vh;
+}
+.fill-viewport-min-50 {
+  min-height: 20vh;
 }
 .min-width-50{
   min-width: 50%;

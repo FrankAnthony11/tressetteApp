@@ -1,9 +1,10 @@
 import { Card } from './../../_models/card';
 import { Game } from './../../_models/game';
 import { HubService } from './../../_services/hub.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../_models/user';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-game',
@@ -11,9 +12,12 @@ import { User } from '../../_models/user';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
+  @ViewChild('gameChatPopover')
+  gameChatPopover: NgbPopover;
+
   currentUser: User;
   game: Game;
-  hasUnreadMessages: boolean;
+  numberUnreadMessages: number = 0;
 
   constructor(private _hubService: HubService, private _router: Router) {}
 
@@ -36,11 +40,14 @@ export class GameComponent implements OnInit {
         }, 500);
       }
     });
+
     this._hubService.CurrentUser.subscribe(user => {
       this.currentUser = user;
     });
+
     this._hubService.GameChatMessages.subscribe(messages => {
-      this.hasUnreadMessages=true;
+      if (messages.length > 0 && messages[0].user.connectionId != this.currentUser.connectionId && !this.gameChatPopover.isOpen())
+        this.numberUnreadMessages++;
     });
   }
 
@@ -51,6 +58,7 @@ export class GameComponent implements OnInit {
       return this.game.players[1];
     }
   }
+
   getOpponent() {
     if (this.currentUser.connectionId != this.game.players[0].user.connectionId) {
       return this.game.players[0];
@@ -69,7 +77,8 @@ export class GameComponent implements OnInit {
       this._hubService.ExitGame();
     }
   }
-  markMessagesAsRead(){
-    this.hasUnreadMessages=false;
+
+  markMessagesAsRead() {
+    this.numberUnreadMessages = 0;
   }
 }

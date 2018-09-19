@@ -2,12 +2,12 @@ namespace TresetaApp.Models
 {
     public class ChatMessage
     {
-        public ChatMessage(string player, string text)
+        public ChatMessage(User user, string text)
         {
-            this.Player = player;
+            this.User = user; ;
             this.Text = text;
         }
-        public string Player { get; set; }
+        public User User { get; set; }
         public string Text { get; set; }
     }
 }
