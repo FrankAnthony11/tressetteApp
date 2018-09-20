@@ -1,64 +1,73 @@
-<div class="row fill-viewport-min-50">
-  <div class="col-4">
-    <button class="btn btn-danger btn-block" (click)="exitGame()">Exit game</button>
-  </div>
-  <div class="col-4">
-    <button type="button" class="btn btn-block  btn-primary" (click)="gameInfoPopover.open()">
-      Game Info
-    </button>
-  </div>
-  <div class="col-4">
-    <button type="button" class="btn btn-block  btn-success" [ngClass]="{'chat-button-has-new-message': numberUnreadMessages>0}"
-      (click)="markMessagesAsRead();gameChatPopover.open()">
-      Chat
-      <span [hidden]="numberUnreadMessages==0" class="badge badge-light">{{numberUnreadMessages}}</span>
-    </button>
-  </div>
-  <div class="col-12" #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate"></div>
-  <div class="col-12" #gameInfoPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameInfoTemplate"></div>
-  <br>
-  <div class="col-6 text-center">
-    <img [src]="card.imageUrl" *ngFor="let card of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
-      class="played-card" alt="">
-  </div>
-  <div class="col-6 d-flex justify-content-center">
-    <div [hidden]="game.cardsDrew.length==0" class="cards-drew-div">
-      <img *ngFor="let card of game.cardsDrew" [src]="card.imageUrl" class="deck-image animate" alt="">
+<div class="fill-viewport-min-50">
+  <div class="row">
+    <div class="col-4">
+      <button class="btn btn-danger btn-block" (click)="exitGame()">Exit game</button>
     </div>
-    <div [hidden]="game.cardsDrew.length==2">
-      <div class="card" [hidden]="game.deck.length==0">
-        <img class="card-img-top" src="/images/background.jpg">
-        <div class="card-body">
-          <p class="card-title text-center">{{game.deck.length/2}}</p>
+    <div class="col-4">
+      <button type="button" class="btn btn-block  btn-primary" (click)="gameInfoPopover.open()">
+        Game Info
+      </button>
+    </div>
+    <div class="col-4">
+      <button type="button" class="btn btn-block  btn-success" [ngClass]="{'chat-button-has-new-message': numberUnreadMessages>0}"
+        (click)="markMessagesAsRead();gameChatPopover.open()">
+        Chat
+        <span [hidden]="numberUnreadMessages==0" class="badge badge-light">{{numberUnreadMessages}}</span>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate"></div>
+    <div class="col-12" #gameInfoPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameInfoTemplate"></div>
+    <br>
+  </div>
+  <div class="row">
+    <div class="col-6 text-center">
+      <p [hidden]="game.cardsPlayed.length!=0">Place cards here. Turn to play: <strong>{{game.userTurnToPlay.name}}</strong></p>
+      <img [src]="cardPlayed.card.imageUrl" *ngFor="let cardPlayed of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
+        class="played-card" alt="">
+    </div>
+    <div class="col-6 d-flex justify-content-center">
+      <div [hidden]="game.cardsDrew.length==0" class="row">
+        <div class="col-12">
+          <div class="card cards-drew-div" *ngFor="let cardDrew of game.cardsDrew">
+            <img class="card-img-top" [src]="cardDrew.card.imageUrl" alt="">
+            <div class="card-body">
+              <p class="card-text text-center btn-primary"><small>{{cardDrew.user.name}}</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [hidden]="game.cardsDrew.length==game.players.length || game.deck.length==0" class="row">
+        <div class="card">
+          <img class="card-img-top" src="/images/background.jpg">
+          <div class="card-body">
+            <p class="card-title text-center">{{game.deck.length/2}}</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div class="row fill-viewport-min-50">
-  <div class="col-12 p5">
-    <!-- rounder card hand -->
-    <!-- <ul class='circle-container'>
-              <li *ngFor="let card of getPlayer().cards" (click)="makeMove(card)">
-                 <img [src]="card.imageUrl" class="animate">
-              </li>
-            </ul> -->
-    <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
-      [src]="card.imageUrl" class="player-hand-card animate">
-  </div>
 
-  <ng-template #gameChatTemplate>
-    <app-game-chat></app-game-chat>
-  </ng-template>
-
-  <ng-template #gameInfoTemplate>
-    <p><strong>Playing until:</strong> {{game.playUntilPoints}}</p>
-    <p><strong>Your points:</strong> {{getPlayer().calculatedPoints}}</p>
-    <p><strong>Opponent's points:</strong> {{getOpponent().calculatedPoints}}</p>
-    <div class="alert alert-primary">
-      Turn to play: <strong>{{game.userTurnToPlay.name}}fsafasfasf</strong>
+<div class="fill-viewport-min-50">
+  <div class="row">
+    <div class="col-12 p5">
+      <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
+        [src]="card.imageUrl" class="player-hand-card animate">
     </div>
-  </ng-template>
-
-
+  </div>
 </div>
+
+<!-- templates -->
+<ng-template #gameChatTemplate>
+  <app-game-chat></app-game-chat>
+</ng-template>
+
+<ng-template #gameInfoTemplate>
+  <p><strong>Playing until:</strong> {{game.playUntilPoints}}</p>
+  <p *ngFor="let player of game.players"><strong>{{player.user.name}} points:</strong> {{player.calculatedPoints}}</p>
+  <div class="alert alert-primary">
+    Turn to play: <strong>{{game.userTurnToPlay.name}}</strong>
+  </div>
+</ng-template>

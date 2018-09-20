@@ -5,17 +5,20 @@
       <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
       <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
     </div>
-    <div [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
-      <h3>Waiting for {{activatedWaitingRoom.expectedNumberOfPlayers - activatedWaitingRoom.users.length}} more
-        player(s)</h3>
-    </div>
-    <div [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
-      <h3>{{activatedWaitingRoom.expectedNumberOfPlayers}} players currently joined!</h3>
-      <ul>
-        <li *ngFor="let user of activatedWaitingRoom.users">{{user.name}}</li>
-      </ul>
-      <button class="btn btn-success" (click)="CreateGame()">Start game!</button>
-    </div>
+    <h3>
+      <span class="text-danger" [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
+        Waiting for
+        {{activatedWaitingRoom.expectedNumberOfPlayers - activatedWaitingRoom.users.length}} more
+        player(s)</span>
+      <span class="text-success" [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
+        All players are here! Game can start!
+      </span>
+    </h3>
+    <ul>
+      <li *ngFor="let user of activatedWaitingRoom.users">{{user.name}}</li>
+    </ul>
+    <button [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers" class="btn btn-success"
+      (click)="CreateGame()">Start game!</button>
   </div>
 </div>
 <app-game-chat></app-game-chat>

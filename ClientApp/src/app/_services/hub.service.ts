@@ -28,12 +28,12 @@ export class HubService {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
-      do {
-        name = prompt('Input your name');
-      } while (!name);
-      name = name+Math.floor((Math.random() * 100) + 1);;
-      // var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
-      // name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
+      // do {
+      //   name = prompt('Input your name');
+      // } while (!name);
+      // name = name+Math.floor((Math.random() * 100) + 1);;
+      var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
+      name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('AllWaitingRoomsUpdate');
     });

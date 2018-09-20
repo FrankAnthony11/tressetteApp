@@ -15,6 +15,8 @@ export class GameComponent implements OnInit {
   @ViewChild('gameChatPopover')
   gameChatPopover: NgbPopover;
 
+  gameLocked = false;
+
   currentUser: User;
   game: Game;
   numberUnreadMessages: number = 0;
@@ -24,20 +26,16 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this._hubService.ActiveGame.subscribe(game => {
       this.game = game;
-      if (this.game.cardsDrew.length == 2) {
+      if (this.game.cardsDrew.length == game.players.length) {
+        this.gameLocked = true;
         setTimeout(() => {
           this.game.cardsDrew = [];
           this.game.cardsPlayed = [];
-        }, 3000);
+          this.gameLocked = false;
+        }, 3500);
       }
       if (this.game.gameEnded) {
-        setTimeout(() => {
-          alert(
-            `You ${this.getPlayer().calculatedPoints > this.getOpponent().calculatedPoints ? 'Won' : 'Lost'}! Your points: ${
-              this.getPlayer().calculatedPoints
-            }, Opponent: ${this.getOpponent().calculatedPoints}`
-          );
-        }, 500);
+        alert(`Game ended!`);
       }
     });
 
@@ -52,22 +50,13 @@ export class GameComponent implements OnInit {
   }
 
   getPlayer() {
-    if (this.currentUser.connectionId == this.game.players[0].user.connectionId) {
-      return this.game.players[0];
-    } else {
-      return this.game.players[1];
-    }
-  }
-
-  getOpponent() {
-    if (this.currentUser.connectionId != this.game.players[0].user.connectionId) {
-      return this.game.players[0];
-    } else {
-      return this.game.players[1];
-    }
+    return this.game.players.find(x => {
+      return x.user.connectionId == this.currentUser.connectionId;
+    });
   }
 
   makeMove(card) {
+    if (this.gameLocked) return;
     this._hubService.MakeMove(card);
   }
 

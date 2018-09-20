@@ -1,6 +1,7 @@
 import { User } from './user';
 import { Player } from './player';
 import { Card } from './card';
+import { CardAndUser } from './cardAndUser';
 
 export interface Game {
   id: string;
@@ -8,7 +9,7 @@ export interface Game {
   userTurnToPlay: User;
   gameEnded: boolean;
   deck: Card[];
-  cardsPlayed: Card[];
-  cardsDrew: Card[];
+  cardsPlayed: CardAndUser[];
+  cardsDrew: CardAndUser[];
   playUntilPoints: number;
 }
