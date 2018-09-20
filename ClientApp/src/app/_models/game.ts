@@ -8,7 +8,8 @@ export interface Game {
   players: Player[];
   userTurnToPlay: User;
   gameEnded: boolean;
-  deck: Card[];
+  deckSize: number;
+  myCards: Card[];
   cardsPlayed: CardAndUser[];
   cardsDrew: CardAndUser[];
   playUntilPoints: number;

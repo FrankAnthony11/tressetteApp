@@ -1,6 +1,6 @@
 using TresetaApp.Models;
 
-namespace tressetteApp.Models
+namespace TresetaApp.Models
 {
     public class CardAndUser
     {

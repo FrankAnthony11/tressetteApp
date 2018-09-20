@@ -57,11 +57,7 @@ export class HubService {
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
       this.activeGameObservable.next(game);
-    });
-
-    this._hubConnection.on('GameStarted', (game: Game) => {
-      this.activeGameObservable.next(game);
-      this._router.navigateByUrl('game');
+      if(this._router.url != "/game") this._router.navigateByUrl("/game");
     });
 
     this._hubConnection.on('AddNewMessageToAllChat', (message: ChatMessage) => {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TresetaApp.Enums;
 using TresetaApp.Extensions;
-using tressetteApp.Models;
+using TresetaApp.Models;
 
 namespace TresetaApp.Models
 {

@@ -38,11 +38,11 @@
           </div>
         </div>
       </div>
-      <div [hidden]="game.cardsDrew.length==game.players.length || game.deck.length==0" class="row">
+      <div [hidden]="game.cardsDrew.length>0 || game.deckSize==0" class="row">
         <div class="card">
           <img class="card-img-top" src="/images/background.jpg">
           <div class="card-body">
-            <p class="card-title text-center">{{game.deck.length/2}}</p>
+            <p class="card-title text-center">{{game.deckSize/2}}</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
 <div class="fill-viewport-min-50">
   <div class="row">
     <div class="col-12 p5">
-      <img *ngFor="let card of getPlayer().cards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
+      <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
         [src]="card.imageUrl" class="player-hand-card animate">
     </div>
   </div>

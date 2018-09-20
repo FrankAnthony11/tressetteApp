@@ -49,12 +49,6 @@ export class GameComponent implements OnInit {
     });
   }
 
-  getPlayer() {
-    return this.game.players.find(x => {
-      return x.user.connectionId == this.currentUser.connectionId;
-    });
-  }
-
   makeMove(card) {
     if (this.gameLocked) return;
     this._hubService.MakeMove(card);
