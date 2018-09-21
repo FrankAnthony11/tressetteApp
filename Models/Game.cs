@@ -17,10 +17,15 @@ namespace TresetaApp.Models
             Players = players;
             PlayUntilPoints = playUntilPoints;
 
+            Teams = new List<Team>();
+            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
+            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
+
             InitializeNewGame();
         }
         public string Id { get; set; }
         public List<Player> Players { get; set; }
+        public List<Team> Teams { get; set; }
         public User UserTurnToPlay { get; set; }
         public List<CardAndUser> CardsPlayed { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
@@ -63,16 +68,17 @@ namespace TresetaApp.Models
                 var isLastPoint = Players.Where(x => x.Cards.Any()).Count() == 0;
 
                 UserTurnToPlay = _strongestCardInRound.User;
-                var roundWinner = Players.FirstOrDefault(x => x.User.ConnectionId == UserTurnToPlay.ConnectionId);
+                var teamRoundWinner = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == UserTurnToPlay.ConnectionId) != null);
 
                 foreach (var cardPlayed in CardsPlayed)
                 {
-                    roundWinner.Points += cardPlayed.Card.Value;
+
+                    teamRoundWinner.Points += cardPlayed.Card.Value;
                 }
 
                 if (isLastPoint)
                 {
-                    roundWinner.Points += 3;
+                    teamRoundWinner.Points += 3;
                 }
                 DrawCards();
             }
@@ -140,7 +146,7 @@ namespace TresetaApp.Models
                 {
                     var card = Deck.GetAndRemove(0, 1).First();
                     player.Cards.Add(card);
-                    CardsDrew.Add(new CardAndUser(card,player.User));
+                    CardsDrew.Add(new CardAndUser(card, player.User));
                 }
             }
         }
@@ -150,12 +156,12 @@ namespace TresetaApp.Models
             if (Players.Where(x => x.Cards.Any()).Count() == 0)
             {
 
-                foreach (var player in Players)
+                foreach (var team in Teams)
                 {
-                    player.CalculatedPoints += player.Points / 3;
+                    team.CalculatedPoints += team.Points / 3;
                 }
 
-                var allPlayersExceeded = Players.Where(y => y.CalculatedPoints < PlayUntilPoints).Count() == 0;
+                var allPlayersExceeded = Teams.Where(y => y.CalculatedPoints < PlayUntilPoints).Count() == 0;
 
                 if (allPlayersExceeded)
                 {
@@ -164,7 +170,7 @@ namespace TresetaApp.Models
                     return true;
                 }
 
-                var atLeastOnePlayerExceeded = Players.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
+                var atLeastOnePlayerExceeded = Teams.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
 
                 if (atLeastOnePlayerExceeded)
                 {
@@ -185,7 +191,10 @@ namespace TresetaApp.Models
             foreach (var player in Players)
             {
                 player.Cards = Deck.GetAndRemove(0, 10);
-                player.Points = 0;
+            }
+            foreach (var team in Teams)
+            {
+                team.Points = 0;
             }
             CardsPlayed = new List<CardAndUser>();
             CardsDrew = new List<CardAndUser>();

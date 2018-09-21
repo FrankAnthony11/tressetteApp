@@ -2,6 +2,7 @@ import { User } from './user';
 import { Player } from './player';
 import { Card } from './card';
 import { CardAndUser } from './cardAndUser';
+import { Team } from './team';
 
 export interface Game {
   id: string;
@@ -10,6 +11,7 @@ export interface Game {
   gameEnded: boolean;
   deckSize: number;
   myCards: Card[];
+  teams: Team[];
   cardsPlayed: CardAndUser[];
   cardsDrew: CardAndUser[];
   playUntilPoints: number;

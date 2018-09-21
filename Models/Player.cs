@@ -10,7 +10,6 @@ namespace TresetaApp.Models
         {
             User = user;
         }
-
         public List<Card> Cards
         {
             get
@@ -20,8 +19,6 @@ namespace TresetaApp.Models
             }
             set { _cards = value; }
         }
-        public int Points { get; set; } = 0;
-        public int CalculatedPoints { get; set; }
         public User User { get; set; }
     
     }

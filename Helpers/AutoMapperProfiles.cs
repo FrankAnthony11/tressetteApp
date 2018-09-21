@@ -15,6 +15,8 @@ namespace TresetaApp.Helpers
                 {
                     opt.MapFrom(src => src.Deck.Count);
                 });
+
+            CreateMap<Team, TeamDto>();
         }
     }
 }

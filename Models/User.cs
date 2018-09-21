@@ -4,9 +4,10 @@ namespace TresetaApp.Models
     {
         public User(string connectionId, string name)
         {
-            ConnectionId=connectionId;
-            Name=name;
+            ConnectionId = connectionId;
+            Name = name;
         }
+
         public string ConnectionId { get; set; }
         public string Name { get; set; }
     }

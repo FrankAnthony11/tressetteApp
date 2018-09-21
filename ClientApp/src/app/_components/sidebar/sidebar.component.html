@@ -8,6 +8,8 @@
       <h3>Available games:</h3>
     </div>
     <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" [hidden]="activatedRoom?.id==waitingRoom.id"
-      (click)="joinWaitingRoom(waitingRoom.id)">{{waitingRoom.users[0].name}}</button>
+      (click)="joinWaitingRoom(waitingRoom.id)">{{waitingRoom.users[0].name}}
+      - ({{waitingRoom.users.length+"/"+waitingRoom.expectedNumberOfPlayers}})
+    </button>
   </div>
 </div>

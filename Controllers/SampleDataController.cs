@@ -21,13 +21,14 @@ namespace TresetaApp.Controllers
         [HttpGet("[action]")]
         public IActionResult GenerateGame()
         {
-            var game = new Game("lol", new List<Player>(){
-                new Player(new User("antonio","antonio")),
-                new Player(new User("ivan","ivan"))
-            }, 2);
-            var gameDto=_mapper.Map<GameDto>(game);
-            gameDto.MyCards=game.Players.First().Cards;
-            return Ok(gameDto);
+            return null;
+            // var game = new Game("lol", new List<Player>(){
+            //     new Player(new User("antonio","antonio")),
+            //     new Player(new User("ivan","ivan"))
+            // }, 2);
+            // var gameDto=_mapper.Map<GameDto>(game);
+            // gameDto.MyCards=game.Teams.First().Cards;
+            // return Ok(gameDto);
         }
 
     }
