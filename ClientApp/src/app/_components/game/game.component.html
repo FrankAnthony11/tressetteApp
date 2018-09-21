@@ -13,17 +13,15 @@
   </div>
   <div class="row">
     <hr #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate" />
+    <div class="col-12">
+      <p class="text-center"> Turn to play: <strong>{{game.userTurnToPlay.name}}</strong> </p>
+    </div>
   </div>
   <div class="row">
     <div class="col-6 text-center">
-      <div [hidden]="game.cardsPlayed.length!=0">
-        <p>Playing until: {{game.playUntilPoints}}</p>
-        <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
-          {{team.calculatedPoints}}</p>
-        <hr>
-        <p> Place cards here. Turn to play: <strong>{{game.userTurnToPlay.name}}</strong> </p>
+      <div [hidden]="!(game.cardsPlayed.length==0)">
+        <ng-container *ngTemplateOutlet="gameInfoTemplate"></ng-container>
       </div>
-
       <img [src]="cardPlayed.card.imageUrl" *ngFor="let cardPlayed of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
         class="played-card" alt="">
     </div>
@@ -40,8 +38,8 @@
       </div>
       <div [hidden]="game.cardsDrew.length>0" class="row">
         <div class="card">
-          <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
-          <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
+            <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
+            <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
           <div class="card-body">
             <p class="card-title text-center">{{game.deckSize/2}}</p>
           </div>
@@ -63,4 +61,14 @@
 <!-- templates -->
 <ng-template #gameChatTemplate>
   <app-game-chat></app-game-chat>
+</ng-template>
+
+<ng-template #gameInfoTemplate>
+  <div [hidden]="game.cardsPlayed.length!=0">
+    <p> Place cards here.</p>
+    <hr>
+    <p>Playing until: {{game.playUntilPoints}}</p>
+    <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
+      {{team.calculatedPoints}}</p>
+  </div>
 </ng-template>

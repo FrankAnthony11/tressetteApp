@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { Game } from './../_models/game';
 import { WaitingRoom } from './../_models/waitingRoom';
 import { Injectable } from '@angular/core';
@@ -28,12 +29,15 @@ export class HubService {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
-      // do {
-      //   name = prompt('Input your name');
-      // } while (!name);
-      // name = name+Math.floor((Math.random() * 100) + 1);;
-      var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
-      name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
+      if (environment.production) {
+        do {
+          name = prompt('Input your name');
+        } while (!name);
+        name = name + Math.floor(Math.random() * 100 + 1);
+      } else {
+        var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
+        name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
+      }
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('AllWaitingRoomsUpdate');
     });
@@ -57,7 +61,7 @@ export class HubService {
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
       this.activeGameObservable.next(game);
-      if(this._router.url != "/game") this._router.navigateByUrl("/game");
+      if (this._router.url != '/game') this._router.navigateByUrl('/game');
     });
 
     this._hubConnection.on('AddNewMessageToAllChat', (message: ChatMessage) => {

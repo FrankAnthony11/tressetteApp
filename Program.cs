@@ -14,12 +14,20 @@ namespace TresetaApp
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var isDevelopment = environment == EnvironmentName.Development;
+
+            var builder = CreateWebHostBuilder(args);
+            if (!isDevelopment)
+                builder.UseUrls("http://localhost:5051");
+            builder.Build().Run();
         }
+
+
+
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-              //  .UseUrls("http://localhost:5051")
                 .UseStartup<Startup>();
     }
 }
