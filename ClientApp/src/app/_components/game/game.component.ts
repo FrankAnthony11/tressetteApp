@@ -64,4 +64,9 @@ export class GameComponent implements OnInit {
   markMessagesAsRead() {
     this.numberUnreadMessages = 0;
   }
+
+  CallAction(action:string){
+    this._hubService.CallAction(action)
+  }
+
 }

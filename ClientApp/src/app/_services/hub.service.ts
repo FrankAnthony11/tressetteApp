@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { ChatMessage } from '../_models/chatMessage';
 import { User } from '../_models/user';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class HubService {
@@ -25,7 +26,7 @@ export class HubService {
   gameChatMessagesObservable = new BehaviorSubject<ChatMessage[]>(this._gameChatMessages);
   currentUserObservable = new BehaviorSubject<User>(null);
 
-  constructor(private _router: Router) {
+  constructor(private _router: Router, private _toastrService: ToastrService) {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
@@ -52,6 +53,9 @@ export class HubService {
 
     this._hubConnection.on('GetAllPlayers', (users: User[]) => {
       this.usersObservable.next(users);
+    });
+    this._hubConnection.on('DisplayToastMessage', (message: string) => {
+      this._toastrService.info(message);
     });
 
     this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
@@ -127,6 +131,10 @@ export class HubService {
 
   AddNewMessageToGameChat(message: string): any {
     this._hubConnection.invoke('AddNewMessageToGameChat', this._gameOrWaitingRoomId, message);
+  }
+
+  CallAction(action: string): any {
+    this._hubConnection.invoke('CallAction', action, this.activeGameObservable.getValue().id);
   }
 
   get Users() {

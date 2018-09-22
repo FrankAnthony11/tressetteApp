@@ -12,9 +12,10 @@
     </div>
   </div>
   <div class="row">
-    <hr #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate" />
     <div class="col-12">
-      <p class="text-center"> Turn to play: <strong>{{game.userTurnToPlay.name}}</strong> </p>
+      <hr #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate" />
+      <p class="text-center">
+        <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.connectionId==game.userTurnToPlay.connectionId}">-{{player.user.name}}-</span>
     </div>
   </div>
   <div class="row">
@@ -38,8 +39,8 @@
       </div>
       <div [hidden]="game.cardsDrew.length>0" class="row">
         <div class="card">
-            <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
-            <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
+          <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
+          <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
           <div class="card-body">
             <p class="card-title text-center">{{game.deckSize/2}}</p>
           </div>
@@ -72,3 +73,12 @@
       {{team.calculatedPoints}}</p>
   </div>
 </ng-template>
+
+<div ngbDropdown placement="top-right" class="d-inline-block action-button">
+  <button class="btn btn-outline-primary" id="dropdownBasic2" [hidden]="currentUser.connectionId!=game.userTurnToPlay.connectionId || game.cardsPlayed.length>0"
+    ngbDropdownToggle>Call action</button>
+  <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+    <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
+    <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
+  </div>
+</div>

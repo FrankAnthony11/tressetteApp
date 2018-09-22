@@ -87,6 +87,17 @@ namespace TresetaApp.Hubs
             await AllWaitingRoomsUpdate();
         }
 
+        public async Task CallAction(string action, string gameid)
+        {
+            var game = _games.SingleOrDefault(x => x.Id == gameid);
+            var allConnectionIds = GetConnectionIdsFromGame(game);
+
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            var message = $"Player {user.Name} is calling on action: {action}";
+
+            await Clients.Clients(allConnectionIds).SendAsync("DisplayToastMessage", message);
+        }
         public async Task ExitGame(string gameid)
         {
             var game = _games.SingleOrDefault(x => x.Id == gameid);
