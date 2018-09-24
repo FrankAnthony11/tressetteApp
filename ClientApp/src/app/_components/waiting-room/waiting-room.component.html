@@ -27,7 +27,11 @@
       </span>
     </h3>
     <ul>
-      <li *ngFor="let user of activatedWaitingRoom.users">{{user.name}}</li>
+      <li *ngFor="let user of activatedWaitingRoom.users">
+        {{user.name}}
+        <strong *ngIf="currentUser.connectionId==activatedWaitingRoom.users[0].connectionId && currentUser.connectionId!=user.connectionId"
+          class="ml-2 text-danger cursor-pointer" (click)="kickUserFromWaitingRoom(user);">[KICK]</strong>
+      </li>
     </ul>
     <button [disabled]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers" *ngIf="activatedWaitingRoom.users[0].connectionId==currentUser.connectionId"
       class="btn btn-success" (click)="createGame()">Start game!</button>

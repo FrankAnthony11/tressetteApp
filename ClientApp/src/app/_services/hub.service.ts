@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class HubService {
+
   private _hubConnection: signalR.HubConnection;
 
   private _gameOrWaitingRoomId: string;
@@ -58,9 +59,14 @@ export class HubService {
       this._toastrService.info(message);
     });
 
-    this._hubConnection.on('SingleWaitingRoomUpdate', (waitingRoom: WaitingRoom) => {
+    this._hubConnection.on('UpdateSingleWaitingRoom', (waitingRoom: WaitingRoom) => {
       this._gameOrWaitingRoomId = waitingRoom.id;
       this.activeWaitingRoomObservable.next(waitingRoom);
+    });
+
+    this._hubConnection.on('KickUserFromWaitingRoom', () => {
+      this.activeWaitingRoomObservable.next(null);
+      this._router.navigateByUrl("home");
     });
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
@@ -88,6 +94,10 @@ export class HubService {
     this._hubConnection.stop();
   }
 
+  KickUserFromWaitingRoom(user: User): any {
+    this._hubConnection.invoke("KickUserFromWaitingRoom", user.connectionId, this.activeWaitingRoomObservable.getValue().id);
+  }
+
   CreateWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {
     this._gameChatMessages = [];
     this.gameChatMessagesObservable.next(this._gameChatMessages);
@@ -103,8 +113,6 @@ export class HubService {
     this.gameChatMessagesObservable.next(this._gameChatMessages);
 
     this._hubConnection.invoke('JoinWaitingRoom', id, password).then(() => {
-      console.log("Navigating to waitingroom");
-      
       this._router.navigateByUrl('waitingRoom');
     });
   }

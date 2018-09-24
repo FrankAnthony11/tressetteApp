@@ -2,6 +2,9 @@
 :disabled{
   cursor: not-allowed;
 }
+.cursor-pointer{
+  cursor:pointer
+}
 .fill-viewport-max-100 {
   max-height: 100vh;
 }

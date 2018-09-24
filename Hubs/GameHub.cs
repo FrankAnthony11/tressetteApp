@@ -131,6 +131,21 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
         }
 
+        public async Task KickUserFromWaitingRoom(string connectionId, string waitingroomId)
+        {
+            var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == waitingroomId);
+            if (waitingRoom == null) return;
+
+            var user = _users.FirstOrDefault(x => x.ConnectionId == connectionId);
+            if (user == null) return;
+
+            waitingRoom.Users.Remove(user);
+
+            await UpdateSingleWaitingRoom(waitingRoom);
+            await UpdateAllWaitingRooms();
+            await Clients.Client(connectionId).SendAsync("KickUserFromWaitingRoom");
+        }
+
         public async Task AddNewMessageToGameChat(string gameOrWaitingRoomId, string message)
         {
             //todo
@@ -246,7 +261,7 @@ namespace TresetaApp.Hubs
         private async Task UpdateSingleWaitingRoom(WaitingRoom waitingRoom)
         {
             var allConnectionIds = waitingRoom.Users.Select(x => x.ConnectionId).ToList();
-            await Clients.Clients(allConnectionIds).SendAsync("SingleWaitingRoomUpdate", waitingRoom);
+            await Clients.Clients(allConnectionIds).SendAsync("UpdateSingleWaitingRoom", waitingRoom);
         }
 
         private async Task CleanupUserFromWaitingRooms()

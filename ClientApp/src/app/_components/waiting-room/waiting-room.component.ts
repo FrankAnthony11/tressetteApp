@@ -10,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WaitingRoomComponent implements OnInit {
   activatedWaitingRoom: WaitingRoom;
-  currentUser:User;
+  currentUser: User;
 
   constructor(private _hubService: HubService) {}
 
@@ -18,12 +18,10 @@ export class WaitingRoomComponent implements OnInit {
     this._hubService.ActiveWaitingRoom.subscribe(room => {
       this.activatedWaitingRoom = room;
     });
-    
+
     this._hubService.CurrentUser.subscribe(user => {
       this.currentUser = user;
     });
-
-
   }
 
   leaveWaitingRoom() {
@@ -37,5 +35,10 @@ export class WaitingRoomComponent implements OnInit {
   setRoomPassword() {
     if (!this.activatedWaitingRoom.password) return;
     this._hubService.SetRoomPassword(this.activatedWaitingRoom.id, this.activatedWaitingRoom.password);
+  }
+
+  kickUserFromWaitingRoom(user: User) {
+    var cfrm = confirm('Really kick this player?');
+    if (cfrm) this._hubService.KickUserFromWaitingRoom(user);
   }
 }
