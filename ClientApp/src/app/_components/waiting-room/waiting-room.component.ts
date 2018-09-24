@@ -1,3 +1,4 @@
+import { User } from './../../_models/user';
 import { WaitingRoom } from './../../_models/waitingRoom';
 import { HubService } from './../../_services/hub.service';
 import { Component, OnInit } from '@angular/core';
@@ -9,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WaitingRoomComponent implements OnInit {
   activatedWaitingRoom: WaitingRoom;
+  currentUser:User;
 
   constructor(private _hubService: HubService) {}
 
@@ -16,13 +18,24 @@ export class WaitingRoomComponent implements OnInit {
     this._hubService.ActiveWaitingRoom.subscribe(room => {
       this.activatedWaitingRoom = room;
     });
+    
+    this._hubService.CurrentUser.subscribe(user => {
+      this.currentUser = user;
+    });
+
+
   }
 
   leaveWaitingRoom() {
     this._hubService.LeaveWaitingRoom();
   }
 
-  CreateGame() {
+  createGame() {
     this._hubService.CreateGame();
+  }
+
+  setRoomPassword() {
+    if (!this.activatedWaitingRoom.password) return;
+    this._hubService.SetRoomPassword(this.activatedWaitingRoom.id, this.activatedWaitingRoom.password);
   }
 }

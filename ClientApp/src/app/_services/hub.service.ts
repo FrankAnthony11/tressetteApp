@@ -40,10 +40,10 @@ export class HubService {
         name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
       }
       this._hubConnection.invoke('AddUser', name);
-      this._hubConnection.invoke('AllWaitingRoomsUpdate');
+      this._hubConnection.invoke('UpdateAllWaitingRooms');
     });
 
-    this._hubConnection.on('AllWaitingRoomsUpdate', (waitingRooms: WaitingRoom[]) => {
+    this._hubConnection.on('UpdateAllWaitingRooms', (waitingRooms: WaitingRoom[]) => {
       this.waitingRoomsObservable.next(waitingRooms);
     });
 
@@ -97,14 +97,20 @@ export class HubService {
     });
   }
 
-  JoinWaitingRoom(id: string) {
+  JoinWaitingRoom(id: string, password:string) {
     this._gameOrWaitingRoomId = id;
     this._gameChatMessages = [];
     this.gameChatMessagesObservable.next(this._gameChatMessages);
 
-    this._hubConnection.invoke('JoinWaitingRoom', id).then(() => {
+    this._hubConnection.invoke('JoinWaitingRoom', id, password).then(() => {
+      console.log("Navigating to waitingroom");
+      
       this._router.navigateByUrl('waitingRoom');
     });
+  }
+
+  SetRoomPassword(id: string, roomPassword: string): any {
+    this._hubConnection.invoke('SetRoomPassword', id, roomPassword);
   }
 
   ExitGame(): any {

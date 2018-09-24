@@ -56,9 +56,21 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("GetAllPlayers", _users);
         }
 
-        public async Task AllWaitingRoomsUpdate()
+
+        public async Task SetRoomPassword(string id, string password)
         {
-            await Clients.All.SendAsync("AllWaitingRoomsUpdate", _waitingRooms.Where(y => y.Users.Count < y.ExpectedNumberOfPlayers));
+            var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
+            if (waitingRoom == null)
+                return;
+            waitingRoom.Password = password;
+            await UpdateSingleWaitingRoom(waitingRoom);
+            await UpdateAllWaitingRooms();
+            await DisplayToastMessage(waitingRoom.Users.Select(x => x.ConnectionId).ToList(), "Password updated");
+        }
+
+        public async Task UpdateAllWaitingRooms()
+        {
+            await Clients.All.SendAsync("UpdateAllWaitingRooms", _waitingRooms.Where(y => y.Users.Count < y.ExpectedNumberOfPlayers));
         }
 
         public async Task CreateWaitingRoom(int playUntilPoints, int expectedNumberOfPlayers)
@@ -67,24 +79,26 @@ namespace TresetaApp.Hubs
             var waitingRoom = new WaitingRoom(user, playUntilPoints, expectedNumberOfPlayers);
             _waitingRooms.Add(waitingRoom);
             await UpdateSingleWaitingRoom(waitingRoom);
-            await AllWaitingRoomsUpdate();
+            await UpdateAllWaitingRooms();
         }
 
-        public async Task JoinWaitingRoom(string id)
+        public async Task JoinWaitingRoom(string id, string password)
         {
-
-            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
 
-            if (waitingRoom == null)
+            if (waitingRoom == null) return;
+
+            if (!string.IsNullOrEmpty(waitingRoom.Password) && waitingRoom.Password != password)
             {
+                await DisplayToastMessage(Context.ConnectionId, "Incorrect password");
                 return;
             }
 
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
             waitingRoom.Users.Add(user);
             await UpdateSingleWaitingRoom(waitingRoom);
-            await AllWaitingRoomsUpdate();
+            await UpdateAllWaitingRooms();
         }
 
         public async Task CallAction(string action, string gameid)
@@ -96,8 +110,11 @@ namespace TresetaApp.Hubs
 
             var message = $"Player {user.Name} is calling on action: {action}";
 
-            await Clients.Clients(allConnectionIds).SendAsync("DisplayToastMessage", message);
+            await DisplayToastMessage(allConnectionIds, message);
+
         }
+
+
         public async Task ExitGame(string gameid)
         {
             var game = _games.SingleOrDefault(x => x.Id == gameid);
@@ -154,7 +171,7 @@ namespace TresetaApp.Hubs
             {
                 await UpdateSingleWaitingRoom(waitingRoom);
             }
-            await AllWaitingRoomsUpdate();
+            await UpdateAllWaitingRooms();
         }
 
         public async Task CreateGame(string waitingRoomId)
@@ -192,10 +209,20 @@ namespace TresetaApp.Hubs
 
         // -------------------------------private--------------------
 
+
+        private async Task DisplayToastMessage(List<string> allConnectionIds, string message)
+        {
+            await Clients.Clients(allConnectionIds).SendAsync("DisplayToastMessage", message);
+        }
+        private async Task DisplayToastMessage(string connectionId, string message)
+        {
+            await Clients.Client(connectionId).SendAsync("DisplayToastMessage", message);
+        }
+
         private async Task RemoveWaitingRoom(string id)
         {
             _waitingRooms.Remove(_waitingRooms.FirstOrDefault(x => x.Id == id));
-            await AllWaitingRoomsUpdate();
+            await UpdateAllWaitingRooms();
         }
 
         private async Task GameUpdated(Game game)

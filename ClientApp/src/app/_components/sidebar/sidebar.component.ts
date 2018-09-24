@@ -1,6 +1,6 @@
+import { WaitingRoom } from './../../_models/waitingRoom';
 import { User } from './../../_models/user';
 import { Component, OnInit } from '@angular/core';
-import { WaitingRoom } from '../../_models/waitingRoom';
 import { HubService } from '../../_services/hub.service';
 
 @Component({
@@ -9,28 +9,26 @@ import { HubService } from '../../_services/hub.service';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-
   users: User[];
   waitingRooms: WaitingRoom[];
-  activatedRoom: WaitingRoom;
 
   constructor(private _hubService: HubService) {}
-  
+
   ngOnInit(): void {
     this._hubService.Users.subscribe((users: User[]) => {
       this.users = users;
     });
 
-    this._hubService.WaitingRooms.subscribe((waitingRooms:WaitingRoom[]) => {
+    this._hubService.WaitingRooms.subscribe((waitingRooms: WaitingRoom[]) => {
       this.waitingRooms = waitingRooms;
     });
-
-    this._hubService.activeWaitingRoomObservable.subscribe((activatedRoom:WaitingRoom) => {
-      this.activatedRoom = activatedRoom;
-    });
   }
-  joinWaitingRoom(id:string){
-   this._hubService.JoinWaitingRoom(id);
+  joinWaitingRoom(waitingRoom: WaitingRoom) {
+    let password = '';
+    if (waitingRoom.password) {
+      password = prompt('Input password for this game');
+      if (password == null) return;
+    }
+    this._hubService.JoinWaitingRoom(waitingRoom.id, password);
   }
-
 }

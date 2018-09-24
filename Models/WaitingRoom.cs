@@ -14,6 +14,7 @@ namespace TresetaApp.Models
         }
 
         public string Id { get; set; }
+        public string Password { get; set; }
         public List<User> Users { get; set; }
         public int PlayUntilPoints { get; set; }
         public int ExpectedNumberOfPlayers { get; set; }

@@ -4,6 +4,18 @@
     <div class="alert alert-primary">
       <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
       <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
+      <form *ngIf="activatedWaitingRoom.users[0].connectionId==currentUser.connectionId">
+        <div class="form-group row">
+          <label for="password" class="col-3 col-sm-1 col-form-label"><strong>Password:</strong> </label>
+          <div class="col-5 col-sm-4">
+            <input type="text" [(ngModel)]="activatedWaitingRoom.password" name="password" class="form-control" id="password"
+              placeholder="Password">
+          </div>
+          <div class="col-4 col-sm-2">
+            <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Update</button>
+          </div>
+        </div>
+      </form>
     </div>
     <h3>
       <span class="text-danger" [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
@@ -17,8 +29,8 @@
     <ul>
       <li *ngFor="let user of activatedWaitingRoom.users">{{user.name}}</li>
     </ul>
-    <button [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers" class="btn btn-success"
-      (click)="CreateGame()">Start game!</button>
+    <button [disabled]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers" *ngIf="activatedWaitingRoom.users[0].connectionId==currentUser.connectionId"
+      class="btn btn-success" (click)="createGame()">Start game!</button>
   </div>
 </div>
 <app-game-chat></app-game-chat>

@@ -75,9 +75,9 @@
 </ng-template>
 
 <div ngbDropdown placement="top-right" class="d-inline-block action-button">
-  <button class="btn btn-outline-primary" id="dropdownBasic2" [hidden]="currentUser.connectionId!=game.userTurnToPlay.connectionId || game.cardsPlayed.length>0"
+  <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0"
     ngbDropdownToggle>Call action</button>
-  <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+  <div ngbDropdownMenu aria-labelledby="callactiondropdown">
     <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
     <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
   </div>
