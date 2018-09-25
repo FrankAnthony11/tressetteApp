@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SidebarModule } from 'ng-sidebar';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './_components/home/home.component';
@@ -25,6 +26,7 @@ import { WaitingRoomGuard } from './_guards/waiting-room.guard';
     FormsModule,
     BrowserAnimationsModule,
     NgbModule,
+    SidebarModule.forRoot(),
     ToastrModule.forRoot(),
     RouterModule.forRoot([
       { path: '', component: HomeComponent },

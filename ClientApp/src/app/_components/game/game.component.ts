@@ -12,8 +12,10 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  @ViewChild('gameChatPopover')
-  gameChatPopover: NgbPopover;
+  // @ViewChild('gameChatPopover')
+  // gameChatPopover: NgbPopover;
+
+  isGameChatSidebarOpen = false;
 
   gameLocked = false;
 
@@ -44,7 +46,7 @@ export class GameComponent implements OnInit {
     });
 
     this._hubService.GameChatMessages.subscribe(messages => {
-      if (messages.length > 0 && messages[0].user.connectionId != this.currentUser.connectionId && !this.gameChatPopover.isOpen())
+      if (messages.length > 0 && messages[0].user.connectionId != this.currentUser.connectionId && !this.isGameChatSidebarOpen)
         this.numberUnreadMessages++;
     });
   }
@@ -61,12 +63,12 @@ export class GameComponent implements OnInit {
     }
   }
 
-  markMessagesAsRead() {
+  toggleGameChatSidebar() {
+    this.isGameChatSidebarOpen = !this.isGameChatSidebarOpen;
     this.numberUnreadMessages = 0;
   }
 
-  CallAction(action:string){
-    this._hubService.CallAction(action)
+  CallAction(action: string) {
+    this._hubService.CallAction(action);
   }
-
 }

@@ -1,84 +1,94 @@
-<div class="fill-viewport-min-50">
-  <div class="row">
-    <div class="col-6">
-      <button class="btn btn-danger btn-block" (click)="exitGame()">Exit game</button>
-    </div>
-    <div class="col-6">
-      <button type="button" class="btn btn-block  btn-success" [ngClass]="{'chat-button-has-new-message': numberUnreadMessages>0}"
-        (click)="markMessagesAsRead();gameChatPopover.open()">
-        Chat
-        <span [hidden]="numberUnreadMessages==0" class="badge badge-light">{{numberUnreadMessages}}</span>
-      </button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <hr #gameChatPopover="ngbPopover" [autoClose]="'outside'" placement="bottom" [ngbPopover]="gameChatTemplate" />
-      <p class="text-center">
-        <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.connectionId==game.userTurnToPlay.connectionId}">-{{player.user.name}}-</span>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-6 text-center">
-      <div [hidden]="!(game.cardsPlayed.length==0)">
-        <ng-container *ngTemplateOutlet="gameInfoTemplate"></ng-container>
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height:100vh">
+
+  <!-- A sidebar -->
+  <ng-sidebar [(opened)]="isGameChatSidebarOpen" [position]="'bottom'" [closeOnClickOutside]="true">
+    <app-game-chat></app-game-chat>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <div class="fill-viewport-min-50">
+      <div class="row">
+        <div class="col-6">
+          <button class="btn btn-danger btn-block" (click)="exitGame()">
+            Exit game &#10007;
+          </button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn btn-block  btn-success" [ngClass]="{'chat-button-has-new-message': numberUnreadMessages>0}"
+            (click)="toggleGameChatSidebar()">
+            Chat &#9776;
+            <span [hidden]="numberUnreadMessages==0" class="badge badge-light">{{numberUnreadMessages}}</span>
+          </button>
+        </div>
       </div>
-      <img [src]="cardPlayed.card.imageUrl" *ngFor="let cardPlayed of game.cardsPlayed;let firstItem = first" [ngClass]="{'first-played-card': firstItem}"
-        class="played-card" alt="">
-    </div>
-    <div class="col-6 d-flex justify-content-center">
-      <div [hidden]="game.cardsDrew.length==0" class="row">
+      <div class="row">
         <div class="col-12">
-          <div class="card cards-drew-div" *ngFor="let cardDrew of game.cardsDrew">
-            <img class="card-img-top" [src]="cardDrew.card.imageUrl" alt="">
-            <div class="card-body">
-              <p class="card-text text-center btn-primary"><small>{{cardDrew.user.name}}</small></p>
+          <p class="text-center">
+            <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.connectionId==game.userTurnToPlay.connectionId}">-{{player.user.name}}-</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 text-center">
+          <div [hidden]="!(game.cardsPlayed.length==0)">
+            <ng-container *ngTemplateOutlet="gameInfoTemplate"></ng-container>
+          </div>
+          <img [src]="cardPlayed.card.imageUrl" *ngFor="let cardPlayed of game.cardsPlayed;let firstItem = first"
+            [ngClass]="{'first-played-card': firstItem}" class="played-card" alt="">
+        </div>
+        <div class="col-6 d-flex justify-content-center">
+          <div [hidden]="game.cardsDrew.length==0" class="row">
+            <div class="col-12">
+              <div class="card cards-drew-div" *ngFor="let cardDrew of game.cardsDrew">
+                <img class="card-img-top" [src]="cardDrew.card.imageUrl" alt="">
+                <div class="card-body">
+                  <p class="card-text text-center btn-primary"><small>{{cardDrew.user.name}}</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div [hidden]="game.cardsDrew.length>0" class="row">
+            <div class="card">
+              <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
+              <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
+              <div class="card-body">
+                <p class="card-title text-center">{{game.deckSize/2}}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div [hidden]="game.cardsDrew.length>0" class="row">
-        <div class="card">
-          <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
-          <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
-          <div class="card-body">
-            <p class="card-title text-center">{{game.deckSize/2}}</p>
-          </div>
+    </div>
+
+    <div class="fill-viewport-min-50">
+      <div class="row">
+        <div class="col-12 p5">
+          <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
+            [src]="card.imageUrl" class="player-hand-card animate">
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="fill-viewport-min-50">
-  <div class="row">
-    <div class="col-12 p5">
-      <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
-        [src]="card.imageUrl" class="player-hand-card animate">
+
+    <ng-template #gameInfoTemplate>
+      <div [hidden]="game.cardsPlayed.length!=0">
+        <p> Place cards here.</p>
+        <hr>
+        <p>Playing until: {{game.playUntilPoints}}</p>
+        <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
+          {{team.calculatedPoints}}</p>
+      </div>
+    </ng-template>
+
+    <div ngbDropdown placement="top-right" class="d-inline-block action-button">
+      <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0"
+        ngbDropdownToggle>Call action</button>
+      <div ngbDropdownMenu aria-labelledby="callactiondropdown">
+        <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
+        <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- templates -->
-<ng-template #gameChatTemplate>
-  <app-game-chat></app-game-chat>
-</ng-template>
-
-<ng-template #gameInfoTemplate>
-  <div [hidden]="game.cardsPlayed.length!=0">
-    <p> Place cards here.</p>
-    <hr>
-    <p>Playing until: {{game.playUntilPoints}}</p>
-    <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
-      {{team.calculatedPoints}}</p>
-  </div>
-</ng-template>
-
-<div ngbDropdown placement="top-right" class="d-inline-block action-button">
-  <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0"
-    ngbDropdownToggle>Call action</button>
-  <div ngbDropdownMenu aria-labelledby="callactiondropdown">
-    <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
-    <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
-  </div>
-</div>
+</ng-sidebar-container>

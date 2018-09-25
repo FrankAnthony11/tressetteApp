@@ -9,10 +9,10 @@
           <label for="password" class="col-3 col-sm-1 col-form-label"><strong>Password:</strong> </label>
           <div class="col-5 col-sm-4">
             <input type="text" [(ngModel)]="activatedWaitingRoom.password" name="password" class="form-control" id="password"
-              placeholder="Password">
+              placeholder="(Optional)">
           </div>
           <div class="col-4 col-sm-2">
-            <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Update</button>
+            <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Set</button>
           </div>
         </div>
       </form>
@@ -23,7 +23,7 @@
         {{activatedWaitingRoom.expectedNumberOfPlayers - activatedWaitingRoom.users.length}} more
         player(s)</span>
       <span class="text-success" [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
-        All players are here! Game can start!
+        All players are here! Host can start the game!
       </span>
     </h3>
     <ul>

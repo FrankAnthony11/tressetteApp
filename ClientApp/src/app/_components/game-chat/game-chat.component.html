@@ -4,7 +4,7 @@
       <h5 class="card-header">
         <p>Your username: <strong>{{currentUser?.name}}</strong></p>
         <form novalidate name="newMessageForm" (ngSubmit)="sendMessageToGameChat()">
-          <input type="text" name="newMessage" autofocus autocomplete="off" class="form-control" placeholder="New Message"
+          <input type="text" name="newMessage"  autofocus autocomplete="off" class="form-control" placeholder="New Message"
             [(ngModel)]="newMessage">
         </form>
       </h5>

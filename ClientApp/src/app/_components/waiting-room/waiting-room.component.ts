@@ -38,7 +38,7 @@ export class WaitingRoomComponent implements OnInit {
   }
 
   kickUserFromWaitingRoom(user: User) {
-    var cfrm = confirm('Really kick this player?');
+    var cfrm = confirm('Really kick this player? ' + user.name);
     if (cfrm) this._hubService.KickUserFromWaitingRoom(user);
   }
 }

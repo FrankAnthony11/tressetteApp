@@ -11,7 +11,6 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class HubService {
-
   private _hubConnection: signalR.HubConnection;
 
   private _gameOrWaitingRoomId: string;
@@ -35,10 +34,9 @@ export class HubService {
         do {
           name = prompt('Input your name');
         } while (!name);
-        name = name + Math.floor(Math.random() * 100 + 1);
       } else {
         var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
-        name = myArray[Math.floor(Math.random() * myArray.length)] + Math.floor(Math.random() * 100 + 1);
+        name = myArray[Math.floor(Math.random() * myArray.length)];
       }
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('UpdateAllWaitingRooms');
@@ -66,7 +64,7 @@ export class HubService {
 
     this._hubConnection.on('KickUserFromWaitingRoom', () => {
       this.activeWaitingRoomObservable.next(null);
-      this._router.navigateByUrl("home");
+      this._router.navigateByUrl('home');
     });
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
@@ -95,7 +93,7 @@ export class HubService {
   }
 
   KickUserFromWaitingRoom(user: User): any {
-    this._hubConnection.invoke("KickUserFromWaitingRoom", user.connectionId, this.activeWaitingRoomObservable.getValue().id);
+    this._hubConnection.invoke('KickUserFromWaitingRoom', user.connectionId, this.activeWaitingRoomObservable.getValue().id);
   }
 
   CreateWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {
@@ -107,7 +105,7 @@ export class HubService {
     });
   }
 
-  JoinWaitingRoom(id: string, password:string) {
+  JoinWaitingRoom(id: string, password: string) {
     this._gameOrWaitingRoomId = id;
     this._gameChatMessages = [];
     this.gameChatMessagesObservable.next(this._gameChatMessages);
@@ -122,10 +120,12 @@ export class HubService {
   }
 
   ExitGame(): any {
+    if(!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().id);
   }
 
   LeaveWaitingRoom() {
+    if(!this.activeWaitingRoomObservable.getValue()) return;
     this._hubConnection.invoke('LeaveWaitingRoom', this.activeWaitingRoomObservable.getValue().id);
     this.activeWaitingRoomObservable.next(null);
     this._router.navigateByUrl('/');

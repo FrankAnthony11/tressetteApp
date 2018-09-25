@@ -43,6 +43,14 @@ namespace TresetaApp.Hubs
 
         public async Task AddUser(string name)
         {
+
+            var nameExists = _users.Any(x => x.Name == name);
+            if (nameExists)
+            {
+                Random rnd = new Random();
+                name = name + rnd.Next(1, 100);
+            }
+
             var user = new User(Context.ConnectionId, name);
 
             _users.Add(user);
@@ -75,6 +83,8 @@ namespace TresetaApp.Hubs
 
         public async Task CreateWaitingRoom(int playUntilPoints, int expectedNumberOfPlayers)
         {
+            await CleanupUserFromWaitingRooms();
+            
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var waitingRoom = new WaitingRoom(user, playUntilPoints, expectedNumberOfPlayers);
             _waitingRooms.Add(waitingRoom);
@@ -84,6 +94,8 @@ namespace TresetaApp.Hubs
 
         public async Task JoinWaitingRoom(string id, string password)
         {
+            await CleanupUserFromWaitingRooms();
+
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
 
             if (waitingRoom == null) return;

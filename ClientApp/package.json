@@ -29,6 +29,7 @@
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.1.3",
     "core-js": "^2.5.7",
+    "ng-sidebar": "^8.0.0",
     "ngx-toastr": "^9.1.0",
     "rxjs": "^6.3.2",
     "zone.js": "^0.8.26"

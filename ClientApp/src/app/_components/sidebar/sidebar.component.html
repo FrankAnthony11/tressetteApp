@@ -7,10 +7,10 @@
     <div class="alert alert-primary">
       <h3>Available games ({{waitingRooms?.length}}):</h3>
     </div>
-    <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" 
-      (click)="joinWaitingRoom(waitingRoom)">{{waitingRoom.users[0].name}}
-      - ({{waitingRoom.users.length+"/"+waitingRoom.expectedNumberOfPlayers}})
+    <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" (click)="joinWaitingRoom(waitingRoom)">
       <span class="mx-2" [hidden]="!waitingRoom.password">&#9919;</span>
+      {{waitingRoom.users[0].name}}
+      - ({{waitingRoom.users.length+"/"+waitingRoom.expectedNumberOfPlayers}})
     </button>
   </div>
 </div>
