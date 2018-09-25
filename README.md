@@ -4,7 +4,7 @@
 
 DEMO: http://tressetteapp.tonymarkoc.com/
 
-functionallity: play the game, chat, set custom nickname, create waiting room, list all the players, list all the games
+functionallity: play the game in 2 or 4 players, chat in all chat or in game chat, set custom nickname, create waiting room, list all the players, list all the players in the waiting room, list all the games, kick player from the waiting room, set password on the waiting room, animations
 
 -------------------------------
 
