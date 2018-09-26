@@ -69,7 +69,10 @@ export class HubService {
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
       this.activeGameObservable.next(game);
-      if (this._router.url != '/game') this._router.navigateByUrl('/game');
+      if (this._router.url != '/game') {
+        this.activeWaitingRoomObservable.next(null);
+        this._router.navigateByUrl('/game');
+      }
     });
 
     this._hubConnection.on('AddNewMessageToAllChat', (message: ChatMessage) => {
@@ -149,6 +152,10 @@ export class HubService {
 
   CallAction(action: string): any {
     this._hubConnection.invoke('CallAction', action, this.activeGameObservable.getValue().id);
+  }
+
+  StartNewRound(): any {
+    this._hubConnection.invoke('StartNewRound',  this.activeGameObservable.getValue().id);
   }
 
   get Users() {

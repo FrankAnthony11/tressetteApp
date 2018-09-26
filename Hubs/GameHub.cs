@@ -84,7 +84,7 @@ namespace TresetaApp.Hubs
         public async Task CreateWaitingRoom(int playUntilPoints, int expectedNumberOfPlayers)
         {
             await CleanupUserFromWaitingRooms();
-            
+
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var waitingRoom = new WaitingRoom(user, playUntilPoints, expectedNumberOfPlayers);
             _waitingRooms.Add(waitingRoom);
@@ -226,11 +226,22 @@ namespace TresetaApp.Hubs
         public async Task MakeMove(string gameId, Card card)
         {
             var game = _games.SingleOrDefault(x => x.Id == gameId);
+            if (game == null)
+                return;
             if (game.GameEnded)
                 return;
             var success = game.MakeMove(Context.ConnectionId, card);
             if (!success)
                 return;
+            await GameUpdated(game);
+        }
+
+        public async Task StartNewRound(string gameId)
+        {
+            var game = _games.SingleOrDefault(x => x.Id == gameId);
+            if (game == null)
+                return;
+            game.InitializeNewGame();
             await GameUpdated(game);
         }
 

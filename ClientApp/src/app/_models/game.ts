@@ -9,6 +9,7 @@ export interface Game {
   players: Player[];
   userTurnToPlay: User;
   gameEnded: boolean;
+  roundEnded: boolean;
   deckSize: number;
   myCards: Card[];
   teams: Team[];

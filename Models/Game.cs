@@ -32,6 +32,7 @@ namespace TresetaApp.Models
         public List<Card> Deck { get; set; }
         public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
+        public bool RoundEnded { get; set; } = false;
 
         public bool MakeMove(string playerConnectionId, Card card)
         {
@@ -85,6 +86,24 @@ namespace TresetaApp.Models
             return true;
         }
 
+
+        public void InitializeNewGame()
+        {
+            Deck = GenerateDeck();
+            foreach (var player in Players)
+            {
+                player.Cards = Deck.GetAndRemove(0, 10);
+            }
+            foreach (var team in Teams)
+            {
+                team.Points = 0;
+            }
+            CardsPlayed = new List<CardAndUser>();
+            CardsDrew = new List<CardAndUser>();
+            UserTurnToPlay = Players.First().User; ;
+            RoundEnded = false;
+        }
+
         // ------------------------------ private----------------------------------------------------//
 
         private List<Card> GenerateDeck()
@@ -136,9 +155,8 @@ namespace TresetaApp.Models
         private void DrawCards()
         {
 
-            var gameEnded = DetectIfGameEnded();
-            if (gameEnded)
-                return;
+            DetectIfGameOrRoundEnded();
+
 
             if (Deck.Any())
             {
@@ -151,10 +169,11 @@ namespace TresetaApp.Models
             }
         }
 
-        private bool DetectIfGameEnded()
+        private void DetectIfGameOrRoundEnded()
         {
             if (Players.Where(x => x.Cards.Any()).Count() == 0)
             {
+                RoundEnded = true;
 
                 foreach (var team in Teams)
                 {
@@ -162,44 +181,19 @@ namespace TresetaApp.Models
                 }
 
                 var allPlayersExceeded = Teams.Where(y => y.CalculatedPoints < PlayUntilPoints).Count() == 0;
+                var atLeastOnePlayerExceeded = Teams.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
 
                 if (allPlayersExceeded)
                 {
                     PlayUntilPoints += 10;
-                    InitializeNewGame();
-                    return true;
                 }
-
-                var atLeastOnePlayerExceeded = Teams.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
-
-                if (atLeastOnePlayerExceeded)
+                else if (atLeastOnePlayerExceeded)
                 {
-                    //game has ended
                     GameEnded = true;
-                    return true;
                 }
-
-                InitializeNewGame();
-                return true;
             }
-            return false;
         }
 
-        private void InitializeNewGame()
-        {
-            Deck = GenerateDeck();
-            foreach (var player in Players)
-            {
-                player.Cards = Deck.GetAndRemove(0, 10);
-            }
-            foreach (var team in Teams)
-            {
-                team.Points = 0;
-            }
-            CardsPlayed = new List<CardAndUser>();
-            CardsDrew = new List<CardAndUser>();
-            UserTurnToPlay = Players.First().User; ;
-        }
 
         private void ChangePlayersTurn()
         {

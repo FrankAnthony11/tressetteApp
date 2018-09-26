@@ -14,5 +14,6 @@ namespace TresetaApp.Models.Dtos
         public int DeckSize { get; set; }
         public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
+        public bool RoundEnded { get; set; } = false;
     }
 }

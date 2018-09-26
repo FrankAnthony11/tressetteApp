@@ -34,10 +34,16 @@ export class GameComponent implements OnInit {
           this.game.cardsDrew = [];
           this.game.cardsPlayed = [];
           this.gameLocked = false;
+          if (this.game.gameEnded) {
+            let message = 'Game ended! ';
+            this.game.teams.forEach(element => {
+              message += ` Team ${element.name} points: ${element.calculatedPoints}`;
+            });
+            alert(message);
+          } else if (this.game.roundEnded) {
+            this._hubService.StartNewRound();
+          }
         }, 3500);
-      }
-      if (this.game.gameEnded) {
-        alert(`Game ended!`);
       }
     });
 
