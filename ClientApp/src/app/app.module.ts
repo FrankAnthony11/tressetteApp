@@ -1,3 +1,4 @@
+import { GameDeactivateGuard } from './_guards/game-deactivate.guard';
 import { GameChatComponent } from './_components/game-chat/game-chat.component';
 import { SidebarComponent } from './_components/sidebar/sidebar.component';
 import { GameGuard } from './_guards/game.guard';
@@ -31,11 +32,11 @@ import { WaitingRoomGuard } from './_guards/waiting-room.guard';
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
       { path: 'waitingRoom', component: WaitingRoomComponent, canActivate: [WaitingRoomGuard] },
-      { path: 'game', component: GameComponent, canActivate: [GameGuard] },
+      { path: 'game', component: GameComponent, canActivate: [GameGuard], canDeactivate: [GameDeactivateGuard] },
       { path: '**', redirectTo: '/' }
     ])
   ],
-  providers: [HubService, WaitingRoomGuard, GameGuard],
+  providers: [HubService, WaitingRoomGuard, GameGuard, GameDeactivateGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
