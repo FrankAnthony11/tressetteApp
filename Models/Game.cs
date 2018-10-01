@@ -21,7 +21,9 @@ namespace TresetaApp.Models
             Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
             Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
 
-            Spectators=new List<User>();
+            Spectators = new List<User>();
+
+            UserTurnToPlay = Players.First().User;
 
             InitializeNewGame();
         }
@@ -103,7 +105,6 @@ namespace TresetaApp.Models
             }
             CardsPlayed = new List<CardAndUser>();
             CardsDrew = new List<CardAndUser>();
-            UserTurnToPlay = Players.First().User; ;
             RoundEnded = false;
         }
 
