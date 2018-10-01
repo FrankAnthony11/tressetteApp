@@ -30,7 +30,7 @@ export class HubService {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
-      if (!environment.production) {
+      if (environment.production) {
         do {
           name = prompt('Input your name');
         } while (!name);
