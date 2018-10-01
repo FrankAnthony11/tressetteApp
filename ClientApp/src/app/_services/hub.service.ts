@@ -30,7 +30,7 @@ export class HubService {
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl('/gamehub').build();
     this._hubConnection.start().then(() => {
       let name;
-      if (environment.production) {
+      if (!environment.production) {
         do {
           name = prompt('Input your name');
         } while (!name);
@@ -56,6 +56,12 @@ export class HubService {
     });
     this._hubConnection.on('DisplayToastMessage', (message: string) => {
       this._toastrService.info(message);
+    });
+
+    this._hubConnection.on('BuzzPlayer', () => {
+      var alert=new Audio("/sounds/alert.mp3");
+      alert.load();
+      alert.play();
     });
 
     this._hubConnection.on('UpdateSingleWaitingRoom', (waitingRoom: WaitingRoom) => {

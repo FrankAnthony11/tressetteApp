@@ -24,7 +24,6 @@ export class HomeComponent implements OnInit {
     });
 
     this._hubService.LeaveWaitingRoom();
-
   }
 
   createNewWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {

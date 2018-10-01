@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
@@ -51,7 +52,9 @@ namespace TresetaApp.Hubs
                 name = name + rnd.Next(1, 100);
             }
 
-            var user = new User(Context.ConnectionId, name);
+            name=Regex.Replace(name, @"\s+", "");
+
+            var user = new User(Context.ConnectionId, name.ToLower());
 
             _users.Add(user);
             await GetAllPlayers();
@@ -166,6 +169,17 @@ namespace TresetaApp.Hubs
 
         public async Task AddNewMessageToAllChat(string message)
         {
+            Regex regex = new Regex(@"^/(slap|buzz|alert) ([A-Za-z0-9\s]*)$");
+            Match match = regex.Match(message);
+
+            if (match.Success)
+            {
+                var username = match.Groups[2].Value;
+                var targetedUser = _users.FirstOrDefault(x => x.Name == username);
+                if (targetedUser != null)
+                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+            }
+
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var msg = new ChatMessage(user, message);
             await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
@@ -173,7 +187,18 @@ namespace TresetaApp.Hubs
 
         public async Task AddNewMessageToGameChat(string gameOrWaitingRoomId, string message)
         {
-            //todo
+
+            Regex regex = new Regex(@"^/(slap|buzz|alert) ([A-Za-z0-9\s]*)$");
+            Match match = regex.Match(message);
+
+            if (match.Success)
+            {
+                var username = match.Groups[2].Value;
+                var targetedUser = _users.FirstOrDefault(x => x.Name == username);
+                if (targetedUser != null)
+                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+            }
+
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var msg = new ChatMessage(user, message);
 
@@ -272,7 +297,7 @@ namespace TresetaApp.Hubs
             if (playerLeftWithThisNickname != null)
             {
                 playerLeftWithThisNickname.User = user;
-                playerLeftWithThisNickname.LeftGame=false;
+                playerLeftWithThisNickname.LeftGame = false;
 
                 game.Teams.ForEach(t =>
                 {
@@ -280,7 +305,7 @@ namespace TresetaApp.Hubs
                     {
                         if (u.Name == user.Name)
                         {
-                            u.ConnectionId=user.ConnectionId;
+                            u.ConnectionId = user.ConnectionId;
                         }
                     });
                 });
@@ -364,7 +389,7 @@ namespace TresetaApp.Hubs
 
         private List<string> GetPlayersConnectionIdsFromTheGame(Game game)
         {
-            return game.Players.Where(x=>!x.LeftGame).Select(y => y.User.ConnectionId).ToList();
+            return game.Players.Where(x => !x.LeftGame).Select(y => y.User.ConnectionId).ToList();
         }
 
         private List<string> GetSpectatorsConnectionIdsFromTheGame(Game game)
