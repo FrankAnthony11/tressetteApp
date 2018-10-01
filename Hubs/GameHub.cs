@@ -145,6 +145,7 @@ namespace TresetaApp.Hubs
             }
             var allPlayersFromTheGame = GetPlayersConnectionIdsFromTheGame(game);
             await Clients.Clients(allPlayersFromTheGame).SendAsync("ExitGame");
+            await Clients.Clients(allSpectatorsFromTheGame).SendAsync("ExitGame");
             _games.Remove(game);
             await UpdateAllRunningGames();
 
