@@ -45,6 +45,8 @@ namespace TresetaApp.Hubs
         public async Task AddUser(string name)
         {
 
+            name=Regex.Replace(name, @"\s+", "").ToLower();
+
             var nameExists = _users.Any(x => x.Name == name);
             if (nameExists)
             {
@@ -52,9 +54,8 @@ namespace TresetaApp.Hubs
                 name = name + rnd.Next(1, 100);
             }
 
-            name=Regex.Replace(name, @"\s+", "");
 
-            var user = new User(Context.ConnectionId, name.ToLower());
+            var user = new User(Context.ConnectionId, name);
 
             _users.Add(user);
             await GetAllPlayers();
