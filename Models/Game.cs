@@ -43,6 +43,9 @@ namespace TresetaApp.Models
         {
             var player = GetPlayerFromConnectionId(playerConnectionId);
 
+            if (player.Cards.FirstOrDefault(x => x.Color == card.Color && x.Number == card.Number) == null)
+                return false;
+
             if (playerConnectionId != UserTurnToPlay.ConnectionId)
                 return false;
 
@@ -62,6 +65,7 @@ namespace TresetaApp.Models
                 return false;
             }
 
+
             CardsPlayed.Add(new CardAndUser(card, player.User));
             _firstCardPlayed = CardsPlayed.FirstOrDefault();
             _strongestCardInRound = CardsPlayed.Where(x => x.Card.Color == _firstCardPlayed.Card.Color).OrderByDescending(item => item.Card.Strength).First();
@@ -73,7 +77,7 @@ namespace TresetaApp.Models
             {
                 var isLastPoint = Players.Where(x => x.Cards.Any()).Count() == 0;
 
-                UserTurnToPlay = _strongestCardInRound.User;
+                UserTurnToPlay = Players.FirstOrDefault(x => x.User.Name == _strongestCardInRound.User.Name).User;
                 var teamRoundWinner = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == UserTurnToPlay.ConnectionId) != null);
 
                 foreach (var cardPlayed in CardsPlayed)

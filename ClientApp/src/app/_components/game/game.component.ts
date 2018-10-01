@@ -13,10 +13,10 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 })
 export class GameComponent implements OnInit {
   
-  @HostListener('window:beforeunload', ['$event'])
-  unloadNotification($event: any) {
-    $event.returnValue = true;
-  }
+  // @HostListener('window:beforeunload', ['$event'])
+  // unloadNotification($event: any) {
+  //   $event.returnValue = true;
+  // }
 
   isGameChatSidebarOpen = false;
   gameLocked = false;

@@ -26,7 +26,7 @@
       <div class="row">
         <div class="col-12">
           <p class="text-center">
-            <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.connectionId==game.userTurnToPlay.connectionId}">-{{player.user.name}}-</span>
+            <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.name==game.userTurnToPlay.name, 'left-game':player.leftGame}">-{{player.user.name}}-</span>
         </div>
       </div>
       <div class="row">

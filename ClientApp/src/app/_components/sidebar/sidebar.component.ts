@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit {
   }
   
   joinGameAsSpectator(runningGame:Game){
-    this._hubService.JoinGameAsSpectator(runningGame.id);
+    this._hubService.JoinGameAsPlayerOrSpectator(runningGame.id);
 
   }
 

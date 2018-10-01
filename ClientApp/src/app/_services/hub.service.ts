@@ -35,7 +35,7 @@ export class HubService {
           name = prompt('Input your name');
         } while (!name);
       } else {
-        var myArray = ['Ante', 'Mate', 'Jure', 'Lola', 'Mile'];
+        var myArray = ['Ante', 'Mate'];
         name = myArray[Math.floor(Math.random() * myArray.length)];
       }
       this._hubConnection.invoke('AddUser', name);
@@ -89,11 +89,6 @@ export class HubService {
       this._gameChatMessages.unshift(message);
       this.gameChatMessagesObservable.next(this._gameChatMessages);
     });
-
-    this._hubConnection.on('ExitGame', () => {
-      alert('Game exits. One of the players has left the game');
-      this._router.navigateByUrl('/');
-    });
   }
 
   StopConnection() {
@@ -123,9 +118,9 @@ export class HubService {
     });
   }
 
-  JoinGameAsSpectator(id: string): any {
+  JoinGameAsPlayerOrSpectator(id: string): any {
     this._gameOrWaitingRoomId = id;
-    this._hubConnection.invoke('JoinGameAsSpectator', id);
+    this._hubConnection.invoke('JoinGameAsPlayerOrSpectator', id);
   }
 
   SetRoomPassword(id: string, roomPassword: string): any {

@@ -139,14 +139,27 @@ namespace TresetaApp.Hubs
                 return;
             var allSpectatorsFromTheGame = GetSpectatorsConnectionIdsFromTheGame(game);
 
-            if (allSpectatorsFromTheGame.Contains(Context.ConnectionId)){
-                game.Spectators.Remove(game.Spectators.FirstOrDefault(x=>x.ConnectionId==Context.ConnectionId));
+            if (allSpectatorsFromTheGame.Contains(Context.ConnectionId))
+            {
+                game.Spectators.Remove(game.Spectators.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId));
                 return;
             }
+
+
             var allPlayersFromTheGame = GetPlayersConnectionIdsFromTheGame(game);
-            await Clients.Clients(allPlayersFromTheGame).SendAsync("ExitGame");
-            await Clients.Clients(allSpectatorsFromTheGame).SendAsync("ExitGame");
-            _games.Remove(game);
+
+            var player = game.Players.FirstOrDefault(y => y.User.ConnectionId == Context.ConnectionId);
+            player.LeftGame = true;
+
+
+            await DisplayToastMessage(allPlayersFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
+            await DisplayToastMessage(allSpectatorsFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
+
+            await GameUpdatedToPlayers(game);
+            await GameUpdatedToSpectators(game);
+
+            if (!game.Players.Any(x => x.LeftGame == false))
+                _games.Remove(game);
             await UpdateAllRunningGames();
 
         }
@@ -243,7 +256,7 @@ namespace TresetaApp.Hubs
             await UpdateAllRunningGames();
         }
 
-        public async Task JoinGameAsSpectator(string gameId)
+        public async Task JoinGameAsPlayerOrSpectator(string gameId)
         {
             var game = _games.SingleOrDefault(x => x.Id == gameId);
             if (game == null)
@@ -253,8 +266,35 @@ namespace TresetaApp.Hubs
             {
                 return;
             }
-            game.Spectators.Add(user);
-            await GameUpdatedToSpectators(game);
+
+            var playerLeftWithThisNickname = game.Players.FirstOrDefault(x => x.LeftGame && x.User.Name == user.Name);
+
+            if (playerLeftWithThisNickname != null)
+            {
+                playerLeftWithThisNickname.User = user;
+                playerLeftWithThisNickname.LeftGame=false;
+
+                game.Teams.ForEach(t =>
+                {
+                    t.Users.ForEach(u =>
+                    {
+                        if (u.Name == user.Name)
+                        {
+                            u.ConnectionId=user.ConnectionId;
+                        }
+                    });
+                });
+                if (game.UserTurnToPlay.Name == user.Name)
+                    game.UserTurnToPlay = user;
+                await DisplayToastMessage(GetPlayersConnectionIdsFromTheGame(game), $"PLAYER {user.Name} HAS RECONNECTED TO THE GAME");
+                await DisplayToastMessage(GetSpectatorsConnectionIdsFromTheGame(game), $"PLAYER {user.Name} HAS RECONNECTED TO THE GAME");
+                await GameUpdatedToPlayers(game);
+            }
+            else
+            {
+                game.Spectators.Add(user);
+                await GameUpdatedToSpectators(game);
+            }
         }
 
         public async Task MakeMove(string gameId, Card card)
@@ -324,7 +364,7 @@ namespace TresetaApp.Hubs
 
         private List<string> GetPlayersConnectionIdsFromTheGame(Game game)
         {
-            return game.Players.Select(y => y.User.ConnectionId).ToList();
+            return game.Players.Where(x=>!x.LeftGame).Select(y => y.User.ConnectionId).ToList();
         }
 
         private List<string> GetSpectatorsConnectionIdsFromTheGame(Game game)

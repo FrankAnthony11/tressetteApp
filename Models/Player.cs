@@ -20,6 +20,7 @@ namespace TresetaApp.Models
             set { _cards = value; }
         }
         public User User { get; set; }
+        public bool LeftGame { get; set; }
     
     }
 }

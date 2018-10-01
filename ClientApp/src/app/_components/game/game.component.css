@@ -40,6 +40,9 @@
     margin-left: -10%;
   }
 }
+.left-game{
+  border:2px solid red;
+}
 .chat-button {
   margin-left: 20px;
 }
