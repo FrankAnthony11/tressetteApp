@@ -2,6 +2,7 @@ import { WaitingRoom } from './../../_models/waitingRoom';
 import { User } from './../../_models/user';
 import { Component, OnInit } from '@angular/core';
 import { HubService } from '../../_services/hub.service';
+import { Game } from '../../_models/game';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,6 +12,7 @@ import { HubService } from '../../_services/hub.service';
 export class SidebarComponent implements OnInit {
   users: User[];
   waitingRooms: WaitingRoom[];
+  runningGames:Game[];
 
   constructor(private _hubService: HubService) {}
 
@@ -22,7 +24,17 @@ export class SidebarComponent implements OnInit {
     this._hubService.WaitingRooms.subscribe((waitingRooms: WaitingRoom[]) => {
       this.waitingRooms = waitingRooms;
     });
+
+    this._hubService.AllRunningGames.subscribe((runningGames: Game[]) => {
+      this.runningGames = runningGames;
+    });
   }
+  
+  joinGameAsSpectator(runningGame:Game){
+    this._hubService.JoinGameAsSpectator(runningGame.id);
+
+  }
+
   joinWaitingRoom(waitingRoom: WaitingRoom) {
     let password = '';
     if (waitingRoom.password) {

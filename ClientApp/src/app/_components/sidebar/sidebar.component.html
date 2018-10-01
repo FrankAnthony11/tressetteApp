@@ -7,6 +7,9 @@
     <div class="alert alert-primary">
       <h3>Available games ({{waitingRooms?.length}}):</h3>
     </div>
+    <button class="btn btn-danger btn-block" *ngFor="let runningGame of runningGames" (click)="joinGameAsSpectator(runningGame)">
+      (spectate) {{runningGame.teams[0].users[0].name}}
+    </button>
     <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" (click)="joinWaitingRoom(waitingRoom)">
       <span class="mx-2" [hidden]="!waitingRoom.password">&#9919;</span>
       {{waitingRoom.users[0].name}}

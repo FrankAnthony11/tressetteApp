@@ -14,11 +14,11 @@ export class HubService {
   private _hubConnection: signalR.HubConnection;
 
   private _gameOrWaitingRoomId: string;
-
   private _allChatMessages: ChatMessage[] = [];
   private _gameChatMessages: ChatMessage[] = [];
 
   waitingRoomsObservable = new BehaviorSubject<WaitingRoom[]>(null);
+  allRunningGamesObservable = new BehaviorSubject<Game[]>(null);
   usersObservable = new BehaviorSubject<User[]>(null);
   activeWaitingRoomObservable = new BehaviorSubject<WaitingRoom>(null);
   activeGameObservable = new BehaviorSubject<Game>(null);
@@ -40,6 +40,7 @@ export class HubService {
       }
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('UpdateAllWaitingRooms');
+      this._hubConnection.invoke('UpdateAllRunningGames');
     });
 
     this._hubConnection.on('UpdateAllWaitingRooms', (waitingRooms: WaitingRoom[]) => {
@@ -80,6 +81,10 @@ export class HubService {
       this.allChatMessagesObservable.next(this._allChatMessages);
     });
 
+    this._hubConnection.on('UpdateAllRunningGames', (games: Game[]) => {
+      this.allRunningGamesObservable.next(games);
+    });
+
     this._hubConnection.on('AddNewMessageToGameChat', (message: ChatMessage) => {
       this._gameChatMessages.unshift(message);
       this.gameChatMessagesObservable.next(this._gameChatMessages);
@@ -118,17 +123,24 @@ export class HubService {
     });
   }
 
+  JoinGameAsSpectator(id: string): any {
+    this._gameOrWaitingRoomId = id;
+    this._hubConnection.invoke('JoinGameAsSpectator', id);
+  }
+
   SetRoomPassword(id: string, roomPassword: string): any {
     this._hubConnection.invoke('SetRoomPassword', id, roomPassword);
   }
 
   ExitGame(): any {
-    if(!this.activeGameObservable.getValue()) return;
+    if (!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().id);
+    this._router.navigateByUrl("/");
+    this.activeGameObservable.next(null);
   }
 
   LeaveWaitingRoom() {
-    if(!this.activeWaitingRoomObservable.getValue()) return;
+    if (!this.activeWaitingRoomObservable.getValue()) return;
     this._hubConnection.invoke('LeaveWaitingRoom', this.activeWaitingRoomObservable.getValue().id);
     this.activeWaitingRoomObservable.next(null);
     this._router.navigateByUrl('/');
@@ -155,7 +167,7 @@ export class HubService {
   }
 
   StartNewRound(): any {
-    this._hubConnection.invoke('StartNewRound',  this.activeGameObservable.getValue().id);
+    this._hubConnection.invoke('StartNewRound', this.activeGameObservable.getValue().id);
   }
 
   get Users() {
@@ -172,6 +184,9 @@ export class HubService {
   }
   get AllChatMessages() {
     return this.allChatMessagesObservable.asObservable();
+  }
+  get AllRunningGames() {
+    return this.allRunningGamesObservable.asObservable();
   }
   get GameChatMessages() {
     return this.gameChatMessagesObservable.asObservable();

@@ -11,6 +11,7 @@ export class GameDeactivateGuard implements CanDeactivate<GameComponent> {
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
-    return confirm('Are you sure you want to quit this game?');
+    // return confirm('Are you sure you want to quit this game?');
+    return true;
   }
 }

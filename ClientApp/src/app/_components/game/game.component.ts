@@ -29,6 +29,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this._hubService.ActiveGame.subscribe(game => {
       this.game = game;
+      if(game==null) return;
       if (this.game.cardsPlayed.length == game.players.length) {
         this.gameLocked = true;
         setTimeout(() => {

@@ -21,10 +21,13 @@ namespace TresetaApp.Models
             Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
             Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
 
+            Spectators=new List<User>();
+
             InitializeNewGame();
         }
         public string Id { get; set; }
         public List<Player> Players { get; set; }
+        public List<User> Spectators { get; set; }
         public List<Team> Teams { get; set; }
         public User UserTurnToPlay { get; set; }
         public List<CardAndUser> CardsPlayed { get; set; }
