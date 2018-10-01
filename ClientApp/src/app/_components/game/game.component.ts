@@ -1,7 +1,7 @@
 import { Card } from './../../_models/card';
 import { Game } from './../../_models/game';
 import { HubService } from './../../_services/hub.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../_models/user';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
@@ -12,13 +12,14 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  // @ViewChild('gameChatPopover')
-  // gameChatPopover: NgbPopover;
+  
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    $event.returnValue = true;
+  }
 
   isGameChatSidebarOpen = false;
-
   gameLocked = false;
-
   currentUser: User;
   game: Game;
   numberUnreadMessages: number = 0;
