@@ -22,6 +22,7 @@ namespace TresetaApp.Models
             Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
 
             Spectators = new List<User>();
+            CardsPlayedPreviousRound = new List<CardAndUser>();
 
             UserTurnToPlay = Players.First().User;
 
@@ -33,6 +34,7 @@ namespace TresetaApp.Models
         public List<Team> Teams { get; set; }
         public User UserTurnToPlay { get; set; }
         public List<CardAndUser> CardsPlayed { get; set; }
+        public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
         public int PlayUntilPoints { get; set; }
@@ -55,6 +57,11 @@ namespace TresetaApp.Models
                 CardsPlayed.Clear();
             }
 
+            if (CardsPlayed.Count == Players.Count-1)
+            {
+                CardsPlayedPreviousRound=CardsPlayed.ToList();
+            }
+
             if (CardsDrew.Count == Players.Count)
             {
                 CardsDrew.Clear();
@@ -67,6 +74,13 @@ namespace TresetaApp.Models
 
 
             CardsPlayed.Add(new CardAndUser(card, player.User));
+
+           if (CardsPlayed.Count == Players.Count)
+            {
+                CardsPlayedPreviousRound=CardsPlayed.ToList();
+            }
+
+
             _firstCardPlayed = CardsPlayed.FirstOrDefault();
             _strongestCardInRound = CardsPlayed.Where(x => x.Card.Color == _firstCardPlayed.Card.Color).OrderByDescending(item => item.Card.Strength).First();
             RemoveCardFromHand(player, card);

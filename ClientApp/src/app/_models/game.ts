@@ -14,6 +14,7 @@ export interface Game {
   myCards: Card[];
   teams: Team[];
   cardsPlayed: CardAndUser[];
+  cardsPlayedPreviousRound: CardAndUser[];
   cardsDrew: CardAndUser[];
   playUntilPoints: number;
 }

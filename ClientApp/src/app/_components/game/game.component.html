@@ -26,7 +26,7 @@
       <div class="row">
         <div class="col-12">
           <p class="text-center">
-            <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.name==game.userTurnToPlay.name, 'left-game':player.leftGame}">-{{player.user.name}}-</span>
+            <span *ngFor="let player of game.players" [ngClass]="{'text-primary font-weight-bold': player.user.connectionId==game.userTurnToPlay.connectionId, 'left-game':player.leftGame}">-{{player.user.name}}-</span>
         </div>
       </div>
       <div class="row">
@@ -49,7 +49,7 @@
             </div>
           </div>
           <div [hidden]="game.cardsDrew.length>0" class="row">
-            <div class="card">
+            <div class="card" #cardsPlayedPopover="ngbPopover" triggers="manual"  placement="left"  [ngbPopover]="cardsPlayedPreviousRound" (dblclick)="showCardsPlayedPreviousRound()">
               <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
               <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
               <div class="card-body">
@@ -70,7 +70,6 @@
       </div>
     </div>
 
-
     <ng-template #gameInfoTemplate>
       <div [hidden]="game.cardsPlayed.length!=0">
         <p> Place cards here.</p>
@@ -79,6 +78,18 @@
         <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
           {{team.calculatedPoints}}</p>
       </div>
+    </ng-template>
+
+    <ng-template #cardsPlayedPreviousRound>
+        <div class="col-12">
+          <p class="text-center text-primary">Cards played last round:</p>
+            <div class="card cards-drew-div" *ngFor="let card of game.cardsPlayedPreviousRound">
+              <img class="card-img-top" [src]="card.card.imageUrl" alt="">
+              <div class="card-body">
+                <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
+              </div>
+            </div>
+          </div>
     </ng-template>
 
     <div ngbDropdown placement="top-right" class="d-inline-block action-button">

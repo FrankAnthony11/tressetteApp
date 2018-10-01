@@ -12,11 +12,13 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  
   // @HostListener('window:beforeunload', ['$event'])
   // unloadNotification($event: any) {
   //   $event.returnValue = true;
   // }
+
+  @ViewChild('cardsPlayedPopover')
+  cardsPlayedPopover: NgbPopover;
 
   isGameChatSidebarOpen = false;
   gameLocked = false;
@@ -29,7 +31,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this._hubService.ActiveGame.subscribe(game => {
       this.game = game;
-      if(game==null) return;
+      if (game == null) return;
       if (this.game.cardsPlayed.length == game.players.length) {
         this.gameLocked = true;
         setTimeout(() => {
@@ -78,5 +80,11 @@ export class GameComponent implements OnInit {
 
   CallAction(action: string) {
     this._hubService.CallAction(action);
+  }
+
+  showCardsPlayedPreviousRound() {
+    if (this.game.cardsPlayedPreviousRound.length == this.game.players.length) {
+      this.cardsPlayedPopover.toggle();
+    }
   }
 }

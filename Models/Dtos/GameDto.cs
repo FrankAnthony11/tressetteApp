@@ -10,6 +10,7 @@ namespace TresetaApp.Models.Dtos
         public List<TeamDto> Teams { get; set; }
         public User UserTurnToPlay { get; set; }
         public List<CardAndUser> CardsPlayed { get; set; }
+        public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public int DeckSize { get; set; }
         public int PlayUntilPoints { get; set; }
