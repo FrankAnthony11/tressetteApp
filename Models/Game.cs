@@ -124,6 +124,7 @@ namespace TresetaApp.Models
             CardsPlayed = new List<CardAndUser>();
             CardsDrew = new List<CardAndUser>();
             RoundEnded = false;
+            CardsPlayedPreviousRound.Clear();
         }
 
         // ------------------------------ private----------------------------------------------------//
