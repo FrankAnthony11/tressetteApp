@@ -22,4 +22,9 @@ namespace TresetaApp.Enums
         Two,
         Three
     }
+    public enum TypeOfMessage{
+        Chat,
+        Server,
+        Spectators
+    }
 }

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using TresetaApp.Enums;
 using TresetaApp.Models;
 using TresetaApp.Models.Dtos;
 
@@ -32,6 +33,7 @@ namespace TresetaApp.Hubs
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             if (user == null)
                 return;
+            await AddNewMessageToAllChat($"{user.Name} has left the server.", TypeOfMessage.Server);
 
 
             await CleanupUserFromWaitingRooms();
@@ -45,7 +47,7 @@ namespace TresetaApp.Hubs
         public async Task AddUser(string name)
         {
 
-            name=Regex.Replace(name, @"\s+", "").ToLower();
+            name = Regex.Replace(name, @"\s+", "").ToLower();
 
             var nameExists = _users.Any(x => x.Name == name);
             if (nameExists)
@@ -60,6 +62,7 @@ namespace TresetaApp.Hubs
             _users.Add(user);
             await GetAllPlayers();
             await Clients.Client(Context.ConnectionId).SendAsync("GetCurrentUser", user);
+            await AddNewMessageToAllChat($"{user.Name} has connected to the server.", TypeOfMessage.Server);
             await base.OnConnectedAsync();
         }
 
@@ -139,6 +142,8 @@ namespace TresetaApp.Hubs
         {
             var game = _games.SingleOrDefault(x => x.Id == gameid);
 
+            var user=_users.FirstOrDefault(x=>x.ConnectionId==Context.ConnectionId);
+
             if (game == null)
                 return;
             var allSpectatorsFromTheGame = GetSpectatorsConnectionIdsFromTheGame(game);
@@ -146,48 +151,63 @@ namespace TresetaApp.Hubs
             if (allSpectatorsFromTheGame.Contains(Context.ConnectionId))
             {
                 game.Spectators.Remove(game.Spectators.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId));
+            }
+            else
+            {
+
+                var allPlayersFromTheGame = GetPlayersConnectionIdsFromTheGame(game);
+
+                var player = game.Players.FirstOrDefault(y => y.User.ConnectionId == Context.ConnectionId);
+                player.LeftGame = true;
+
+
+                await DisplayToastMessage(allPlayersFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
+                await DisplayToastMessage(allSpectatorsFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
+
+                await GameUpdatedToPlayers(game);
+                await GameUpdatedToSpectators(game);
+
+                if (!game.Players.Any(x => x.LeftGame == false))
+                    _games.Remove(game);
+                await UpdateAllRunningGames();
+            }
+            await AddNewMessageToGameChat(gameid, $"{user.Name} has left the game room.", TypeOfMessage.Server);
+
+
+        }
+
+        public async Task AddNewMessageToAllChat(string message, TypeOfMessage typeOfMessage = TypeOfMessage.Chat)
+        {
+
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            Regex regex = new Regex(@"^/(slap|buzz|alert) ([A-Za-z0-9\s]*)$");
+            Match match = regex.Match(message);
+
+            if (match.Success)
+            {
+                var username = match.Groups[2].Value;
+                var targetedUser = _users.FirstOrDefault(x => x.Name == username);
+                if (targetedUser != null)
+                {
+                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+                    await AddNewMessageToAllChat($"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                }
+                else
+                {
+                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage(user, "Player not found", TypeOfMessage.Server));
+                }
                 return;
             }
 
-
-            var allPlayersFromTheGame = GetPlayersConnectionIdsFromTheGame(game);
-
-            var player = game.Players.FirstOrDefault(y => y.User.ConnectionId == Context.ConnectionId);
-            player.LeftGame = true;
-
-
-            await DisplayToastMessage(allPlayersFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
-            await DisplayToastMessage(allSpectatorsFromTheGame, $"USER {player.User.Name} HAS LEFT THE GAME.");
-
-            await GameUpdatedToPlayers(game);
-            await GameUpdatedToSpectators(game);
-
-            if (!game.Players.Any(x => x.LeftGame == false))
-                _games.Remove(game);
-            await UpdateAllRunningGames();
-
-        }
-
-        public async Task AddNewMessageToAllChat(string message)
-        {
-            Regex regex = new Regex(@"^/(slap|buzz|alert) ([A-Za-z0-9\s]*)$");
-            Match match = regex.Match(message);
-
-            if (match.Success)
-            {
-                var username = match.Groups[2].Value;
-                var targetedUser = _users.FirstOrDefault(x => x.Name == username);
-                if (targetedUser != null)
-                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
-            }
-
-            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var msg = new ChatMessage(user, message);
+            var msg = new ChatMessage(user, message, typeOfMessage);
             await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
         }
 
-        public async Task AddNewMessageToGameChat(string gameOrWaitingRoomId, string message)
+        public async Task AddNewMessageToGameChat(string gameOrWaitingRoomId, string message, TypeOfMessage typeOfMessage = TypeOfMessage.Chat)
         {
+
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
             Regex regex = new Regex(@"^/(slap|buzz|alert) ([A-Za-z0-9\s]*)$");
             Match match = regex.Match(message);
@@ -196,15 +216,22 @@ namespace TresetaApp.Hubs
             {
                 var username = match.Groups[2].Value;
                 var targetedUser = _users.FirstOrDefault(x => x.Name == username);
+
                 if (targetedUser != null)
+                {
                     await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+                    await AddNewMessageToGameChat(gameOrWaitingRoomId, $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                }
+                else
+                {
+                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToGameChat", new ChatMessage(user, "Player not found", TypeOfMessage.Server));
+                }
+                return;
+
             }
 
-            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var msg = new ChatMessage(user, message);
-
+            var msg = new ChatMessage(user, message, typeOfMessage);
             var allConnectionIds = new List<string>();
-
 
             var game = _games.FirstOrDefault(x => x.Id == gameOrWaitingRoomId);
             if (game != null)
@@ -321,6 +348,7 @@ namespace TresetaApp.Hubs
                 game.Spectators.Add(user);
                 await GameUpdatedToSpectators(game);
             }
+            await AddNewMessageToGameChat(gameId, $"{user.Name} has joined the game room.", TypeOfMessage.Server);
         }
 
         public async Task MakeMove(string gameId, Card card)

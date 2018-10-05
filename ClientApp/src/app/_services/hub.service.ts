@@ -1,3 +1,4 @@
+import { TypeOfMessage } from './../_models/enums';
 import { environment } from './../../environments/environment';
 import { Game } from './../_models/game';
 import { WaitingRoom } from './../_models/waitingRoom';
@@ -156,11 +157,11 @@ export class HubService {
   }
 
   AddNewMessageToAllChat(message: string): any {
-    this._hubConnection.invoke('AddNewMessageToAllChat', message);
+    this._hubConnection.invoke('AddNewMessageToAllChat', message, TypeOfMessage.chat);
   }
 
   AddNewMessageToGameChat(message: string): any {
-    this._hubConnection.invoke('AddNewMessageToGameChat', this._gameOrWaitingRoomId, message);
+    this._hubConnection.invoke('AddNewMessageToGameChat', this._gameOrWaitingRoomId, message, TypeOfMessage.chat);
   }
 
   CallAction(action: string): any {

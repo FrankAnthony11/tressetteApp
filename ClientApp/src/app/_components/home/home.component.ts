@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { WaitingRoom } from '../../_models/waitingRoom';
 import { HubService } from '../../_services/hub.service';
 import { ChatMessage } from '../../_models/chatMessage';
+import { TypeOfMessage } from '../../_models/enums';
 
 @Component({
   selector: 'app-home',
@@ -34,5 +35,11 @@ export class HomeComponent implements OnInit {
     if (!this.newMessage) return;
     this._hubService.AddNewMessageToAllChat(this.newMessage);
     this.newMessage = '';
+  }
+
+  getChatMessageClass(message: ChatMessage) {
+    if (message.typeOfMessage == TypeOfMessage.server) {
+      return 'server-chat-message';
+    }
   }
 }
