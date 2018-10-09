@@ -27,7 +27,7 @@
           </h5>
           <div class="card-body">
             <p class="card-text" [hidden]="messages.length>0">No messages</p>
-            <p class="card-text"  [ngClass]="getChatMessageClass(message)"  *ngFor="let message of messages"><strong> [{{message.user.name}}]: </strong> {{message.text}}</p>
+            <p class="card-text"  [ngClass]="getChatMessageClass(message)"  *ngFor="let message of messages"><strong> [{{message.username}}]: </strong> {{message.text}}</p>
           </div>
         </div>
       </div>

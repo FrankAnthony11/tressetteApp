@@ -33,7 +33,7 @@ namespace TresetaApp.Hubs
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             if (user == null)
                 return;
-            await AddNewMessageToAllChat($"{user.Name} has left the server.", TypeOfMessage.Server);
+            await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage("Server", $"{user.Name} has left the server.", TypeOfMessage.Server));
 
 
             await CleanupUserFromWaitingRooms();
@@ -62,7 +62,7 @@ namespace TresetaApp.Hubs
             _users.Add(user);
             await GetAllPlayers();
             await Clients.Client(Context.ConnectionId).SendAsync("GetCurrentUser", user);
-            await AddNewMessageToAllChat($"{user.Name} has connected to the server.", TypeOfMessage.Server);
+            await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage("Server", $"{user.Name} has connected to the server.", TypeOfMessage.Server));
             await base.OnConnectedAsync();
         }
 
@@ -142,7 +142,7 @@ namespace TresetaApp.Hubs
         {
             var game = _games.SingleOrDefault(x => x.Id == gameid);
 
-            var user=_users.FirstOrDefault(x=>x.ConnectionId==Context.ConnectionId);
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
             if (game == null)
                 return;
@@ -191,16 +191,17 @@ namespace TresetaApp.Hubs
                 if (targetedUser != null)
                 {
                     await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
-                    await AddNewMessageToAllChat($"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage("Server", $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server));
+
                 }
                 else
                 {
-                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage(user, "Player not found", TypeOfMessage.Server));
+                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToAllChat", new ChatMessage("Server", "Player not found", TypeOfMessage.Server));
                 }
                 return;
             }
 
-            var msg = new ChatMessage(user, message, typeOfMessage);
+            var msg = new ChatMessage(user.Name, message, typeOfMessage);
             await Clients.All.SendAsync("AddNewMessageToAllChat", msg);
         }
 
@@ -224,13 +225,13 @@ namespace TresetaApp.Hubs
                 }
                 else
                 {
-                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToGameChat", new ChatMessage(user, "Player not found", TypeOfMessage.Server));
+                    await Clients.Client(user.ConnectionId).SendAsync("AddNewMessageToGameChat", new ChatMessage("Server", "Player not found", TypeOfMessage.Server));
                 }
                 return;
 
             }
 
-            var msg = new ChatMessage(user, message, typeOfMessage);
+            var msg = new ChatMessage(user.Name, message, typeOfMessage);
             var allConnectionIds = new List<string>();
 
             var game = _games.FirstOrDefault(x => x.Id == gameOrWaitingRoomId);

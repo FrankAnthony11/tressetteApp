@@ -56,7 +56,7 @@ export class GameComponent implements OnInit {
     });
 
     this._hubService.GameChatMessages.subscribe(messages => {
-      if (messages.length > 0 && messages[0].user.connectionId != this.currentUser.connectionId && !this.isGameChatSidebarOpen)
+      if (messages.length > 0 && messages[0].username != this.currentUser.name && !this.isGameChatSidebarOpen)
         this.numberUnreadMessages++;
     });
   }

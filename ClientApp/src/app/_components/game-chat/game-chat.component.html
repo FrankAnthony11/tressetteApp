@@ -11,7 +11,7 @@
       <div class="card-body fill-viewport-max-50 scrollable-div-y">
         <p class="card-text" [hidden]="messages.length>0">No messages</p>
         <p class="card-text" [hidden]="getChatMessageHidden(message)" [ngClass]="getChatMessageClass(message)" *ngFor="let message of messages"><strong>
-            [{{message.user.name}}]: </strong> {{message.text}}</p>
+            [{{message.username}}]: </strong> {{message.text}}</p>
       </div>
     </div>
   </div>

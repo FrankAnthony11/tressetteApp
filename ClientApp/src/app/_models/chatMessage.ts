@@ -2,7 +2,7 @@ import { TypeOfMessage } from './enums';
 import { User } from "./user";
 
 export interface ChatMessage{
-    user:User;
+    username:string;
     text:string;
     typeOfMessage:TypeOfMessage
 }
