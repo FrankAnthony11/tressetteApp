@@ -49,6 +49,9 @@ namespace TresetaApp.Hubs
 
             name = Regex.Replace(name, @"\s+", "").ToLower();
 
+            if (name.Length > 10)
+                name = name.Substring(0, 10); 
+
             var nameExists = _users.Any(x => x.Name == name);
             if (nameExists)
             {

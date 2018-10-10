@@ -22,7 +22,7 @@
   width: 50%;;
 }
 .extraPointsCardSelected{
-  opacity:0.9!important;
+  opacity:1!important;
   margin-top: -5%;
 }
 .extraPointsCardUnselected{
