@@ -25,6 +25,8 @@ export class GameComponent implements OnInit {
   currentUser: User;
   game: Game;
   numberUnreadMessages: number = 0;
+  cardsForExtraPoints: Card[] = [];
+  selectingCardsForExtraPoints: boolean = false;
 
   constructor(private _hubService: HubService, private _router: Router) {}
 
@@ -56,14 +58,17 @@ export class GameComponent implements OnInit {
     });
 
     this._hubService.GameChatMessages.subscribe(messages => {
-      if (messages.length > 0 && messages[0].username != this.currentUser.name && !this.isGameChatSidebarOpen)
-        this.numberUnreadMessages++;
+      if (messages.length > 0 && messages[0].username != this.currentUser.name && !this.isGameChatSidebarOpen) this.numberUnreadMessages++;
     });
   }
 
   makeMove(card) {
     if (this.gameLocked) return;
-    this._hubService.MakeMove(card);
+    if(this.selectingCardsForExtraPoints){
+      this.cardsForExtraPoints.push(card);
+    }else{
+      this._hubService.MakeMove(card);
+    }
   }
 
   exitGame() {
@@ -85,6 +90,25 @@ export class GameComponent implements OnInit {
   showCardsPlayedPreviousRound() {
     if (this.game.cardsPlayedPreviousRound.length == this.game.players.length) {
       this.cardsPlayedPopover.toggle();
+    }
+  }
+
+  addExtraPoints() {
+    if(this.selectingCardsForExtraPoints){
+      this._hubService.AddExtraPoints(this.cardsForExtraPoints);
+      this.cardsForExtraPoints = [];
+    }
+    this.selectingCardsForExtraPoints=!this.selectingCardsForExtraPoints;
+  }
+
+  getClassForCard(card:Card){
+    var classesArray=[];
+    if(this.selectingCardsForExtraPoints){
+      if(this.cardsForExtraPoints.includes(card)){
+        classesArray.push("extraPointsCardSelected");
+      }else{
+        classesArray.push("extraPointsCardUnselected");
+      }
     }
   }
 }

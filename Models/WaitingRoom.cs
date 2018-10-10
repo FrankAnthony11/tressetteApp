@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace TresetaApp.Models
 {
-    public class WaitingRoom
+    public class GameSetup
     {
-        public WaitingRoom(User user, int playUntilPoints, int expectedNumberOfPlayers)
+        public GameSetup(User user, int playUntilPoints, int expectedNumberOfPlayers)
         {
             Id = Guid.NewGuid().ToString();
             Users = new List<User>() { user };

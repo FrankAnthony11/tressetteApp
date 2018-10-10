@@ -49,7 +49,8 @@
             </div>
           </div>
           <div [hidden]="game.cardsDrew.length>0" class="row">
-            <div class="card" #cardsPlayedPopover="ngbPopover" triggers="manual"  placement="left"  [ngbPopover]="cardsPlayedPreviousRound" (dblclick)="showCardsPlayedPreviousRound()">
+            <div class="card" #cardsPlayedPopover="ngbPopover" triggers="manual" placement="left" [ngbPopover]="cardsPlayedPreviousRound"
+              (dblclick)="showCardsPlayedPreviousRound()">
               <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
               <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
               <div class="card-body">
@@ -64,7 +65,7 @@
     <div class="fill-viewport-min-50">
       <div class="row">
         <div class="col-12 p5">
-          <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="{'first-played-card': firstItem}"
+          <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="[{'first-played-card': firstItem}, getClassForCard(card)]"
             [src]="card.imageUrl" class="player-hand-card animate">
         </div>
       </div>
@@ -81,23 +82,27 @@
     </ng-template>
 
     <ng-template #cardsPlayedPreviousRound>
-        <div class="col-12">
-          <p class="text-center text-primary">Cards played last round:</p>
-            <div class="card cards-drew-div" *ngFor="let card of game.cardsPlayedPreviousRound">
-              <img class="card-img-top" [src]="card.card.imageUrl" alt="">
-              <div class="card-body">
-                <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
-              </div>
-            </div>
+      <div class="col-12">
+        <p class="text-center text-primary">Cards played last round:</p>
+        <div class="card cards-drew-div" *ngFor="let card of game.cardsPlayedPreviousRound">
+          <img class="card-img-top" [src]="card.card.imageUrl" alt="">
+          <div class="card-body">
+            <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
           </div>
+        </div>
+      </div>
     </ng-template>
 
     <div ngbDropdown placement="top-right" class="d-inline-block action-button">
       <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0"
-        ngbDropdownToggle>Call action</button>
+        ngbDropdownToggle>Power move</button> 
       <div ngbDropdownMenu aria-labelledby="callactiondropdown">
+        <h5 class="dropdown-header">Game moves</h5>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item"  (click)="addExtraPoints()">Add extra points</button>
+        <h5 class="dropdown-header">Call action</h5>
         <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
-        <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
+        <button class="dropdown-item" (click)="CallAction('SLIDE')">Call</button>
       </div>
     </div>
   </div>

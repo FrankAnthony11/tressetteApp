@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ChatMessage } from '../_models/chatMessage';
 import { User } from '../_models/user';
 import { ToastrService } from 'ngx-toastr';
+import { Card } from '../_models/card';
 
 @Injectable()
 export class HubService {
@@ -152,7 +153,11 @@ export class HubService {
     this._hubConnection.invoke('CreateGame', this.activeWaitingRoomObservable.getValue().id);
   }
 
-  MakeMove(card) {
+  AddExtraPoints(cards:Card[]){
+    this._hubConnection.invoke('AddExtraPoints', this.activeWaitingRoomObservable.getValue().id, cards);
+  }
+
+  MakeMove(card:Card) {
     this._hubConnection.invoke('MakeMove', this.activeGameObservable.getValue().id, card);
   }
 

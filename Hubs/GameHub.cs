@@ -15,7 +15,7 @@ namespace TresetaApp.Hubs
     {
         private static List<Game> _games = new List<Game>();
         private static List<User> _users = new List<User>();
-        private static List<WaitingRoom> _waitingRooms = new List<WaitingRoom>();
+        private static List<GameSetup> _waitingRooms = new List<GameSetup>();
         private readonly IMapper _mapper;
 
         public GameHub(IMapper mapper)
@@ -97,7 +97,7 @@ namespace TresetaApp.Hubs
             await CleanupUserFromWaitingRooms();
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var waitingRoom = new WaitingRoom(user, playUntilPoints, expectedNumberOfPlayers);
+            var waitingRoom = new GameSetup(user, playUntilPoints, expectedNumberOfPlayers);
             _waitingRooms.Add(waitingRoom);
             await UpdateSingleWaitingRoom(waitingRoom);
             await UpdateAllWaitingRooms();
@@ -375,6 +375,31 @@ namespace TresetaApp.Hubs
             await GameUpdatedToPlayers(game);
         }
 
+        public async Task AddExtraPoints(string gameId, List<Card> cards)
+        {
+
+            var game = _games.SingleOrDefault(x => x.Id == gameId);
+            if (game == null)
+                return;
+            if (game.GameEnded)
+                return;
+            var success = game.AddExtraPoints(Context.ConnectionId, cards);
+            if (!success)
+            {
+                await DisplayToastMessage(Context.ConnectionId, "You cannot add these extra points");
+                return;
+            }
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var message = $"Player {user.Name} added extra points:";
+            cards.ForEach(x => {
+                message+=$"{(CardColor) x.Color} {(CardNumber) x.Number},";
+            });
+            await DisplayToastMessage(GetPlayersConnectionIdsFromTheGame(game), message);
+            await DisplayToastMessage(GetSpectatorsConnectionIdsFromTheGame(game), message);
+            //  await GameUpdatedToPlayers(game);
+            //  await GameUpdatedToSpectators(game);
+        }
+
         // -------------------------------private--------------------
 
 
@@ -427,7 +452,7 @@ namespace TresetaApp.Hubs
             return game.Spectators.Select(y => y.ConnectionId).ToList();
         }
 
-        private async Task UpdateSingleWaitingRoom(WaitingRoom waitingRoom)
+        private async Task UpdateSingleWaitingRoom(GameSetup waitingRoom)
         {
             var allConnectionIds = waitingRoom.Users.Select(x => x.ConnectionId).ToList();
             await Clients.Clients(allConnectionIds).SendAsync("UpdateSingleWaitingRoom", waitingRoom);
@@ -444,7 +469,7 @@ namespace TresetaApp.Hubs
 
         private async Task CleanupUserFromGames()
         {
-            List<Game> games = _games.Where(x => GetPlayersConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList();
+            List<Game> games = _games.Where(x => GetPlayersConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).Union(_games.Where(x => GetSpectatorsConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList()).ToList();
 
             foreach (var game in games)
             {

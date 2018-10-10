@@ -57,9 +57,9 @@ namespace TresetaApp.Models
                 CardsPlayed.Clear();
             }
 
-            if (CardsPlayed.Count == Players.Count-1)
+            if (CardsPlayed.Count == Players.Count - 1)
             {
-                CardsPlayedPreviousRound=CardsPlayed.ToList();
+                CardsPlayedPreviousRound = CardsPlayed.ToList();
             }
 
             if (CardsDrew.Count == Players.Count)
@@ -75,9 +75,9 @@ namespace TresetaApp.Models
 
             CardsPlayed.Add(new CardAndUser(card, player.User));
 
-           if (CardsPlayed.Count == Players.Count)
+            if (CardsPlayed.Count == Players.Count)
             {
-                CardsPlayedPreviousRound=CardsPlayed.ToList();
+                CardsPlayedPreviousRound = CardsPlayed.ToList();
             }
 
 
@@ -109,6 +109,41 @@ namespace TresetaApp.Models
             return true;
         }
 
+        public bool AddExtraPoints(string connectionId, List<Card> cards)
+        {
+            if (cards.Count != 3 || cards.Count != 4)
+                return false;
+            if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
+                return false;
+            var cardSample = cards.First();
+            var player = GetPlayerFromConnectionId(connectionId);
+            ExtraPoint extraPoint;
+            if (cards.Any(x => x.Color != cardSample.Color))
+            {
+                //3 or 4 of a kind
+                if (cards.Any(x => x.Number != cardSample.Number))
+                    return false;
+
+                if (player.ExtraPoints.Any(x => x.Cards.Any(c =>
+                 c.Number == cardSample.Number &&
+                 c.Color == cardSample.Color &&
+                 x.TypeOfExtraPoint == TypeOfExtraPoint.SameKind)))
+                    return false;
+                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.SameKind);
+            }
+            else
+            {
+                //napolitana
+                if (player.ExtraPoints.Any(x => x.Cards.Any(c => c.Color == cardSample.Color && x.TypeOfExtraPoint == TypeOfExtraPoint.Napoletana)))
+                    return false;
+                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.Napoletana);
+            }
+            player.ExtraPoints.Add(extraPoint);
+            var team = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == connectionId) != null);
+            team.CalculatedPoints += cards.Count;
+            return true;
+        }
+
 
         public void InitializeNewGame()
         {
@@ -116,6 +151,7 @@ namespace TresetaApp.Models
             foreach (var player in Players)
             {
                 player.Cards = Deck.GetAndRemove(0, 10);
+                player.ExtraPoints.Clear();
             }
             foreach (var team in Teams)
             {

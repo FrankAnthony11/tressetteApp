@@ -27,4 +27,8 @@ namespace TresetaApp.Enums
         Server,
         Spectators
     }
+    public enum TypeOfExtraPoint{
+        Napoletana,
+        SameKind
+    }
 }
