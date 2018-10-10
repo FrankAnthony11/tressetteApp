@@ -10,6 +10,7 @@ export interface Game {
   userTurnToPlay: User;
   gameEnded: boolean;
   roundEnded: boolean;
+  isFirstRound: boolean;
   deckSize: number;
   myCards: Card[];
   teams: Team[];

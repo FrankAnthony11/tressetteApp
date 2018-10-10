@@ -243,7 +243,8 @@ namespace TresetaApp.Hubs
             else
             {
                 var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == gameOrWaitingRoomId);
-                allConnectionIds = waitingRoom.Users.Select(y => y.ConnectionId).ToList();
+                if (waitingRoom != null)
+                    allConnectionIds = waitingRoom.Users.Select(y => y.ConnectionId).ToList();
             }
             await Clients.Clients(allConnectionIds).SendAsync("AddNewMessageToGameChat", msg);
         }
@@ -391,13 +392,16 @@ namespace TresetaApp.Hubs
             }
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var message = $"Player {user.Name} added extra points:";
-            cards.ForEach(x => {
-                message+=$"{(CardColor) x.Color} {(CardNumber) x.Number},";
+            cards.ForEach(x =>
+            {
+                message += $"{(CardColor)x.Color} {(CardNumber)x.Number},";
             });
             await DisplayToastMessage(GetPlayersConnectionIdsFromTheGame(game), message);
             await DisplayToastMessage(GetSpectatorsConnectionIdsFromTheGame(game), message);
-            //  await GameUpdatedToPlayers(game);
-            //  await GameUpdatedToSpectators(game);
+            await Clients.Clients(GetPlayersConnectionIdsFromTheGame(game)).SendAsync("AddNewMessageToGameChat", new ChatMessage("Server", $"Player {user.Name} has added {cards.Count} extra points.", TypeOfMessage.Server));
+            await Clients.Clients(GetSpectatorsConnectionIdsFromTheGame(game)).SendAsync("AddNewMessageToGameChat", new ChatMessage("Server", $"Player {user.Name} has added {cards.Count} extra points.", TypeOfMessage.Server));
+            await GameUpdatedToPlayers(game);
+            await GameUpdatedToSpectators(game);
         }
 
         // -------------------------------private--------------------
@@ -469,7 +473,9 @@ namespace TresetaApp.Hubs
 
         private async Task CleanupUserFromGames()
         {
-            List<Game> games = _games.Where(x => GetPlayersConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).Union(_games.Where(x => GetSpectatorsConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList()).ToList();
+            List<Game> games = _games.Where(x => GetPlayersConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList();
+
+            games.AddRange(_games.Where(x => GetSpectatorsConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList());
 
             foreach (var game in games)
             {

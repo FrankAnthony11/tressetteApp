@@ -39,6 +39,7 @@ namespace TresetaApp.Models
         public List<Card> Deck { get; set; }
         public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
+        public bool IsFirstRound { get; set; } = false;
         public bool RoundEnded { get; set; } = false;
 
         public bool MakeMove(string playerConnectionId, Card card)
@@ -106,12 +107,14 @@ namespace TresetaApp.Models
                 }
                 DrawCards();
             }
+            if (CardsPlayed.Count == Players.Count)
+                IsFirstRound = false;
             return true;
         }
 
         public bool AddExtraPoints(string connectionId, List<Card> cards)
         {
-            if (cards.Count != 3 || cards.Count != 4)
+            if (cards.Count != 3 && cards.Count != 4)
                 return false;
             if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
                 return false;
@@ -129,14 +132,14 @@ namespace TresetaApp.Models
                  c.Color == cardSample.Color &&
                  x.TypeOfExtraPoint == TypeOfExtraPoint.SameKind)))
                     return false;
-                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.SameKind);
+                extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.SameKind);
             }
             else
             {
                 //napolitana
                 if (player.ExtraPoints.Any(x => x.Cards.Any(c => c.Color == cardSample.Color && x.TypeOfExtraPoint == TypeOfExtraPoint.Napoletana)))
                     return false;
-                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.Napoletana);
+                extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.Napoletana);
             }
             player.ExtraPoints.Add(extraPoint);
             var team = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == connectionId) != null);
@@ -160,6 +163,7 @@ namespace TresetaApp.Models
             CardsPlayed = new List<CardAndUser>();
             CardsDrew = new List<CardAndUser>();
             RoundEnded = false;
+            IsFirstRound = true;
             CardsPlayedPreviousRound.Clear();
         }
 

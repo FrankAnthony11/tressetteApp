@@ -57,7 +57,7 @@ export class HubService {
       this.usersObservable.next(users);
     });
     this._hubConnection.on('DisplayToastMessage', (message: string) => {
-      this._toastrService.info(message);
+      this._toastrService.info(message, '', {timeOut:6000});
     });
 
     this._hubConnection.on('BuzzPlayer', () => {
@@ -154,7 +154,7 @@ export class HubService {
   }
 
   AddExtraPoints(cards:Card[]){
-    this._hubConnection.invoke('AddExtraPoints', this.activeWaitingRoomObservable.getValue().id, cards);
+    this._hubConnection.invoke('AddExtraPoints', this.activeGameObservable.getValue().id, cards);
   }
 
   MakeMove(card:Card) {

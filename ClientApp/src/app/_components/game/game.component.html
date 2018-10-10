@@ -65,8 +65,8 @@
     <div class="fill-viewport-min-50">
       <div class="row">
         <div class="col-12 p5">
-          <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [ngClass]="[{'first-played-card': firstItem}, getClassForCard(card)]"
-            [src]="card.imageUrl" class="player-hand-card animate">
+          <img *ngFor="let card of game.myCards;let firstItem = first" (click)="makeMove(card)" [class.firstPlayedCard]="firstItem"
+            [ngClass]="getClassForCard(card)" [src]="card.imageUrl" class="player-hand-card animate">
         </div>
       </div>
     </div>
@@ -93,16 +93,18 @@
       </div>
     </ng-template>
 
+
+    <button class=" btn btn-success d-inline-block extra-points-button" (click)="addExtraPoints()" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId &&  game.isFirstRound">
+      <span [hidden]="selectingCardsForExtraPoints">Add extra points</span>
+      <span [hidden]="!selectingCardsForExtraPoints">Confirm</span>
+    </button>
+
     <div ngbDropdown placement="top-right" class="d-inline-block action-button">
-      <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0"
-        ngbDropdownToggle>Power move</button> 
+      <button class="btn btn-primary" id="callactiondropdown" *ngIf="currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0 && !selectingCardsForExtraPoints"
+        ngbDropdownToggle>Call action</button>
       <div ngbDropdownMenu aria-labelledby="callactiondropdown">
-        <h5 class="dropdown-header">Game moves</h5>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item"  (click)="addExtraPoints()">Add extra points</button>
-        <h5 class="dropdown-header">Call action</h5>
         <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>
-        <button class="dropdown-item" (click)="CallAction('SLIDE')">Call</button>
+        <button class="dropdown-item" (click)="CallAction('SLIDE')">Slide</button>
       </div>
     </div>
   </div>

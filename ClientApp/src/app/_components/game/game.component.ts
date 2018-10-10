@@ -64,9 +64,17 @@ export class GameComponent implements OnInit {
 
   makeMove(card) {
     if (this.gameLocked) return;
-    if(this.selectingCardsForExtraPoints){
-      this.cardsForExtraPoints.push(card);
-    }else{
+    if (this.selectingCardsForExtraPoints) {
+      if (this.cardsForExtraPoints.includes(card)) {
+        const index = this.cardsForExtraPoints.indexOf(card, 0);
+        if (index > -1) {
+          this.cardsForExtraPoints.splice(index, 1);
+        }
+      } else {
+        if (this.cardsForExtraPoints.length == 4) return;
+        this.cardsForExtraPoints.push(card);
+      }
+    } else {
       this._hubService.MakeMove(card);
     }
   }
@@ -94,21 +102,22 @@ export class GameComponent implements OnInit {
   }
 
   addExtraPoints() {
-    if(this.selectingCardsForExtraPoints){
+    if (this.selectingCardsForExtraPoints) {
       this._hubService.AddExtraPoints(this.cardsForExtraPoints);
       this.cardsForExtraPoints = [];
     }
-    this.selectingCardsForExtraPoints=!this.selectingCardsForExtraPoints;
+    this.selectingCardsForExtraPoints = !this.selectingCardsForExtraPoints;
   }
 
-  getClassForCard(card:Card){
-    var classesArray=[];
-    if(this.selectingCardsForExtraPoints){
-      if(this.cardsForExtraPoints.includes(card)){
-        classesArray.push("extraPointsCardSelected");
-      }else{
-        classesArray.push("extraPointsCardUnselected");
+  getClassForCard(card: Card) {
+    var classesArray = [];
+    if (this.selectingCardsForExtraPoints) {
+      if (this.cardsForExtraPoints.includes(card)) {
+        classesArray.push('extraPointsCardSelected');
+      } else {
+        classesArray.push('extraPointsCardUnselected');
       }
     }
+    return classesArray;
   }
 }

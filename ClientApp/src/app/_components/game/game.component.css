@@ -22,12 +22,11 @@
   width: 50%;;
 }
 .extraPointsCardSelected{
-  background:blue!important;
-  opacity:0.5!important;
+  opacity:0.9!important;
+  margin-top: -5%;
 }
 .extraPointsCardUnselected{
-  background:green!important;
-  opacity:0.5!important;
+  opacity:0.3!important;
 }
 .first-played-card {
   margin-left: 0;
@@ -77,6 +76,11 @@
   position:fixed;
   bottom:20px;
   right:20px;
+}
+.extra-points-button{
+  position:fixed;
+  bottom:20px;
+  left:20px;
 }
 
 /* rounder card hand */
