@@ -1,3 +1,4 @@
+import { CardAndUser } from './../../_models/cardAndUser';
 import { Card } from './../../_models/card';
 import { Game } from './../../_models/game';
 import { HubService } from './../../_services/hub.service';
@@ -28,6 +29,8 @@ export class GameComponent implements OnInit {
   cardsForExtraPoints: Card[] = [];
   selectingCardsForExtraPoints: boolean = false;
 
+  cardsDrewPreviousRound: CardAndUser[];
+
   constructor(private _hubService: HubService, private _router: Router) {}
 
   ngOnInit() {
@@ -35,6 +38,7 @@ export class GameComponent implements OnInit {
       this.game = game;
       if (game == null) return;
       if (this.game.cardsPlayed.length == game.players.length) {
+        this.cardsDrewPreviousRound=game.cardsDrew;
         this.gameLocked = true;
         setTimeout(() => {
           this.game.cardsDrew = [];

@@ -94,6 +94,15 @@
                 <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
               </div>
             </div>
+            <div [hidden]="!cardsDrewPreviousRound">
+              <p class="text-center text-primary">Cards drew last round:</p>
+              <div class="card cards-drew-div" *ngFor="let card of cardsDrewPreviousRound">
+                <img class="card-img-top" [src]="card.card.imageUrl" alt="">
+                <div class="card-body">
+                  <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
+                </div>
+              </div>
+            </div>
           </div>
         </ng-template>
 
