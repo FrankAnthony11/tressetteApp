@@ -14,7 +14,8 @@ import { Router } from '@angular/router';
 })
 export class GameComponent implements OnInit {
   @ViewChild('cardsPlayedPopover')
-  cardsPlayedPopover: NgbPopover;
+  private cardsPlayedPopover: NgbPopover;
+  private gamefinished = false;
 
   isGameChatSidebarOpen = false;
   gameLocked = false;
@@ -32,9 +33,11 @@ export class GameComponent implements OnInit {
     this._hubService.ActiveGame.subscribe(game => {
       this.game = game;
       if (game == null) return;
+      if (this.gamefinished) return;
       if (this.game.cardsPlayed.length == game.players.length) {
         this.cardsDrewPreviousRound = game.cardsDrew;
         this.gameLocked = true;
+        this.gamefinished=game.gameEnded;
         setTimeout(() => {
           this.game.cardsDrew = [];
           this.game.cardsPlayed = [];
