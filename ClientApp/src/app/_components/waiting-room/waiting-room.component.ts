@@ -1,7 +1,8 @@
-import { User } from './../../_models/user';
-import { WaitingRoom } from './../../_models/waitingRoom';
-import { HubService } from './../../_services/hub.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
+import { WaitingRoom } from "app/_models/waitingRoom";
+import { User } from "app/_models/user";
+import { HubService } from "app/_services/hub.service";
+
 
 @Component({
   selector: 'app-waiting-room',
@@ -38,7 +39,7 @@ export class WaitingRoomComponent implements OnInit {
   }
 
   kickUserFromWaitingRoom(user: User) {
-    var cfrm = confirm('Really kick this player? ' + user.name);
+    let cfrm = confirm('Really kick this player? ' + user.name);
     if (cfrm) this._hubService.KickUserFromWaitingRoom(user);
   }
 }

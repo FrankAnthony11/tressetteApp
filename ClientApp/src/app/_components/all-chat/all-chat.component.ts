@@ -4,24 +4,20 @@ import { User } from "app/_models/user";
 import { HubService } from "app/_services/hub.service";
 import { TypeOfMessage } from "app/_models/enums";
 
-
 @Component({
-  selector: 'app-game-chat',
-  templateUrl: './game-chat.component.html',
-  styleUrls: ['./game-chat.component.css']
+  selector: 'app-all-chat',
+  templateUrl: './all-chat.component.html',
+  styleUrls: ['./all-chat.component.css']
 })
-export class GameChatComponent implements OnInit {
-
-  hideSpectatorsChat=false;
+export class AllChatComponent implements OnInit {
 
   messages: ChatMessage[];
   currentUser: User;
   newMessage = '';
 
   constructor(private _hubService: HubService) {}
-
   ngOnInit(): void {
-    this._hubService.GameChatMessages.subscribe(nn => {
+    this._hubService.AllChatMessages.subscribe(nn => {
       this.messages = nn;
     });
     this._hubService.CurrentUser.subscribe(user => {
@@ -29,19 +25,22 @@ export class GameChatComponent implements OnInit {
     });
   }
 
-  sendMessageToGameChat() {
+  sendMessageAllChat() {
     if (!this.newMessage) return;
-    this._hubService.AddNewMessageToGameChat(this.newMessage);
+    this._hubService.AddNewMessageToAllChat(this.newMessage);
     this.newMessage = '';
   }
 
-  getChatMessageClass(message:ChatMessage){
-    if(message.typeOfMessage==TypeOfMessage.server){
-      return "server-chat-message"
+  getChatMessageClass(message: ChatMessage) {
+    if (message.typeOfMessage == TypeOfMessage.server) {
+      return 'server-chat-message';
     }
   }
-  getChatMessageHidden(message:ChatMessage){
-   return message.typeOfMessage==TypeOfMessage.spectators && this.hideSpectatorsChat;
-  }
 
+  rename() {
+    let name = prompt('Input your name');
+    if (!name) return;
+    localStorage.setItem('name', name);
+    window.location.reload();
+  }
 }

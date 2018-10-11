@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { HubService } from './_services/hub.service';
-import { WaitingRoom } from './_models/waitingRoom';
+import { Component } from '@angular/core';
+
 
 @Component({
   selector: 'app-root',

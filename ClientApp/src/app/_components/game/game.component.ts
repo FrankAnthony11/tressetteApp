@@ -1,11 +1,11 @@
-import { CardAndUser } from './../../_models/cardAndUser';
-import { Card } from './../../_models/card';
-import { Game } from './../../_models/game';
-import { HubService } from './../../_services/hub.service';
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
-import { User } from '../../_models/user';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { User } from 'app/_models/user';
+import { Game } from 'app/_models/game';
+import { Card } from 'app/_models/card';
+import { CardAndUser } from 'app/_models/cardAndUser';
+import { HubService } from 'app/_services/hub.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -13,11 +13,6 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  // @HostListener('window:beforeunload', ['$event'])
-  // unloadNotification($event: any) {
-  //   $event.returnValue = true;
-  // }
-
   @ViewChild('cardsPlayedPopover')
   cardsPlayedPopover: NgbPopover;
 
@@ -38,7 +33,7 @@ export class GameComponent implements OnInit {
       this.game = game;
       if (game == null) return;
       if (this.game.cardsPlayed.length == game.players.length) {
-        this.cardsDrewPreviousRound=game.cardsDrew;
+        this.cardsDrewPreviousRound = game.cardsDrew;
         this.gameLocked = true;
         setTimeout(() => {
           this.game.cardsDrew = [];
@@ -84,10 +79,7 @@ export class GameComponent implements OnInit {
   }
 
   exitGame() {
-    var cfrm = confirm('Really exit game?');
-    if (cfrm) {
-      this._hubService.ExitGame();
-    }
+    this._router.navigateByUrl('/');
   }
 
   toggleGameChatSidebar() {
@@ -114,7 +106,7 @@ export class GameComponent implements OnInit {
   }
 
   getClassForCard(card: Card) {
-    var classesArray = [];
+    let classesArray = [];
     if (this.selectingCardsForExtraPoints) {
       if (this.cardsForExtraPoints.includes(card)) {
         classesArray.push('extraPointsCardSelected');

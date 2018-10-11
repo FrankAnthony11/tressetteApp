@@ -17,23 +17,11 @@
         </div>
       </div>
       <div class="col-12 scrollable-div-y fill-viewport-max-70  mb-2">
-        <div class="card">
-          <h5 class="card-header">
-            <p>Your username: <strong>{{currentUser?.name}}</strong> <button class="btn btn-outline-dark btn-sm float-right" (click)="rename()">Rename</button> </p>
-            <form novalidate name="newMessageForm" (ngSubmit)="sendMessageAllChat()">
-              <input type="text" name="newMessage" autofocus autocomplete="off" class="form-control" placeholder="New Message"
-                [(ngModel)]="newMessage">
-            </form>
-          </h5> 
-          <div class="card-body">
-            <p class="card-text" [hidden]="messages.length>0">No messages</p>
-            <p class="card-text"  [ngClass]="getChatMessageClass(message)"  *ngFor="let message of messages"><strong> [{{message.username}}]: </strong> {{message.text}}</p>
-          </div>
-        </div>
+        <app-all-chat></app-all-chat>
       </div>
     </div>
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm-4 fill-viewport-max-100 scrollable-div-y">
     <app-sidebar></app-sidebar>
   </div>
 </div>

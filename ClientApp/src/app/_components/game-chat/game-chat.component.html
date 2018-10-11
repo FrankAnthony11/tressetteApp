@@ -8,7 +8,7 @@
             [(ngModel)]="newMessage">
         </form>
       </h5>
-      <div class="card-body fill-viewport-max-50 scrollable-div-y">
+      <div class="card-body">
         <p class="card-text" [hidden]="messages.length>0">No messages</p>
         <p class="card-text" [hidden]="getChatMessageHidden(message)" [ngClass]="getChatMessageClass(message)" *ngFor="let message of messages"><strong>
             [{{message.username}}]: </strong> {{message.text}}</p>

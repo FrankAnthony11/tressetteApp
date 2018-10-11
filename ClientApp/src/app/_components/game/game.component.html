@@ -3,7 +3,7 @@
   <ng-sidebar-container style="height:100vh">
     <!-- A sidebar -->
     <ng-sidebar [(opened)]="isGameChatSidebarOpen" [position]="'bottom'" [closeOnClickOutside]="true">
-      <div class="col-12">
+      <div class="col-12 fill-viewport-max-50 scrollable-div-y">
         <app-game-chat></app-game-chat>
       </div>
     </ng-sidebar>

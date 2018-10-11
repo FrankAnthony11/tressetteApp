@@ -13,6 +13,8 @@ export class GameDeactivateGuard implements CanDeactivate<GameComponent> {
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
+    var cfrm = confirm('Really exit game?');
+    if (!cfrm) return false;
     this._hubService.ExitGame();
     return true;
   }

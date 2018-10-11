@@ -104,6 +104,7 @@ namespace TresetaApp.Hubs
             _waitingRooms.Add(waitingRoom);
             await UpdateSingleWaitingRoom(waitingRoom);
             await UpdateAllWaitingRooms();
+            await AddNewMessageToAllChat($"User {user.Name} has created new game", TypeOfMessage.Server);
         }
 
         public async Task JoinWaitingRoom(string id, string password)

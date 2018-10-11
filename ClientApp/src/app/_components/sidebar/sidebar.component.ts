@@ -1,8 +1,8 @@
-import { WaitingRoom } from './../../_models/waitingRoom';
-import { User } from './../../_models/user';
-import { Component, OnInit } from '@angular/core';
-import { HubService } from '../../_services/hub.service';
-import { Game } from '../../_models/game';
+import { Component, OnInit } from "@angular/core";
+import { User } from "app/_models/user";
+import { WaitingRoom } from "app/_models/waitingRoom";
+import { Game } from "app/_models/game";
+import { HubService } from "app/_services/hub.service";
 
 @Component({
   selector: 'app-sidebar',

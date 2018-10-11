@@ -1,15 +1,16 @@
-import { TypeOfMessage } from './../_models/enums';
-import { environment } from './../../environments/environment';
-import { Game } from './../_models/game';
-import { WaitingRoom } from './../_models/waitingRoom';
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { ChatMessage } from "app/_models/chatMessage";
+import { BehaviorSubject } from "rxjs";
+import { WaitingRoom } from "app/_models/waitingRoom";
+import { Game } from "app/_models/game";
+import { User } from "app/_models/user";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
+import { environment } from "environments/environment";
+import { Card } from "app/_models/card";
+import { TypeOfMessage } from "app/_models/enums";
 import * as signalR from '@aspnet/signalr';
-import { BehaviorSubject } from 'rxjs';
-import { Router } from '@angular/router';
-import { ChatMessage } from '../_models/chatMessage';
-import { User } from '../_models/user';
-import { ToastrService } from 'ngx-toastr';
-import { Card } from '../_models/card';
+
 
 @Injectable()
 export class HubService {
@@ -39,7 +40,7 @@ export class HubService {
           localStorage.setItem("name",name);
         } while (!name);
       } else {
-        var myArray = ['Ante', 'Mate'];
+        let myArray = ['Ante', 'Mate'];
         name = myArray[Math.floor(Math.random() * myArray.length)];
       }
       this._hubConnection.invoke('AddUser', name);
@@ -63,7 +64,7 @@ export class HubService {
     });
 
     this._hubConnection.on('BuzzPlayer', () => {
-      var alert = new Audio('/sounds/alert.mp3');
+      let alert = new Audio('/sounds/alert.mp3');
       alert.load();
       alert.play();
     });
@@ -140,7 +141,6 @@ export class HubService {
   ExitGame(): any {
     if (!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().id);
-    this._router.navigateByUrl('/');
     this.activeGameObservable.next(null);
   }
 
