@@ -42,4 +42,11 @@ export class HomeComponent implements OnInit {
       return 'server-chat-message';
     }
   }
+
+  rename() {
+    let name = prompt('Input your name');
+    if (!name) return;
+    localStorage.setItem('name', name);
+    window.location.reload();
+  }
 }

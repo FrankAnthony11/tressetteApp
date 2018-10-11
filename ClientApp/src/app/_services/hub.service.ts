@@ -13,6 +13,7 @@ import { Card } from '../_models/card';
 
 @Injectable()
 export class HubService {
+
   private _hubConnection: signalR.HubConnection;
 
   private _gameOrWaitingRoomId: string;
@@ -34,7 +35,8 @@ export class HubService {
       let name;
       if (environment.production) {
         do {
-          name = prompt('Input your name');
+          name = localStorage.getItem('name') || prompt('Input your name');
+          localStorage.setItem("name",name);
         } while (!name);
       } else {
         var myArray = ['Ante', 'Mate'];
@@ -57,11 +59,11 @@ export class HubService {
       this.usersObservable.next(users);
     });
     this._hubConnection.on('DisplayToastMessage', (message: string) => {
-      this._toastrService.info(message, '', {timeOut:6000});
+      this._toastrService.info(message, '', { timeOut: 6000 });
     });
 
     this._hubConnection.on('BuzzPlayer', () => {
-      var alert=new Audio("/sounds/alert.mp3");
+      var alert = new Audio('/sounds/alert.mp3');
       alert.load();
       alert.play();
     });
@@ -138,7 +140,7 @@ export class HubService {
   ExitGame(): any {
     if (!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().id);
-    this._router.navigateByUrl("/");
+    this._router.navigateByUrl('/');
     this.activeGameObservable.next(null);
   }
 
@@ -153,11 +155,11 @@ export class HubService {
     this._hubConnection.invoke('CreateGame', this.activeWaitingRoomObservable.getValue().id);
   }
 
-  AddExtraPoints(cards:Card[]){
+  AddExtraPoints(cards: Card[]) {
     this._hubConnection.invoke('AddExtraPoints', this.activeGameObservable.getValue().id, cards);
   }
 
-  MakeMove(card:Card) {
+  MakeMove(card: Card) {
     this._hubConnection.invoke('MakeMove', this.activeGameObservable.getValue().id, card);
   }
 
