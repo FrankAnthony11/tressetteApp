@@ -1,0 +1,7 @@
+<div [hidden]="game.cardsPlayed.length!=0">
+    <p> Place cards here.</p> 
+    <hr>
+    <p>Playing until: {{game.playUntilPoints}}</p>
+    <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
+      {{team.calculatedPoints}}</p>
+  </div>

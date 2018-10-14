@@ -1,25 +1,16 @@
 .player-hand-card {
   width: 10%;
 }
-.card {
-  width: 100%;
-  margin: auto;
+.deck-image-div{
+  margin:0 auto;
+  width: 25%;
 }
-.played-card {
-  width: 200px;
-  margin-left: -15%;
-}
-.player-hand-card:hover {
-  margin-top: -5%;
-}
-.deck-image {
-  width: 50%;
+.deck-image-div>.card-body{
+  padding:0;
 }
 
-.cards-drew-div {
-  border: 3px solid black;
-  float: left;
-  width: 50%;;
+.player-hand-card:hover {
+  margin-top: -5%;
 }
 .extraPointsCardSelected{
   opacity:1!important;
@@ -31,19 +22,13 @@
 .first-played-card {
   margin-left: 0;
 }
-.card-body {
-  padding: 0;
-}
+
 @media (max-width: 768px) {
   .player-hand-card {
     width: 20%;
   }
-  .card {
+  .deck-image-div{
     width: 50%;
-  }
-  .played-card {
-    width: 50%;
-    margin-left: -10%;
   }
 }
 .left-game{

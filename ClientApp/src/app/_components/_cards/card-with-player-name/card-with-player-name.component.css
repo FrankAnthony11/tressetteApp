@@ -1,0 +1,21 @@
+.played-card {
+    border: 3px solid black;
+    float: left;
+    width:25%;;
+    margin:0 auto;
+  }
+.drew-card {
+    border: 3px solid black;
+    float: left;
+    margin:0 auto;
+    width:50%;;
+  }
+  .card-body {
+    padding: 0;
+  }
+
+  @media (max-width: 768px) {
+    .played-card {
+      width:50%;;
+    }
+  }

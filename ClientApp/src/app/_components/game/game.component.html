@@ -36,25 +36,17 @@
           <div class="row">
             <div class="col-6 text-center">
               <div [hidden]="!(game.cardsPlayed.length==0)">
-                <ng-container *ngTemplateOutlet="gameInfoTemplate"></ng-container>
+                <app-game-info-template [game]="game"></app-game-info-template>
               </div>
-              <img [src]="cardPlayed.card.imageUrl" *ngFor="let cardPlayed of game.cardsPlayed;let firstItem = first"
-                [ngClass]="{'first-played-card': firstItem}" class="played-card" alt="">
+              <app-card-with-player-name [cardAndUser]="card" isPlayedCard="true" *ngFor="let card of game.cardsPlayed"></app-card-with-player-name>
             </div>
-            <div class="col-6 d-flex justify-content-center">
-              <div [hidden]="game.cardsDrew.length==0" class="row">
-                <div class="col-12">
-                  <div class="card cards-drew-div" *ngFor="let cardDrew of game.cardsDrew">
-                    <img class="card-img-top" [src]="cardDrew.card.imageUrl" alt="">
-                    <div class="card-body">
-                      <p class="card-text text-center btn-primary"><small>{{cardDrew.user.name}}</small></p>
-                    </div>
-                  </div>
-                </div>
+            <div class="col-6">
+              <div [hidden]="game.cardsDrew.length==0">
+                <app-card-with-player-name *ngFor="let cardDrew of game.cardsDrew" isPlayedCard="true" [cardAndUser]="cardDrew"></app-card-with-player-name>
               </div>
-              <div [hidden]="game.cardsDrew.length>0" class="row">
-                <div class="card" #cardsPlayedPopover="ngbPopover" triggers="manual" placement="left" [ngbPopover]="cardsPlayedPreviousRound"
-                  (dblclick)="showCardsPlayedPreviousRound()">
+              <div [hidden]="game.cardsDrew.length>0">
+                <div class="card deck-image-div" #cardsPlayedPopover="ngbPopover" triggers="manual" placement="left"
+                  [ngbPopover]="cardsPlayedPreviousRound" (click)="showCardsPlayedPreviousRound()">
                   <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
                   <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
                   <div class="card-body">
@@ -65,7 +57,7 @@
             </div>
           </div>
         </div>
-
+        <hr>
         <div class="fill-viewport-min-50">
           <div class="row">
             <div class="col-12 p5">
@@ -75,33 +67,13 @@
           </div>
         </div>
 
-        <ng-template #gameInfoTemplate>
-          <div [hidden]="game.cardsPlayed.length!=0">
-            <p> Place cards here.</p>
-            <hr>
-            <p>Playing until: {{game.playUntilPoints}}</p>
-            <p *ngFor="let team of game.teams"><strong>{{team.name}}'s</strong> points:
-              {{team.calculatedPoints}}</p>
-          </div>
-        </ng-template>
-
         <ng-template #cardsPlayedPreviousRound>
           <div class="col-12">
             <p class="text-center text-primary">Cards played last round:</p>
-            <div class="card cards-drew-div" *ngFor="let card of game.cardsPlayedPreviousRound">
-              <img class="card-img-top" [src]="card.card.imageUrl" alt="">
-              <div class="card-body">
-                <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
-              </div>
-            </div>
-            <div [hidden]="!cardsDrewPreviousRound">
+            <app-card-with-player-name [cardAndUser]="card" *ngFor="let card of game.cardsPlayedPreviousRound"></app-card-with-player-name>
+            <div [hidden]="!cardsDrewPreviousRound || cardsDrewPreviousRound.length==0">
               <p class="text-center text-primary">Cards drew last round:</p>
-              <div class="card cards-drew-div" *ngFor="let card of cardsDrewPreviousRound">
-                <img class="card-img-top" [src]="card.card.imageUrl" alt="">
-                <div class="card-body">
-                  <p class="card-text text-center btn-primary"><small>{{card.user.name}}</small></p>
-                </div>
-              </div>
+              <app-card-with-player-name [cardAndUser]="card" *ngFor="let card of cardsDrewPreviousRound"></app-card-with-player-name>
             </div>
           </div>
         </ng-template>

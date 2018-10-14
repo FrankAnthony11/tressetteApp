@@ -37,12 +37,13 @@ export class HubService {
       if (environment.production) {
         do {
           name = localStorage.getItem('name') || prompt('Input your name');
-          localStorage.setItem("name",name);
         } while (!name);
       } else {
         let myArray = ['Ante', 'Mate'];
         name = myArray[Math.floor(Math.random() * myArray.length)];
       }
+      localStorage.setItem("name",name);
+
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('UpdateAllWaitingRooms');
       this._hubConnection.invoke('UpdateAllRunningGames');

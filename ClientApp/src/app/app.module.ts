@@ -1,3 +1,5 @@
+import { GameInfoTemplateComponent } from './_components/_game/game-info-template/game-info-template.component';
+import { CardWithPlayerNameComponent } from './_components/_cards/card-with-player-name/card-with-player-name.component';
 import { AllChatComponent } from './_components/all-chat/all-chat.component';
 import { GameDeactivateGuard } from './_guards/game-deactivate.guard';
 import { GameChatComponent } from './_components/game-chat/game-chat.component';
@@ -21,7 +23,7 @@ import { WaitingRoomComponent } from './_components/waiting-room/waiting-room.co
 import { WaitingRoomGuard } from './_guards/waiting-room.guard';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, GameComponent, WaitingRoomComponent, SidebarComponent, GameChatComponent, AllChatComponent],
+  declarations: [AppComponent, HomeComponent, CardWithPlayerNameComponent, GameInfoTemplateComponent ,GameComponent, WaitingRoomComponent, SidebarComponent, GameChatComponent, AllChatComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
