@@ -118,18 +118,24 @@ namespace TresetaApp.Models
                 return false;
             if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
                 return false;
-            var cardSample = cards.First();
+            var firstCardSample = cards[0];
+            var secondCardSample = cards[1];
             var player = GetPlayerFromConnectionId(connectionId);
             ExtraPoint extraPoint;
-            if (cards.Any(x => x.Color != cardSample.Color))
+            if (cards.Any(x => x.Color != firstCardSample.Color))
             {
                 //3 or 4 of a kind
-                if (cards.Any(x => x.Number != cardSample.Number))
+                if (cards.Any(x => x.Number != firstCardSample.Number))
                     return false;
 
                 if (player.ExtraPoints.Any(x => x.Cards.Any(c =>
-                 c.Number == cardSample.Number &&
-                 c.Color == cardSample.Color &&
+                 c.Number == firstCardSample.Number &&
+                 c.Color == firstCardSample.Color &&
+                 x.TypeOfExtraPoint == TypeOfExtraPoint.SameKind)))
+                    return false;
+                if (player.ExtraPoints.Any(x => x.Cards.Any(c =>
+                 c.Number == secondCardSample.Number &&
+                 c.Color == secondCardSample.Color &&
                  x.TypeOfExtraPoint == TypeOfExtraPoint.SameKind)))
                     return false;
                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.SameKind);
@@ -137,7 +143,7 @@ namespace TresetaApp.Models
             else
             {
                 //napolitana
-                if (player.ExtraPoints.Any(x => x.Cards.Any(c => c.Color == cardSample.Color && x.TypeOfExtraPoint == TypeOfExtraPoint.Napoletana)))
+                if (player.ExtraPoints.Any(x => x.Cards.Any(c => c.Color == firstCardSample.Color && x.TypeOfExtraPoint == TypeOfExtraPoint.Napoletana)))
                     return false;
                 extraPoint = new ExtraPoint(cards, TypeOfExtraPoint.Napoletana);
             }
