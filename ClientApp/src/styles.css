@@ -54,3 +54,12 @@
   color:grey;
   font-style: italic;
 }
+
+.popover-previous-cards {
+  top:0!important;
+}
+@media (max-width: 768px) {
+  .popover-previous-cards {
+    max-width: 200px!important;
+  }
+}

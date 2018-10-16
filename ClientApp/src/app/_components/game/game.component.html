@@ -46,7 +46,7 @@
               </div>
               <div [hidden]="game.cardsDrew.length>0">
                 <div class="card deck-image-div" #cardsPlayedPopover="ngbPopover" triggers="manual" placement="left"
-                  [ngbPopover]="cardsPlayedPreviousRound" (click)="showCardsPlayedPreviousRound()">
+                  [ngbPopover]="cardsPlayedPreviousRound" popoverClass="popover-previous-cards" (click)="showCardsPlayedPreviousRound()">
                   <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/deckbackground.jpg">
                   <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/whitebackground.jpg">
                   <div class="card-body">

@@ -1,23 +1,23 @@
 .player-hand-card {
   width: 10%;
 }
-.deck-image-div{
-  margin:0 auto;
+.deck-image-div {
+  margin: 0 auto;
   width: 25%;
 }
-.deck-image-div>.card-body{
-  padding:0;
+.deck-image-div > .card-body {
+  padding: 0;
 }
 
 .player-hand-card:hover {
   margin-top: -5%;
 }
-.extraPointsCardSelected{
-  opacity:1!important;
+.extraPointsCardSelected {
+  opacity: 1 !important;
   margin-top: -5%;
 }
-.extraPointsCardUnselected{
-  opacity:0.3!important;
+.extraPointsCardUnselected {
+  opacity: 0.3 !important;
 }
 .first-played-card {
   margin-left: 0;
@@ -27,12 +27,12 @@
   .player-hand-card {
     width: 20%;
   }
-  .deck-image-div{
+  .deck-image-div {
     width: 50%;
   }
 }
-.left-game{
-  border:2px solid red;
+.left-game {
+  border: 2px solid red;
 }
 .chat-button {
   margin-left: 20px;
@@ -57,15 +57,15 @@
   }
 }
 
-.action-button{
-  position:fixed;
-  bottom:20px;
-  right:20px;
+.action-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
 }
-.extra-points-button{
-  position:fixed;
-  bottom:20px;
-  left:20px;
+.extra-points-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
 }
 
 /* rounder card hand */
