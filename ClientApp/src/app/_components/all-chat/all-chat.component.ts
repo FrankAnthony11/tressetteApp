@@ -37,10 +37,5 @@ export class AllChatComponent implements OnInit {
     }
   }
 
-  rename() {
-    let name = prompt('Input your name');
-    if (!name) return;
-    localStorage.setItem('name', name);
-    window.location.reload();
-  }
+
 }

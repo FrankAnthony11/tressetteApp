@@ -16,6 +16,13 @@ export class HomeComponent implements OnInit {
   createNewWaitingRoom(playUntilPoints: number, expectedNumberOfPlayers: number) {
     this._hubService.CreateWaitingRoom(playUntilPoints, expectedNumberOfPlayers);
   }
+  
+  rename() {
+    let name = prompt('Input your name');
+    if (!name) return;
+    localStorage.setItem('name', name);
+    window.location.reload();
+  }
 
 
 }

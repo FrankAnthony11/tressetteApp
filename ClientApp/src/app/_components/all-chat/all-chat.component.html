@@ -1,7 +1,6 @@
 <div class="card">
   <h5 class="card-header">
-    <p>Your username: <strong>{{currentUser?.name}}</strong> <button class="btn btn-outline-dark btn-sm float-right"
-        (click)="rename()">Rename</button> </p>
+    <p>Your username: <strong>{{currentUser?.name}}</strong></p>
     <form novalidate name="newMessageForm" (ngSubmit)="sendMessageAllChat()">
       <input type="text" name="newMessage" autofocus autocomplete="off" class="form-control" placeholder="New Message"
         [(ngModel)]="newMessage">
@@ -11,5 +10,5 @@
     <p class="card-text" [hidden]="messages.length>0">No messages</p>
     <p class="card-text" [ngClass]="getChatMessageClass(message)" *ngFor="let message of messages"><strong>
         [{{message.username}}]: </strong> {{message.text}}</p>
-  </div> 
+  </div>
 </div>

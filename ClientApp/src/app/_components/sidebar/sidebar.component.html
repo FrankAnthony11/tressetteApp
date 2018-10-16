@@ -1,11 +1,11 @@
 <div class="row">
   <div class="col-12">
     <div class="alert alert-primary">
-      <h3>Available players ({{users?.length}}):</h3>
+      <h4 class="h4">Available players ({{users?.length}}):</h4>
     </div>
     <p *ngFor="let user of users">{{user.name}}</p>
     <div class="alert alert-primary">
-      <h3>Available games ({{waitingRooms?.length}}):</h3>
+      <h4 class="h4">Available games ({{waitingRooms?.length}}):</h4>
     </div>
     <button class="btn btn-danger btn-block" *ngFor="let runningGame of runningGames" (click)="joinGameAsSpectator(runningGame)">
       (spectate) {{runningGame.teams[0].users[0].name}}
