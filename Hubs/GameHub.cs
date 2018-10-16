@@ -50,7 +50,7 @@ namespace TresetaApp.Hubs
             name = Regex.Replace(name, @"\s+", "").ToLower();
 
             if (name.Length > 10)
-                name = name.Substring(0, 10); 
+                name = name.Substring(0, 10);
 
             var nameExists = _users.Any(x => x.Name == name);
             if (nameExists)
@@ -109,6 +109,13 @@ namespace TresetaApp.Hubs
 
         public async Task JoinWaitingRoom(string id, string password)
         {
+
+            var rooms = _waitingRooms.Where(x => x.Users.FirstOrDefault(y => y.ConnectionId == Context.ConnectionId) != null).ToList();
+
+            if (rooms.FirstOrDefault(x => x.Id == id) != null)
+                return;
+
+            await CleanupUserFromGames();
             await CleanupUserFromWaitingRooms();
 
             var waitingRoom = _waitingRooms.FirstOrDefault(x => x.Id == id);
@@ -317,6 +324,16 @@ namespace TresetaApp.Hubs
 
         public async Task JoinGameAsPlayerOrSpectator(string gameId)
         {
+
+            List<Game> games = _games.Where(x => GetPlayersConnectionIdsFromTheGame(x).Where(y => y == Context.ConnectionId).Any()).ToList();
+
+            if (games.FirstOrDefault(x => x.Id == gameId) != null)
+                return;
+
+            await CleanupUserFromGames();
+            await CleanupUserFromWaitingRooms();
+
+
             var game = _games.SingleOrDefault(x => x.Id == gameId);
             if (game == null)
                 return;

@@ -1,21 +1,21 @@
-import { Injectable } from "@angular/core";
-import { ChatMessage } from "app/_models/chatMessage";
-import { BehaviorSubject } from "rxjs";
-import { WaitingRoom } from "app/_models/waitingRoom";
-import { Game } from "app/_models/game";
-import { User } from "app/_models/user";
-import { Router } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
-import { environment } from "environments/environment";
-import { Card } from "app/_models/card";
-import { TypeOfMessage } from "app/_models/enums";
+import { Injectable } from '@angular/core';
+import { ChatMessage } from 'app/_models/chatMessage';
+import { BehaviorSubject } from 'rxjs';
+import { WaitingRoom } from 'app/_models/waitingRoom';
+import { Game } from 'app/_models/game';
+import { User } from 'app/_models/user';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { environment } from 'environments/environment';
+import { Card } from 'app/_models/card';
+import { TypeOfMessage } from 'app/_models/enums';
 import * as signalR from '@aspnet/signalr';
-
 
 @Injectable()
 export class HubService {
-
   private _hubConnection: signalR.HubConnection;
+
+  private _buzzPlayerDisabled: boolean = false;
 
   private _gameOrWaitingRoomId: string;
   private _allChatMessages: ChatMessage[] = [];
@@ -42,7 +42,7 @@ export class HubService {
         let myArray = ['Ante', 'Mate'];
         name = myArray[Math.floor(Math.random() * myArray.length)];
       }
-      localStorage.setItem("name",name);
+      localStorage.setItem('name', name);
 
       this._hubConnection.invoke('AddUser', name);
       this._hubConnection.invoke('UpdateAllWaitingRooms');
@@ -65,9 +65,17 @@ export class HubService {
     });
 
     this._hubConnection.on('BuzzPlayer', () => {
+      if (this._buzzPlayerDisabled) return;
+      
+      this._buzzPlayerDisabled = true;
+
       let alert = new Audio('/sounds/alert.mp3');
       alert.load();
       alert.play();
+
+      setTimeout(() => {
+        this._buzzPlayerDisabled = false;
+      }, 5000);
     });
 
     this._hubConnection.on('UpdateSingleWaitingRoom', (waitingRoom: WaitingRoom) => {

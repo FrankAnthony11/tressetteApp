@@ -43,4 +43,10 @@ export class SidebarComponent implements OnInit {
     }
     this._hubService.JoinWaitingRoom(waitingRoom.id, password);
   }
+
+  buzzPlayer(user:User){
+    this._hubService.AddNewMessageToAllChat(`/buzz ${user.name}`)
+  }
+
+
 }

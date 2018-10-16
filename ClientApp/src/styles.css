@@ -5,6 +5,26 @@
 .cursor-pointer{
   cursor:pointer
 }
+
+.fill-viewport-100 {
+  height: 100vh;
+}
+.fill-viewport-80{
+  height: 80vh;
+}
+.fill-viewport-70 {
+  height: 70vh;
+}
+.fill-viewport-50 {
+  height: 50vh;
+}
+.fill-viewport-30 {
+  height: 30vh;
+}
+.fill-viewport--20 {
+  height: 20vh;
+}
+
 .fill-viewport-max-100 {
   max-height: 100vh;
 }
@@ -66,6 +86,10 @@
 .server-chat-message{
   color:grey;
   font-style: italic;
+}
+
+.nav-link{
+  padding:.5rem!important;
 }
 
 .popover-previous-cards {

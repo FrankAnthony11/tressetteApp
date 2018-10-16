@@ -7,6 +7,7 @@ import { Team } from './team';
 export interface Game {
   id: string;
   players: Player[];
+  spectators: User[];
   userTurnToPlay: User;
   gameEnded: boolean;
   roundEnded: boolean;
