@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-12">
+    <ngb-tabset>
+      <ngb-tab title="Game chat">
+        <ng-template ngbTabContent>
+          <app-game-chat></app-game-chat>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="All chat">
+        <ng-template ngbTabContent>
+          <app-all-chat></app-all-chat>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Lobby">
+        <ng-template ngbTabContent>
+          <app-active-players></app-active-players>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Spectators">
+        <ng-template ngbTabContent>
+          <app-game-spectators></app-game-spectators>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</div>

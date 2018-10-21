@@ -1,9 +1,11 @@
+import { GameTabsComponent } from './_components/_game/game-tabs/game-tabs.component';
+import { GameSpectatorsComponent } from './_components/_game/game-spectators/game-spectators.component';
+import { ActivePlayersComponent } from './_components/_lobbyInfo/active-players/active-players.component';
 import { GameInfoTemplateComponent } from './_components/_game/game-info-template/game-info-template.component';
 import { CardWithPlayerNameComponent } from './_components/_cards/card-with-player-name/card-with-player-name.component';
 import { AllChatComponent } from './_components/all-chat/all-chat.component';
 import { GameDeactivateGuard } from './_guards/game-deactivate.guard';
 import { GameChatComponent } from './_components/game-chat/game-chat.component';
-import { SidebarComponent } from './_components/sidebar/sidebar.component';
 import { GameGuard } from './_guards/game.guard';
 import { GameComponent } from './_components/game/game.component';
 import { HubService } from './_services/hub.service';
@@ -21,9 +23,23 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './_components/home/home.component';
 import { WaitingRoomComponent } from './_components/waiting-room/waiting-room.component';
 import { WaitingRoomGuard } from './_guards/waiting-room.guard';
+import { RunningGamesComponent } from './_components/_lobbyInfo/running-games/running-games.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, CardWithPlayerNameComponent, GameInfoTemplateComponent ,GameComponent, WaitingRoomComponent, SidebarComponent, GameChatComponent, AllChatComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    CardWithPlayerNameComponent,
+    GameInfoTemplateComponent,
+    GameComponent,
+    WaitingRoomComponent,
+    ActivePlayersComponent,
+    RunningGamesComponent,
+    GameChatComponent,
+    GameSpectatorsComponent,
+    AllChatComponent,
+    GameTabsComponent
+  ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,

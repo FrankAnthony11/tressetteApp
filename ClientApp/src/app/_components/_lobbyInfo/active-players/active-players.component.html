@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="col-12">
+    <div class="alert alert-primary">
+      <h4 class="h4">Available players ({{users.length}}):</h4>
+    </div>
+    <p *ngFor="let user of users">{{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span>
+    </p>
+  </div>
+</div>

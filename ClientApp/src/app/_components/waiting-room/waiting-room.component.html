@@ -16,7 +16,8 @@
         </div>
       </form>
     </div>
-    <button class="btn btn-primary my-3" *ngIf="userIsSpectator()" (click)="joinGame()">Join the game</button>
+    <button class="btn btn-primary my-3" *ngIf="userIsSpectator() && activeGame.players.length<activeGame.gameSetup.expectedNumberOfPlayers"
+      (click)="joinGame()">Join the game</button>
     <h3>
       <span class="text-danger" [hidden]="activeGame.players.length==activeGame.gameSetup.expectedNumberOfPlayers">
         Waiting for
@@ -39,23 +40,7 @@
 </div>
 
 <div class="row">
-  <div class="col-12  fill-viewport-50 scrollable-div-y bg-white border-primary border-top">
-    <ngb-tabset>
-      <ngb-tab title="Game chat">
-        <ng-template ngbTabContent>
-          <app-game-chat></app-game-chat>
-        </ng-template>
-      </ngb-tab>
-      <ngb-tab title="All chat">
-        <ng-template ngbTabContent>
-          <app-all-chat></app-all-chat>
-        </ng-template>
-      </ngb-tab>
-      <ngb-tab title="Lobby">
-        <ng-template ngbTabContent>
-          <app-sidebar></app-sidebar>
-        </ng-template>
-      </ngb-tab>
-    </ngb-tabset>
+  <div class="col-12  fill-viewport-50 scrollable-div-y bg-white">
+    <app-game-tabs></app-game-tabs>
   </div>
 </div>

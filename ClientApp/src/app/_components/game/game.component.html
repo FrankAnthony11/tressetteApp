@@ -3,36 +3,12 @@
   <ng-sidebar-container style="height:100vh">
     <!-- A sidebar -->
     <ng-sidebar [(opened)]="isGameChatSidebarOpen" [position]="'bottom'" [closeOnClickOutside]="true">
-      <div class="col-12  fill-viewport-50 scrollable-div-y bg-white border-primary border-top">
-
-        <ngb-tabset type="pills">
-          <ngb-tab title="Game chat">
-            <ng-template ngbTabContent>
-              <app-game-chat></app-game-chat>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab title="All chat">
-            <ng-template ngbTabContent>
-              <app-all-chat></app-all-chat>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab title="Lobby">
-            <ng-template ngbTabContent>
-                <app-sidebar></app-sidebar>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab title="Spectators">
-            <ng-template ngbTabContent>
-              <h3 [hidden]="game.spectators.length>0" class="text-primary text-center">No spectators</h3>
-              <ul>
-                <li *ngFor="let spectator of game.spectators">{{spectator.name}}</li>
-              </ul>
-            </ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+      <div class="row">
+        <div class="col-12  fill-viewport-50 scrollable-div-y bg-white">
+          <app-game-tabs></app-game-tabs>
+        </div>
       </div>
     </ng-sidebar>
-
 
     <!-- Page content -->
     <div ng-sidebar-content>

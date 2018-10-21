@@ -37,7 +37,7 @@ export class GameComponent implements OnInit {
       if (this.game.cardsPlayed.length == game.players.length) {
         this.cardsDrewPreviousRound = game.cardsDrew;
         this.gameLocked = true;
-        this.gamefinished=game.gameEnded;
+        this.gamefinished = game.gameEnded;
         setTimeout(() => {
           this.game.cardsDrew = [];
           this.game.cardsPlayed = [];
@@ -49,7 +49,7 @@ export class GameComponent implements OnInit {
             });
             alert(message);
           } else if (this.game.roundEnded) {
-            this._hubService.StartNewRound();
+            if (this.currentUser.name == this.game.players[0].user.name) this._hubService.StartNewRound();
           }
         }, 3500);
       }

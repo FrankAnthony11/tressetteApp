@@ -187,7 +187,7 @@ namespace TresetaApp.Hubs
                 return;
             }
 
-            var msg = new ChatMessage(user.Name, message, typeOfMessage);
+            var msg = new ChatMessage(username, message, typeOfMessage);
             await Clients.All.SendAsync("SendMessageToAllChat", msg);
         }
 
@@ -291,6 +291,8 @@ namespace TresetaApp.Hubs
                 if (isAlreadySpectator)
                 {
                     //join the gamt that hasn't started
+                    if (game.Players.Count == game.GameSetup.ExpectedNumberOfPlayers)
+                        return;
                     game.Spectators.Remove(user);
                     game.Players.Add(new Player(user));
                 }
@@ -341,14 +343,18 @@ namespace TresetaApp.Hubs
         public async Task MakeMove(string gameId, Card card)
         {
             var game = _games.SingleOrDefault(x => x.GameSetup.Id == gameId);
-            if (game == null)
-                return;
-            if (game.GameEnded)
-                return;
-            var success = game.MakeMove(Context.ConnectionId, card);
-            if (!success)
-                return;
+            lock (game)
+            {
+                if (game == null)
+                    return;
+                if (game.GameEnded)
+                    return;
+                var success = game.MakeMove(Context.ConnectionId, card);
+                if (!success)
+                    return;
+            }
             await GameUpdated(game);
+
         }
 
         public async Task StartNewRound(string gameId)

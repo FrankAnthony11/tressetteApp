@@ -1,11 +1,6 @@
 <div class="row">
   <div class="col-12">
     <div class="alert alert-primary">
-      <h4 class="h4">Available players ({{users.length}}):</h4>
-    </div>
-    <p *ngFor="let user of users">{{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span>
-    </p>
-    <div class="alert alert-primary">
       <h4 class="h4">Available games ({{runningGames.length}}):</h4>
     </div>
     <button [class.btn-danger]="runningGame.gameStarted" class="btn btn-primary btn-block" *ngFor="let runningGame of runningGames"
