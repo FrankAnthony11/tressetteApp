@@ -1,3 +1,4 @@
+import { GameSetup } from './gameSetup';
 import { User } from './user';
 import { Player } from './player';
 import { Card } from './card';
@@ -5,11 +6,12 @@ import { CardAndUser } from './cardAndUser';
 import { Team } from './team';
 
 export interface Game {
-  id: string;
+  gameSetup:GameSetup;
   players: Player[];
   spectators: User[];
   userTurnToPlay: User;
   gameEnded: boolean;
+  gameStarted: boolean;
   roundEnded: boolean;
   isFirstRound: boolean;
   deckSize: number;
@@ -18,5 +20,4 @@ export interface Game {
   cardsPlayed: CardAndUser[];
   cardsPlayedPreviousRound: CardAndUser[];
   cardsDrew: CardAndUser[];
-  playUntilPoints: number;
 }

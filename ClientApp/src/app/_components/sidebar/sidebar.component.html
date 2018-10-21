@@ -1,19 +1,18 @@
 <div class="row">
   <div class="col-12">
     <div class="alert alert-primary">
-      <h4 class="h4">Available players ({{users?.length}}):</h4>
+      <h4 class="h4">Available players ({{users.length}}):</h4>
     </div>
-    <p *ngFor="let user of users">{{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span> </p>
+    <p *ngFor="let user of users">{{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span>
+    </p>
     <div class="alert alert-primary">
-      <h4 class="h4">Available games ({{waitingRooms?.length}}):</h4>
+      <h4 class="h4">Available games ({{runningGames.length}}):</h4>
     </div>
-    <button class="btn btn-danger btn-block" *ngFor="let runningGame of runningGames" (click)="joinGameAsSpectator(runningGame)">
-      (spectate) {{runningGame.teams[0].users[0].name}} 
-    </button>
-    <button class="btn btn-primary btn-block" *ngFor="let waitingRoom of waitingRooms" (click)="joinWaitingRoom(waitingRoom)">
-      <span class="mx-2" [hidden]="!waitingRoom.password">&#9919;</span>
-      {{waitingRoom.users[0].name}}
-      - ({{waitingRoom.users.length+"/"+waitingRoom.expectedNumberOfPlayers}})
+    <button [class.btn-danger]="runningGame.gameStarted" class="btn btn-primary btn-block" *ngFor="let runningGame of runningGames"
+      (click)="joinGame(runningGame)">
+      <span class="mx-2" *ngIf="runningGame.gameSetup.isPasswordProtected">&#9919;</span>
+      {{runningGame.players[0].user.name}}
+      - ({{runningGame.players.length+"/"+runningGame.gameSetup.expectedNumberOfPlayers}})
     </button>
   </div>
 </div>

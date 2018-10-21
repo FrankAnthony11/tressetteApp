@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class WaitingRoomGuard implements CanActivate {
   constructor(private _hubService: HubService, private _router:Router) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    let waitingRoom = this._hubService.activeWaitingRoomObservable.getValue();
+    let waitingRoom = this._hubService.activeGameObservable.getValue();
     
     if(!waitingRoom){
       {

@@ -17,6 +17,11 @@ namespace TresetaApp.Helpers
                 });
 
             CreateMap<Team, TeamDto>();
+
+            CreateMap<GameSetup, GameSetupDto>().ForMember(dest => dest.IsPasswordProtected, opt =>
+            {
+                opt.MapFrom(src => src.Password.Length > 0);
+            });
         }
     }
 }

@@ -27,7 +27,7 @@ export class AllChatComponent implements OnInit {
 
   sendMessageAllChat() {
     if (!this.newMessage) return;
-    this._hubService.AddNewMessageToAllChat(this.newMessage);
+    this._hubService.SendMessageToAllChat(this.newMessage);
     this.newMessage = '';
   }
 

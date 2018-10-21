@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
-import { WaitingRoom } from "app/_models/waitingRoom";
-import { User } from "app/_models/user";
-import { HubService } from "app/_services/hub.service";
-
+import { Router } from '@angular/router';
+import { Player } from './../../_models/player';
+import { Component, OnInit } from '@angular/core';
+import { User } from 'app/_models/user';
+import { HubService } from 'app/_services/hub.service';
+import { Game } from 'app/_models/game';
 
 @Component({
   selector: 'app-waiting-room',
@@ -10,14 +11,15 @@ import { HubService } from "app/_services/hub.service";
   styleUrls: ['./waiting-room.component.css']
 })
 export class WaitingRoomComponent implements OnInit {
-  activatedWaitingRoom: WaitingRoom;
+  activeGame: Game;
+  password: string;
   currentUser: User;
 
-  constructor(private _hubService: HubService) {}
+  constructor(private _hubService: HubService, private _router: Router) {}
 
   ngOnInit() {
-    this._hubService.ActiveWaitingRoom.subscribe(room => {
-      this.activatedWaitingRoom = room;
+    this._hubService.ActiveGame.subscribe(room => {
+      this.activeGame = room;
     });
 
     this._hubService.CurrentUser.subscribe(user => {
@@ -26,20 +28,32 @@ export class WaitingRoomComponent implements OnInit {
   }
 
   leaveWaitingRoom() {
-    this._hubService.LeaveWaitingRoom();
+    this._hubService.ExitGame();
+    this._router.navigate(['/']);
   }
 
-  createGame() {
-    this._hubService.CreateGame();
+  joinGame() {
+    this._hubService.JoinGame(this.activeGame.gameSetup.id, '');
+  }
+
+  userIsSpectator() {
+    var exists = this.activeGame.spectators.find(spectator => {
+      return spectator.name == this.currentUser.name;
+    });
+    return exists != null;
+  }
+
+  startGame() {
+    this._hubService.StartGame();
   }
 
   setRoomPassword() {
-    if (!this.activatedWaitingRoom.password) return;
-    this._hubService.SetRoomPassword(this.activatedWaitingRoom.id, this.activatedWaitingRoom.password);
+    if (!this.password) return;
+    this._hubService.SetGamePassword(this.activeGame.gameSetup.id, this.password);
   }
 
-  kickUserFromWaitingRoom(user: User) {
-    let cfrm = confirm('Really kick this player? ' + user.name);
-    if (cfrm) this._hubService.KickUserFromWaitingRoom(user);
+  kickPlayerFromGame(player: Player) {
+    let cfrm = confirm('Really kick this player? ' + player.user.name);
+    if (cfrm) this._hubService.KickUSerFromGame(player.user);
   }
 }

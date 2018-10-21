@@ -22,7 +22,6 @@ namespace TresetaApp.Models
         }
         public User User { get; set; }
         public bool LeftGame { get; set; }
-
         public List<ExtraPoint> ExtraPoints { get; set; }
 
     }

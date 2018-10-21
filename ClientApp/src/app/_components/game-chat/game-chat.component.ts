@@ -31,7 +31,7 @@ export class GameChatComponent implements OnInit {
 
   sendMessageToGameChat() {
     if (!this.newMessage) return;
-    this._hubService.AddNewMessageToGameChat(this.newMessage);
+    this._hubService.SendMessageToGameChat(this.newMessage);
     this.newMessage = '';
   }
 

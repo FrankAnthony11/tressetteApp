@@ -1,8 +1,8 @@
 import { User } from "./user";
 
-export interface WaitingRoom {
+export interface GameSetup {
   id: string;
-  password: string;
+  isPasswordProtected: boolean;
   users:User[];
   playUntilPoints:number;
   expectedNumberOfPlayers:number;

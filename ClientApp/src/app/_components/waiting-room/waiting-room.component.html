@@ -2,14 +2,13 @@
   <div class="col-sm-12">
     <button class="btn btn-danger btn-block mb-2" (click)="leaveWaitingRoom()">Leave waiting room</button>
     <div class="alert alert-primary">
-      <p><strong>Playing until:</strong> {{activatedWaitingRoom.playUntilPoints}}</p>
-      <p><strong>Expected number of players:</strong> {{activatedWaitingRoom.expectedNumberOfPlayers}}</p>
-      <form *ngIf="activatedWaitingRoom.users[0].connectionId==currentUser.connectionId">
+      <p><strong>Playing until:</strong> {{activeGame.gameSetup.playUntilPoints}}</p>
+      <p><strong>Expected number of players:</strong> {{activeGame.gameSetup.expectedNumberOfPlayers}}</p>
+      <form *ngIf="activeGame.players[0].user.connectionId==currentUser.connectionId">
         <div class="form-group row">
           <label for="password" class="col-3 col-sm-1 col-form-label"><strong>Password:</strong> </label>
           <div class="col-5 col-sm-4">
-            <input type="text" [(ngModel)]="activatedWaitingRoom.password" name="password" class="form-control" id="password"
-              placeholder="(Optional)">
+            <input type="text" [(ngModel)]="password" name="password" class="form-control" id="password" placeholder="(Optional)">
           </div>
           <div class="col-4 col-sm-2">
             <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Set</button>
@@ -17,24 +16,25 @@
         </div>
       </form>
     </div>
+    <button class="btn btn-primary my-3" *ngIf="userIsSpectator()" (click)="joinGame()">Join the game</button>
     <h3>
-      <span class="text-danger" [hidden]="activatedWaitingRoom.users.length==activatedWaitingRoom.expectedNumberOfPlayers">
+      <span class="text-danger" [hidden]="activeGame.players.length==activeGame.gameSetup.expectedNumberOfPlayers">
         Waiting for
-        {{activatedWaitingRoom.expectedNumberOfPlayers - activatedWaitingRoom.users.length}} more
+        {{activeGame.gameSetup.expectedNumberOfPlayers - activeGame.players.length}} more
         player(s)</span>
-      <span class="text-success" [hidden]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers">
+      <span class="text-success" [hidden]="activeGame.players.length!=activeGame.gameSetup.expectedNumberOfPlayers">
         All players are here! Host can start the game!
       </span>
     </h3>
     <ul>
-      <li *ngFor="let user of activatedWaitingRoom.users">
-        {{user.name}}
-        <strong *ngIf="currentUser.connectionId==activatedWaitingRoom.users[0].connectionId && currentUser.connectionId!=user.connectionId"
-          class="ml-2 text-danger cursor-pointer" (click)="kickUserFromWaitingRoom(user);">[KICK]</strong>
+      <li *ngFor="let player of activeGame.players">
+        {{player.user.name}}
+        <strong *ngIf="currentUser.connectionId==activeGame.players[0].user.connectionId && currentUser.connectionId!=player.user.connectionId"
+          class="ml-2 text-danger cursor-pointer" (click)="kickPlayerFromGame(player);">[KICK]</strong>
       </li>
     </ul>
-    <button [disabled]="activatedWaitingRoom.users.length!=activatedWaitingRoom.expectedNumberOfPlayers" *ngIf="activatedWaitingRoom.users[0].connectionId==currentUser.connectionId"
-      class="btn btn-success" (click)="createGame()">Start game!</button>
+    <button [disabled]="activeGame.players.length!=activeGame.gameSetup.expectedNumberOfPlayers" *ngIf="activeGame.players[0].user.connectionId==currentUser.connectionId"
+      class="btn btn-success" (click)="startGame()">Start game!</button>
   </div>
 </div>
 

@@ -10,25 +10,17 @@ namespace TresetaApp.Models
     public class Game
     {
         private CardAndUser _strongestCardInRound;
-        private CardAndUser _firstCardPlayed;
-        public Game(string id, List<Player> players, int playUntilPoints)
+        private CardAndUser _firstCardPlayedInRound;
+        public Game(GameSetup gameSetup)
         {
-            Id = id;
-            Players = players;
-            PlayUntilPoints = playUntilPoints;
-
+            CardsPlayed = new List<CardAndUser>();
+            CardsDrew = new List<CardAndUser>();
             Teams = new List<Team>();
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
-
             Spectators = new List<User>();
+            Players = new List<Player>();
             CardsPlayedPreviousRound = new List<CardAndUser>();
-
-            UserTurnToPlay = Players.First().User;
-
-            InitializeNewGame();
+            GameSetup = gameSetup;
         }
-        public string Id { get; set; }
         public List<Player> Players { get; set; }
         public List<User> Spectators { get; set; }
         public List<Team> Teams { get; set; }
@@ -37,10 +29,11 @@ namespace TresetaApp.Models
         public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
-        public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
+        public bool GameStarted { get; set; } = false;
         public bool IsFirstRound { get; set; } = false;
         public bool RoundEnded { get; set; } = false;
+        public GameSetup GameSetup { get; }
 
         public bool MakeMove(string playerConnectionId, Card card)
         {
@@ -68,7 +61,7 @@ namespace TresetaApp.Models
                 CardsDrew.Clear();
             }
 
-            if (CardsPlayed.Count != 0 && card.Color != _firstCardPlayed.Card.Color && player.Cards.Any(x => x.Color == _firstCardPlayed.Card.Color))
+            if (CardsPlayed.Count != 0 && card.Color != _firstCardPlayedInRound.Card.Color && player.Cards.Any(x => x.Color == _firstCardPlayedInRound.Card.Color))
             {
                 return false;
             }
@@ -82,8 +75,8 @@ namespace TresetaApp.Models
             }
 
 
-            _firstCardPlayed = CardsPlayed.FirstOrDefault();
-            _strongestCardInRound = CardsPlayed.Where(x => x.Card.Color == _firstCardPlayed.Card.Color).OrderByDescending(item => item.Card.Strength).First();
+            _firstCardPlayedInRound = CardsPlayed.FirstOrDefault();
+            _strongestCardInRound = CardsPlayed.Where(x => x.Card.Color == _firstCardPlayedInRound.Card.Color).OrderByDescending(item => item.Card.Strength).First();
             RemoveCardFromHand(player, card);
             ChangePlayersTurn();
 
@@ -107,9 +100,28 @@ namespace TresetaApp.Models
                 }
                 DrawCards();
             }
-            if (CardsPlayed.Count == Players.Count)
+            if (CardsPlayed.Count == Players.Count && IsFirstRound)
                 IsFirstRound = false;
             return true;
+        }
+
+
+        public bool StartGame()
+        {
+            if (Players.Count != GameSetup.ExpectedNumberOfPlayers)
+                return false;
+
+            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
+            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
+
+            UserTurnToPlay = Players.First().User;
+
+            GameStarted = true;
+
+            InitializeNewGame();
+
+            return true;
+
         }
 
         public bool AddExtraPoints(string connectionId, List<Card> cards)
@@ -166,11 +178,11 @@ namespace TresetaApp.Models
             {
                 team.Points = 0;
             }
-            CardsPlayed = new List<CardAndUser>();
-            CardsDrew = new List<CardAndUser>();
+            CardsPlayed.Clear();
+            CardsDrew.Clear();
+            CardsPlayedPreviousRound.Clear();
             RoundEnded = false;
             IsFirstRound = true;
-            CardsPlayedPreviousRound.Clear();
         }
 
         // ------------------------------ private----------------------------------------------------//
@@ -249,12 +261,12 @@ namespace TresetaApp.Models
                     team.CalculatedPoints += team.Points / 3;
                 }
 
-                var allPlayersExceeded = Teams.Where(y => y.CalculatedPoints < PlayUntilPoints).Count() == 0;
-                var atLeastOnePlayerExceeded = Teams.Where(y => y.CalculatedPoints >= PlayUntilPoints).Count() > 0;
+                var allPlayersExceeded = Teams.Where(y => y.CalculatedPoints < GameSetup.PlayUntilPoints).Count() == 0;
+                var atLeastOnePlayerExceeded = Teams.Where(y => y.CalculatedPoints >= GameSetup.PlayUntilPoints).Count() > 0;
 
                 if (allPlayersExceeded)
                 {
-                    PlayUntilPoints += 10;
+                    GameSetup.PlayUntilPoints += 10;
                 }
                 else if (atLeastOnePlayerExceeded)
                 {

@@ -4,7 +4,7 @@ namespace TresetaApp.Models.Dtos
 {
     public class GameDto
     {
-        public string Id { get; set; }
+        public GameSetupDto GameSetup { get; set; }
         public List<PlayerDto> Players { get; set; }
         public List<User> Spectators { get; set; }
         public List<Card> MyCards { get; set; }
@@ -14,8 +14,8 @@ namespace TresetaApp.Models.Dtos
         public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public int DeckSize { get; set; }
-        public int PlayUntilPoints { get; set; }
         public bool GameEnded { get; set; } = false;
+        public bool GameStarted { get; set; } = false;
         public bool IsFirstRound { get; set; } = false;
         public bool RoundEnded { get; set; } = false;
     }
