@@ -56,4 +56,8 @@ export class WaitingRoomComponent implements OnInit {
     let cfrm = confirm('Really kick this player? ' + player.user.name);
     if (cfrm) this._hubService.KickUSerFromGame(player.user);
   }
+
+  setDeckType(typeOfDeck: number) {
+    this._hubService.SetGameTypeOfDeck(this.activeGame.gameSetup.id, typeOfDeck);
+  }
 }

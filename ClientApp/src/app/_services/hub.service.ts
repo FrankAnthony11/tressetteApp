@@ -123,14 +123,18 @@ export class HubService {
     this._hubConnection.invoke('SetGamePassword', id, roomPassword);
   }
 
+  SetGameTypeOfDeck(id: string, typeOfDeck: number): any {
+    this._hubConnection.invoke('SetGameTypeOfDeck', id, typeOfDeck);
+  }
+
   ExitGame(): any {
     if (!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().gameSetup.id);
     this.activeGameObservable.next(null);
   }
 
-  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number, deckType: number) {
-    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers, deckType);
+  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number) {
+    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers);
   }
 
   AddExtraPoints(cards: Card[]) {

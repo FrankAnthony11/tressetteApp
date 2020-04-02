@@ -6,16 +6,11 @@ import { HubService } from 'app/_services/hub.service';
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-
-  deckType: number;
-
   ngOnInit(): void {}
-  constructor(private _hubService: HubService) {
-    localStorage.setItem('typeOfDeck', "1");
-  }
+  constructor(private _hubService: HubService) {}
 
   createGame(playUntilPoints: number, expectedNumberOfPlayers: number) {
-    this._hubService.CreateGame(playUntilPoints, expectedNumberOfPlayers, +localStorage.getItem("typeOfDeck"));
+    this._hubService.CreateGame(playUntilPoints, expectedNumberOfPlayers);
   }
 
   rename() {
@@ -23,9 +18,5 @@ export class HomeComponent implements OnInit {
     if (!name) return;
     localStorage.setItem('name', name);
     window.location.reload();
-  }
-
-  setDeckType(typeOfDeck: number) {
-    localStorage.setItem('typeOfDeck', ""+typeOfDeck);
   }
 }
