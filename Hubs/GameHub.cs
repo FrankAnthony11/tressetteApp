@@ -95,13 +95,15 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("UpdateAllGames", games);
         }
 
-        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers)
+        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers, int deckType)
         {
 
             await CleanupUserFromGames();
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers);
+            gameSetup.TypeOfDeck = (TypeOfDeck)deckType;
+            
             var game = new Game(gameSetup);
             game.Players.Add(new Player(user));
             _games.Add(game);

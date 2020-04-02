@@ -129,8 +129,8 @@ export class HubService {
     this.activeGameObservable.next(null);
   }
 
-  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number) {
-    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers);
+  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number, deckType: number) {
+    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers, deckType);
   }
 
   AddExtraPoints(cards: Card[]) {
