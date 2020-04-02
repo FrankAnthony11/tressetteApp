@@ -380,9 +380,6 @@ namespace TresetaApp.Hubs
                 return;
             if (game.GameEnded)
                 return;
-            
-            if (game.GameSetup.GameMode == GameMode.Evasion)
-                return;
 
             var success = game.AddExtraPoints(Context.ConnectionId, cards);
             if (!success)

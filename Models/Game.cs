@@ -151,7 +151,10 @@ namespace TresetaApp.Models
             if (cards.Count != 3 && cards.Count != 4)
                 return false;
             if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
+                return false;            
+            if (GameSetup.GameMode == GameMode.Evasion)
                 return false;
+            
             var firstCardSample = cards[0];
             var secondCardSample = cards[1];
             var player = GetPlayerFromConnectionId(connectionId);
@@ -183,7 +186,7 @@ namespace TresetaApp.Models
             }
             player.ExtraPoints.Add(extraPoint);
             var team = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == connectionId) != null);
-            team.Points += cards.Count * 3;
+            team.CalculatedPoints += cards.Count;
             return true;
         }
 
