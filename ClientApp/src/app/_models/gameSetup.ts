@@ -6,4 +6,5 @@ export interface GameSetup {
   users:User[];
   playUntilPoints:number;
   expectedNumberOfPlayers:number;
+  typeOfDeck:number;
 }

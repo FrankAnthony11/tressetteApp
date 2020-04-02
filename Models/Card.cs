@@ -4,11 +4,11 @@ namespace TresetaApp.Models
 {
     public class Card
     {
-        public Card(CardColor color, CardNumber number)
+        public Card(CardColor color, CardNumber number, TypeOfDeck typeOfDeck)
         {
             Color = color;
             Number = number;
-            ImageUrl = $"/images/{(int)color}/{(int)number}.jpg";
+            ImageUrl = $"/images/{(int)typeOfDeck}/{(int)color}/{(int)number}.jpg";
         }
         public string ImageUrl { get; set; }
         public CardColor Color { get; set; }

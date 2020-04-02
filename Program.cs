@@ -19,7 +19,7 @@ namespace TresetaApp
 
             var builder = CreateWebHostBuilder(args);
             if (!isDevelopment)
-                builder.UseUrls("http://localhost:5051");
+                builder.UseUrls("http://*:5051");
             builder.Build().Run();
         }
 

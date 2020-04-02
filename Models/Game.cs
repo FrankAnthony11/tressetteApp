@@ -196,7 +196,7 @@ namespace TresetaApp.Models
                 var allCardColors = (CardColor[])Enum.GetValues(typeof(CardColor));
                 for (int j = 0; j < allCardColors.Length; j++)
                 {
-                    var card = new Card(allCardColors[j], allCardNumbers[i]);
+                    var card = new Card(allCardColors[j], allCardNumbers[i],GameSetup.TypeOfDeck);
                     cards.Add(card);
                 }
 

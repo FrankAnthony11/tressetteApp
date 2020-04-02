@@ -123,6 +123,10 @@ export class HubService {
     this._hubConnection.invoke('SetGamePassword', id, roomPassword);
   }
 
+  SetGameTypeOfDeck(id: string, typeOfDeck: number): any {
+    this._hubConnection.invoke('SetGameTypeOfDeck', id, typeOfDeck);
+  }
+
   ExitGame(): any {
     if (!this.activeGameObservable.getValue()) return;
     this._hubConnection.invoke('ExitGame', this.activeGameObservable.getValue().gameSetup.id);

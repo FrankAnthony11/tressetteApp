@@ -88,6 +88,15 @@ namespace TresetaApp.Hubs
             await DisplayToastMessageToGame(id, "Password updated");
         }
 
+        public async Task SetGameTypeOfDeck(string id, int typeOfDeck)
+        {
+            var game = _games.FirstOrDefault(x => x.GameSetup.Id == id);
+            if (game == null)
+                return;
+            game.GameSetup.TypeOfDeck = (TypeOfDeck)typeOfDeck;
+            await UpdateAllGames();
+            await DisplayToastMessageToGame(id, "Type of Deck updated");
+        }
 
         public async Task UpdateAllGames()
         {
@@ -102,6 +111,7 @@ namespace TresetaApp.Hubs
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers);
+            
             var game = new Game(gameSetup);
             game.Players.Add(new Player(user));
             _games.Add(game);

@@ -13,6 +13,15 @@
           <div class="col-4 col-sm-2">
             <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Set</button>
           </div>
+          <div class="col-2 col-sm-2">
+            <div ngbDropdown>
+              <button class="btn btn-primary btn-block" ngbDropdownToggle> Deck Type</button>
+              <div ngbDropdownMenu>
+                <button class="dropdown-item" (click)="setDeckType(1)">Napoletane</button>
+                <button class="dropdown-item" (click)="setDeckType(2)">Triestine</button>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
     </div>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TresetaApp.Enums;
 
 namespace TresetaApp.Models
 {
@@ -16,5 +17,6 @@ namespace TresetaApp.Models
         public string Password { get; set; }
         public int PlayUntilPoints { get; set; }
         public int ExpectedNumberOfPlayers { get; set; }
+        public TypeOfDeck TypeOfDeck { get; set; } = TypeOfDeck.Napoletano;
     }
 }

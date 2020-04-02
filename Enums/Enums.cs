@@ -31,4 +31,9 @@ namespace TresetaApp.Enums
         Napoletana,
         SameKind
     }
+
+    public enum TypeOfDeck{
+        Napoletano = 1,
+        Triestino 
+    }
 }
