@@ -6,11 +6,12 @@ namespace TresetaApp.Models
 {
     public class GameSetup
     {
-        public GameSetup(int playUntilPoints, int expectedNumberOfPlayers)
+        public GameSetup(int playUntilPoints, int expectedNumberOfPlayers, GameMode gameMode)
         {
             Id = Guid.NewGuid().ToString();
             PlayUntilPoints = playUntilPoints;
             ExpectedNumberOfPlayers=expectedNumberOfPlayers;
+            GameMode = gameMode;
         }
 
         public string Id { get; set; }
@@ -18,5 +19,6 @@ namespace TresetaApp.Models
         public int PlayUntilPoints { get; set; }
         public int ExpectedNumberOfPlayers { get; set; }
         public TypeOfDeck TypeOfDeck { get; set; } = TypeOfDeck.Napoletano;
+        public GameMode GameMode {get; set; }
     }
 }

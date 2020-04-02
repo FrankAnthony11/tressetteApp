@@ -1,4 +1,5 @@
 using TresetaApp.Enums;
+using System;
 
 namespace TresetaApp.Models
 {
@@ -13,23 +14,25 @@ namespace TresetaApp.Models
         public string ImageUrl { get; set; }
         public CardColor Color { get; set; }
         public CardNumber Number { get; set; }
-        public int Value
+
+        public int Value(GameMode gameMode)
         {
-            get
+            switch (Number)
             {
-                switch (Number)
-                {
-                    case CardNumber.Ace:
+                case CardNumber.Ace:
+                    if(gameMode == GameMode.Evasion && Color == CardColor.Bastoni){
+                        return 15;
+                    }
+                    else
                         return 3;
-                    case CardNumber.Two:
-                    case CardNumber.Three:
-                    case CardNumber.Fante:
-                    case CardNumber.Cavallo:
-                    case CardNumber.Re:
-                        return 1;
-                    default:
-                        return 0;
-                }
+                case CardNumber.Two:
+                case CardNumber.Three:
+                case CardNumber.Fante:
+                case CardNumber.Cavallo:
+                case CardNumber.Re:
+                    return 1;
+                default:
+                    return 0;
             }
         }
         public int Strength

@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from 'environments/environment';
 import { Card } from 'app/_models/card';
 import { TypeOfMessage } from 'app/_models/enums';
+import { GameMode } from 'app/_models/enums';
 import * as signalR from '@aspnet/signalr';
 
 @Injectable()
@@ -133,8 +134,8 @@ export class HubService {
     this.activeGameObservable.next(null);
   }
 
-  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number) {
-    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers);
+  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number, gameMode: GameMode) {
+    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers, gameMode);
   }
 
   AddExtraPoints(cards: Card[]) {

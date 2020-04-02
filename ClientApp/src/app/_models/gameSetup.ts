@@ -1,4 +1,5 @@
 import { User } from "./user";
+import { GameMode } from "./enums";
 
 export interface GameSetup {
   id: string;
@@ -7,4 +8,5 @@ export interface GameSetup {
   playUntilPoints:number;
   expectedNumberOfPlayers:number;
   typeOfDeck:number;
+  gameMode: GameMode;
 }

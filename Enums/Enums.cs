@@ -31,9 +31,13 @@ namespace TresetaApp.Enums
         Napoletana,
         SameKind
     }
-
     public enum TypeOfDeck{
         Napoletano = 1,
         Triestino 
+    }
+
+    public enum GameMode{
+        Plain,
+        Evasion
     }
 }

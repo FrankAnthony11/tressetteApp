@@ -19,6 +19,7 @@ namespace TresetaApp.Models
             Spectators = new List<User>();
             Players = new List<Player>();
             CardsPlayedPreviousRound = new List<CardAndUser>();
+            ExcludedCards = new List<Card>();
             GameSetup = gameSetup;
         }
         public List<Player> Players { get; set; }
@@ -29,6 +30,7 @@ namespace TresetaApp.Models
         public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
+        public List<Card> ExcludedCards {get; set; }
         public bool GameEnded { get; set; } = false;
         public bool GameStarted { get; set; } = false;
         public bool IsFirstRound { get; set; } = false;
@@ -90,14 +92,29 @@ namespace TresetaApp.Models
 
                 foreach (var cardPlayed in CardsPlayed)
                 {
-
-                    teamRoundWinner.Points += cardPlayed.Card.Value;
+                    teamRoundWinner.Points += cardPlayed.Card.Value(GameSetup.GameMode);
                 }
 
                 if (isLastPoint)
                 {
                     teamRoundWinner.Points += 3;
+                    if(GameSetup.GameMode == GameMode.Evasion){
+                        var remainingPoints = 0;
+                        foreach (var team in Teams){
+                            if(team.Name != teamRoundWinner.Name)
+                                remainingPoints += team.Points % 3;
+                        }
+
+                        // Cappotto
+                        if(Teams.All(x => x.Name == teamRoundWinner.Name || x.Points < 3)){
+                            var total = teamRoundWinner.Points;
+                            foreach(var team in Teams)
+                                team.Points = total;
+                            teamRoundWinner.Points = 0;
+                        }
+                    }
                 }
+
                 DrawCards();
             }
             if (CardsPlayed.Count == Players.Count && IsFirstRound)
@@ -111,9 +128,14 @@ namespace TresetaApp.Models
             if (Players.Count != GameSetup.ExpectedNumberOfPlayers)
                 return false;
 
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
-
+            if(GameSetup.GameMode == GameMode.Evasion){
+                foreach(var player in Players)
+                    Teams.Add(new Team(new List<User>{player.User}));
+            }else{
+                Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
+                Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
+            }
+            
             UserTurnToPlay = Players.First().User;
 
             GameStarted = true;
@@ -161,7 +183,7 @@ namespace TresetaApp.Models
             }
             player.ExtraPoints.Add(extraPoint);
             var team = Teams.FirstOrDefault(x => x.Users.FirstOrDefault(y => y.ConnectionId == connectionId) != null);
-            team.CalculatedPoints += cards.Count;
+            team.Points += cards.Count * 3;
             return true;
         }
 
@@ -169,11 +191,23 @@ namespace TresetaApp.Models
         public void InitializeNewGame()
         {
             Deck = GenerateDeck();
+            ExcludedCards.Clear();
+
+            var cardsPerPlayer = 10;
+            var excludedCards = 0;
+
+            if(GameSetup.GameMode == GameMode.Evasion){
+                cardsPerPlayer = Deck.Count/Players.Count;
+                excludedCards = Deck.Count % Players.Count;
+            }
+
             foreach (var player in Players)
             {
-                player.Cards = Deck.GetAndRemove(0, 10);
+                player.Cards = Deck.GetAndRemove(0, cardsPerPlayer);
                 player.ExtraPoints.Clear();
             }
+            ExcludedCards = Deck.GetAndRemove(0, excludedCards);
+
             foreach (var team in Teams)
             {
                 team.Points = 0;
