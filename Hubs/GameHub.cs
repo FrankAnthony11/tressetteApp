@@ -123,13 +123,10 @@ namespace TresetaApp.Hubs
 
         public async Task CallAction(string action, string gameid)
         {
-
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
             var message = $"Player {user.Name} is calling on action: {action}";
-
-            await DisplayToastMessageToGame(gameid, message);
-
+            await DisplayToastMessageToGame(gameid, message);   
         }
 
 
@@ -378,12 +375,15 @@ namespace TresetaApp.Hubs
 
         public async Task AddExtraPoints(string gameId, List<Card> cards)
         {
-
             var game = _games.SingleOrDefault(x => x.GameSetup.Id == gameId);
             if (game == null)
                 return;
             if (game.GameEnded)
                 return;
+            
+            if (game.GameSetup.GameMode == GameMode.Evasion)
+                return;
+
             var success = game.AddExtraPoints(Context.ConnectionId, cards);
             if (!success)
             {
