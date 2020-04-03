@@ -98,12 +98,18 @@ namespace TresetaApp.Models
                 if (isLastPoint)
                 {
                     teamRoundWinner.Points += 3;
+
+
                     if(GameSetup.GameMode == GameMode.Evasion){
+                        // In evasion mode, the spurious points of all players go to the
+                        // player who played last.
+                        // However, if doing so, the player who played last gets maximum points (Cappotto),
+                        // he/she transfers the total to each player, and he/she stays at 0 points.
                         foreach (var team in Teams){
                             if(team.Name != teamRoundWinner.Name){
-                                var rem = team.Points % 3;
-                                teamRoundWinner.Points += rem;
-                                team.Points -= rem;
+                                var spurious = team.Points % 3;
+                                teamRoundWinner.Points += spurious;
+                                team.Points -= spurious;
                             }
                         }
 
