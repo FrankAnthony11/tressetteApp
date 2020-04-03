@@ -7,6 +7,16 @@ import { GameMode } from 'app/_models/enums';
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
+  standardDescription = `This is plain Tressette where the goal is to maximize the score.
+  Aces account for 1 point, and all cards not in range [4-6] account for 1/3 points.`;
+
+  evasionDescription = `In this variation, each player plays alone, and the goal is to minimize the score.
+  The first player reaching the given upper score loses, and the game ends.
+  Card points are like in standard mode, except that Ace of Clubs accounts for 4.
+  At the end of each round, the player getting the last point will also get all spurious cards
+  from other players. However, if a player scores all points at the end of a round,
+  these points will go to the other players instead`;
+
   ngOnInit(): void {}
   constructor(private _hubService: HubService) {}
 
