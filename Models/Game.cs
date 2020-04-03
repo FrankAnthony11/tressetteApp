@@ -99,14 +99,16 @@ namespace TresetaApp.Models
                 {
                     teamRoundWinner.Points += 3;
                     if(GameSetup.GameMode == GameMode.Evasion){
-                        var remainingPoints = 0;
                         foreach (var team in Teams){
-                            if(team.Name != teamRoundWinner.Name)
-                                remainingPoints += team.Points % 3;
+                            if(team.Name != teamRoundWinner.Name){
+                                var rem = team.Points % 3;
+                                teamRoundWinner.Points += rem;
+                                team.Points -= rem;
+                            }
                         }
 
                         // Cappotto
-                        if(Teams.All(x => x.Name == teamRoundWinner.Name || x.Points < 3)){
+                        if(Teams.All(x => x.Name == teamRoundWinner.Name || x.Points == 0)){
                             var total = teamRoundWinner.Points;
                             foreach(var team in Teams)
                                 team.Points = total;
