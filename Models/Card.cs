@@ -21,7 +21,7 @@ namespace TresetaApp.Models
             {
                 case CardNumber.Ace:
                     if(gameMode == GameMode.Evasion && Color == CardColor.Bastoni){
-                        return 15;
+                        return 12;
                     }
                     else
                         return 3;
