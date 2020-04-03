@@ -99,11 +99,10 @@ namespace TresetaApp.Models
                 {
                     teamRoundWinner.Points += 3;
 
-
                     if(GameSetup.GameMode == GameMode.Evasion){
-                        // In evasion mode, the spurious points of all players go to the
-                        // player who played last.
-                        // However, if doing so, the player who played last gets maximum points (Cappotto),
+                        // In evasion mode, the spurious points of all players and the excluded cards go to the
+                        // player who got the last point.
+                        // However, if doing so, the player who got the last point gets maximum points (Cappotto),
                         // he/she transfers the total to each player, and he/she stays at 0 points.
                         foreach (var team in Teams){
                             if(team.Name != teamRoundWinner.Name){
@@ -112,6 +111,10 @@ namespace TresetaApp.Models
                                 team.Points -= spurious;
                             }
                         }
+
+                        // Add points from excluded cards
+                        // TODO: There should be an animation showing this happening
+                        teamRoundWinner.Points += ExcludedCards.Sum(x => x.Value(GameSetup.GameMode));
 
                         // Cappotto
                         if(Teams.All(x => x.Name == teamRoundWinner.Name || x.Points == 0)){
@@ -136,6 +139,7 @@ namespace TresetaApp.Models
             if (Players.Count != GameSetup.ExpectedNumberOfPlayers)
                 return false;
 
+            // In evasion mode, each player plays alone
             if(GameSetup.GameMode == GameMode.Evasion){
                 foreach(var player in Players)
                     Teams.Add(new Team(new List<User>{player.User}));
@@ -159,7 +163,9 @@ namespace TresetaApp.Models
             if (cards.Count != 3 && cards.Count != 4)
                 return false;
             if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
-                return false;            
+                return false;
+    
+            // Cannot claim any extra points in evasion mode      
             if (GameSetup.GameMode == GameMode.Evasion)
                 return false;
             
@@ -207,6 +213,8 @@ namespace TresetaApp.Models
             var cardsPerPlayer = 10;
             var excludedCards = 0;
 
+            // In evasion mode, cards are distributed "evenly" between players, with some cards remaining out.
+            // These cards will be given to the player who got the last point.
             if(GameSetup.GameMode == GameMode.Evasion){
                 cardsPerPlayer = Deck.Count/Players.Count;
                 excludedCards = Deck.Count % Players.Count;
@@ -217,6 +225,7 @@ namespace TresetaApp.Models
                 player.Cards = Deck.GetAndRemove(0, cardsPerPlayer);
                 player.ExtraPoints.Clear();
             }
+
             ExcludedCards = Deck.GetAndRemove(0, excludedCards);
 
             foreach (var team in Teams)
