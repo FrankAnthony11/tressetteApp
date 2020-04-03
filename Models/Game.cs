@@ -320,7 +320,11 @@ namespace TresetaApp.Models
 
                 if (allPlayersExceeded)
                 {
-                    GameSetup.PlayUntilPoints += 10;
+                    // In evasion mode, we just pick the one with highest score as the loser.
+                    if(GameSetup.GameMode == GameMode.Evasion)
+                        GameEnded = true;
+                    else
+                        GameSetup.PlayUntilPoints += 10;
                 }
                 else if (atLeastOnePlayerExceeded)
                 {

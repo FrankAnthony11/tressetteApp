@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
   Card points are like in standard mode, except that Ace of Clubs accounts for 4.
   At the end of each round, the player getting the last point will also get all spurious cards
   from other players. However, if a player scores all points at the end of a round,
-  these points will go to the other players instead`;
+  these points will go to the other players instead.`;
 
   ngOnInit(): void {}
   constructor(private _hubService: HubService) {}
