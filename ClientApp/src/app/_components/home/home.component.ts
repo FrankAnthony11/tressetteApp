@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   At the end of each round, the player getting the last point will also get all spurious cards
   from the other players. However, if a player scores all points at the end of a round,
   these points will go to the other players instead.`;
-
+  
   ngOnInit(): void {}
   constructor(private _hubService: HubService) {}
 

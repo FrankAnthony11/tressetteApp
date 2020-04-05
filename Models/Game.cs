@@ -11,6 +11,7 @@ namespace TresetaApp.Models
     {
         private CardAndUser _strongestCardInRound;
         private CardAndUser _firstCardPlayedInRound;
+        private User _firstPlayerPreviousRound;
         public Game(GameSetup gameSetup)
         {
             CardsPlayed = new List<CardAndUser>();
@@ -147,8 +148,6 @@ namespace TresetaApp.Models
                 Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
                 Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
             }
-            
-            UserTurnToPlay = Players.First().User;
 
             GameStarted = true;
 
@@ -208,6 +207,8 @@ namespace TresetaApp.Models
         public void InitializeNewGame()
         {
             Deck = GenerateDeck();
+            ChooseFirstRoundPlayer();
+
             ExcludedCards.Clear();
 
             var cardsPerPlayer = 10;
@@ -218,7 +219,7 @@ namespace TresetaApp.Models
             // in plain mode.
             // I some cards remain out, they will be given to the player who got the last point.
             if(GameSetup.GameMode == GameMode.Evasion){
-                if(Players.Count == 3 || Players.Count == 5){
+                if(Players.Count != 2 && Players.Count != 4){
                     cardsPerPlayer = Deck.Count/Players.Count;
                     excludedCards = Deck.Count % Players.Count;
                 }
@@ -353,8 +354,16 @@ namespace TresetaApp.Models
             {
                 UserTurnToPlay = Players[index + 1].User;
             }
-
         }
 
+        private void ChooseFirstRoundPlayer()
+        {
+            if(_firstPlayerPreviousRound == null){ //if no previous round has been played, pick the first
+                UserTurnToPlay = Players.First().User;
+            }else{ // otherwise it is up to the player next to the player who played first on the previous round
+                UserTurnToPlay = GetNextPlayerFromConnectionId(_firstPlayerPreviousRound.ConnectionId).User;
+            }
+            _firstPlayerPreviousRound = UserTurnToPlay;
+        }
     }
 }
