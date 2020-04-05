@@ -213,11 +213,15 @@ namespace TresetaApp.Models
             var cardsPerPlayer = 10;
             var excludedCards = 0;
 
-            // In evasion mode, cards are distributed "evenly" between players, with some cards remaining out.
-            // These cards will be given to the player who got the last point.
+            // In evasion mode, cards are distributed "evenly" between players, with some cards remaining out,
+            // when 3 or 5 players are playing. If 2 or 4 players are playing, 10 cards each are given, like
+            // in plain mode.
+            // I some cards remain out, they will be given to the player who got the last point.
             if(GameSetup.GameMode == GameMode.Evasion){
-                cardsPerPlayer = Deck.Count/Players.Count;
-                excludedCards = Deck.Count % Players.Count;
+                if(Players.Count == 3 || Players.Count == 5){
+                    cardsPerPlayer = Deck.Count/Players.Count;
+                    excludedCards = Deck.Count % Players.Count;
+                }
             }
 
             foreach (var player in Players)
