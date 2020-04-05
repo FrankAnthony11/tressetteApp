@@ -19,6 +19,7 @@ namespace TresetaApp.Models
             Spectators = new List<User>();
             Players = new List<Player>();
             CardsPlayedPreviousRound = new List<CardAndUser>();
+            ExcludedCards = new List<Card>();
             GameSetup = gameSetup;
         }
         public List<Player> Players { get; set; }
@@ -29,6 +30,7 @@ namespace TresetaApp.Models
         public List<CardAndUser> CardsPlayedPreviousRound { get; set; }
         public List<CardAndUser> CardsDrew { get; set; }
         public List<Card> Deck { get; set; }
+        public List<Card> ExcludedCards {get; set; }
         public bool GameEnded { get; set; } = false;
         public bool GameStarted { get; set; } = false;
         public bool IsFirstRound { get; set; } = false;
@@ -90,14 +92,40 @@ namespace TresetaApp.Models
 
                 foreach (var cardPlayed in CardsPlayed)
                 {
-
-                    teamRoundWinner.Points += cardPlayed.Card.Value;
+                    teamRoundWinner.Points += cardPlayed.Card.Value(GameSetup.GameMode);
                 }
 
                 if (isLastPoint)
                 {
                     teamRoundWinner.Points += 3;
+
+                    if(GameSetup.GameMode == GameMode.Evasion){
+                        // In evasion mode, the spurious points of all players and the excluded cards go to the
+                        // player who got the last point.
+                        // However, if doing so, the player who got the last point gets maximum points (Cappotto),
+                        // he/she transfers the total to each player, and he/she stays at 0 points.
+                        foreach (var team in Teams){
+                            if(team.Name != teamRoundWinner.Name){
+                                var spurious = team.Points % 3;
+                                teamRoundWinner.Points += spurious;
+                                team.Points -= spurious;
+                            }
+                        }
+
+                        // Add points from excluded cards
+                        // TODO: There should be an animation showing this happening
+                        teamRoundWinner.Points += ExcludedCards.Sum(x => x.Value(GameSetup.GameMode));
+
+                        // Cappotto
+                        if(Teams.All(x => x.Name == teamRoundWinner.Name || x.Points == 0)){
+                            var total = teamRoundWinner.Points;
+                            foreach(var team in Teams)
+                                team.Points = total;
+                            teamRoundWinner.Points = 0;
+                        }
+                    }
                 }
+
                 DrawCards();
             }
             if (CardsPlayed.Count == Players.Count && IsFirstRound)
@@ -111,9 +139,15 @@ namespace TresetaApp.Models
             if (Players.Count != GameSetup.ExpectedNumberOfPlayers)
                 return false;
 
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
-            Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
-
+            // In evasion mode, each player plays alone
+            if(GameSetup.GameMode == GameMode.Evasion){
+                foreach(var player in Players)
+                    Teams.Add(new Team(new List<User>{player.User}));
+            }else{
+                Teams.Add(new Team(Players.Where((c, i) => i % 2 == 0).Select(x => x.User).ToList()));
+                Teams.Add(new Team(Players.Where((c, i) => i % 2 == 1).Select(x => x.User).ToList()));
+            }
+            
             UserTurnToPlay = Players.First().User;
 
             GameStarted = true;
@@ -130,6 +164,11 @@ namespace TresetaApp.Models
                 return false;
             if (cards.Any(x => x.Number != CardNumber.Ace && x.Number != CardNumber.Two && x.Number != CardNumber.Three))
                 return false;
+    
+            // Cannot claim any extra points in evasion mode      
+            if (GameSetup.GameMode == GameMode.Evasion)
+                return false;
+            
             var firstCardSample = cards[0];
             var secondCardSample = cards[1];
             var player = GetPlayerFromConnectionId(connectionId);
@@ -169,11 +208,30 @@ namespace TresetaApp.Models
         public void InitializeNewGame()
         {
             Deck = GenerateDeck();
+            ExcludedCards.Clear();
+
+            var cardsPerPlayer = 10;
+            var excludedCards = 0;
+
+            // In evasion mode, cards are distributed "evenly" between players, with some cards remaining out,
+            // when 3 or 5 players are playing. If 2 or 4 players are playing, 10 cards each are given, like
+            // in plain mode.
+            // I some cards remain out, they will be given to the player who got the last point.
+            if(GameSetup.GameMode == GameMode.Evasion){
+                if(Players.Count == 3 || Players.Count == 5){
+                    cardsPerPlayer = Deck.Count/Players.Count;
+                    excludedCards = Deck.Count % Players.Count;
+                }
+            }
+
             foreach (var player in Players)
             {
-                player.Cards = Deck.GetAndRemove(0, 10);
+                player.Cards = Deck.GetAndRemove(0, cardsPerPlayer);
                 player.ExtraPoints.Clear();
             }
+
+            ExcludedCards = Deck.GetAndRemove(0, excludedCards);
+
             foreach (var team in Teams)
             {
                 team.Points = 0;
@@ -266,7 +324,12 @@ namespace TresetaApp.Models
 
                 if (allPlayersExceeded)
                 {
-                    GameSetup.PlayUntilPoints += 10;
+                    // In evasion mode, we just pick the one with highest score as the loser, so we end
+                    // the game.
+                    if(GameSetup.GameMode == GameMode.Evasion)
+                        GameEnded = true;
+                    else
+                        GameSetup.PlayUntilPoints += 10;
                 }
                 else if (atLeastOnePlayerExceeded)
                 {

@@ -4,6 +4,7 @@ import { User } from 'app/_models/user';
 import { Game } from 'app/_models/game';
 import { Card } from 'app/_models/card';
 import { CardAndUser } from 'app/_models/cardAndUser';
+import { GameMode } from 'app/_models/enums';
 import { HubService } from 'app/_services/hub.service';
 import { Router } from '@angular/router';
 
@@ -21,6 +22,8 @@ export class GameComponent implements OnInit {
   gameLocked = false;
   currentUser: User;
   game: Game;
+  GameMode = GameMode;
+  
   numberUnreadMessages: number = 0;
   cardsForExtraPoints: Card[] = [];
   selectingCardsForExtraPoints: boolean = false;

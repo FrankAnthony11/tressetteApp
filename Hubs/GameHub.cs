@@ -104,13 +104,13 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("UpdateAllGames", games);
         }
 
-        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers)
+        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers, GameMode gameMode)
         {
 
             await CleanupUserFromGames();
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers);
+            var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers,gameMode);
             
             var game = new Game(gameSetup);
             game.Players.Add(new Player(user));
@@ -123,13 +123,10 @@ namespace TresetaApp.Hubs
 
         public async Task CallAction(string action, string gameid)
         {
-
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
             var message = $"Player {user.Name} is calling on action: {action}";
-
-            await DisplayToastMessageToGame(gameid, message);
-
+            await DisplayToastMessageToGame(gameid, message);   
         }
 
 
@@ -378,12 +375,12 @@ namespace TresetaApp.Hubs
 
         public async Task AddExtraPoints(string gameId, List<Card> cards)
         {
-
             var game = _games.SingleOrDefault(x => x.GameSetup.Id == gameId);
             if (game == null)
                 return;
             if (game.GameEnded)
                 return;
+
             var success = game.AddExtraPoints(Context.ConnectionId, cards);
             if (!success)
             {

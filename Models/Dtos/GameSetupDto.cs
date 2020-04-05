@@ -9,6 +9,6 @@ namespace TresetaApp.Models.Dtos
         public int PlayUntilPoints { get; set; }
         public int ExpectedNumberOfPlayers { get; set; }
         public TypeOfDeck TypeOfDeck { get; set; }
-
+        public GameMode GameMode {get; set; }
     }
 }

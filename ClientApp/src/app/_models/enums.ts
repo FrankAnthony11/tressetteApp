@@ -3,3 +3,8 @@ export enum TypeOfMessage{
     server,
     spectators
 }
+
+export enum GameMode{
+    plain,
+    evasion
+}
