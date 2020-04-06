@@ -18,8 +18,11 @@ namespace TresetaApp
             var isDevelopment = environment == EnvironmentName.Development;
 
             var builder = CreateWebHostBuilder(args);
-            if (!isDevelopment)
-                builder.UseUrls("http://*:5051");
+            if (!isDevelopment){
+                var port = Environment.GetEnvironmentVariable("PORT");
+                if(port==null) port = "5051";
+                builder.UseUrls("http://*:"+port);
+            }
             builder.Build().Run();
         }
 
