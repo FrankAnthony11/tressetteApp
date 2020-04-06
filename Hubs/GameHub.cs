@@ -355,6 +355,7 @@ namespace TresetaApp.Hubs
 
         public async Task MakeMove(string gameId, Card card)
         {
+            bool isLastCardAceOfClubsInEvasionMode = false;
             var game = _games.SingleOrDefault(x => x.GameSetup.Id == gameId);
             lock (game)
             {
@@ -365,9 +366,10 @@ namespace TresetaApp.Hubs
                 var success = game.MakeMove(Context.ConnectionId, card);
                 if (!success)
                     return;
+                isLastCardAceOfClubsInEvasionMode = game.IsLastCardAceOfClubsInEvasionMode;
             } 
             await GameUpdated(game);
-            if(game.IsLastCardAceOfClubsInEvasionMode)
+            if(isLastCardAceOfClubsInEvasionMode)
                 await SendSoundCommandToGame(game.GameSetup.Id, "AceOfClubsPlayer");
         }
 
