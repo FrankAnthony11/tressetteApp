@@ -127,8 +127,9 @@ namespace TresetaApp.Hubs
 
             var message = $"Player {user.Name} is calling on action: {action}";
             await DisplayToastMessageToGame(gameid, message);
+
             if(action == "KNOCK")
-                await Clients.All.SendAsync("KnockPlayer");
+                await SendSoundCommandToGame(gameid, "KnockPlayer");
             else if(action == "SLIDE"){
                 //TODO
             }
@@ -364,9 +365,10 @@ namespace TresetaApp.Hubs
                 var success = game.MakeMove(Context.ConnectionId, card);
                 if (!success)
                     return;
-            }
+            } 
             await GameUpdated(game);
-
+            if(game.IsLastCardAceOfClubsInEvasionMode)
+                await SendSoundCommandToGame(game.GameSetup.Id, "AceOfClubsPlayer");
         }
 
         public async Task StartNewRound(string gameId)
@@ -426,8 +428,16 @@ namespace TresetaApp.Hubs
             await Clients.Client(connectionId).SendAsync("DisplayToastMessage", message);
         }
 
+        private async Task SendSoundCommandToGame(string gameid, string sound)
+        {
+            var game = _games.FirstOrDefault(x => x.GameSetup.Id == gameid);
+            if (game == null)
+                return;
+            var usersToNotify = GetPlayersFromGame(game);
+            usersToNotify.AddRange(GetSpectatorsFromGame(game));
 
-
+            await Clients.Clients(usersToNotify).SendAsync(sound);
+        }
 
         private async Task GameUpdated(Game game)
         {
@@ -449,7 +459,6 @@ namespace TresetaApp.Hubs
             {
                 await Clients.Clients(allPlayersInTheGame).SendAsync("GameUpdate", gameDto);
             }
-
         }
 
 

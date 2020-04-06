@@ -18,6 +18,7 @@ export class HubService {
 
   private _buzzPlayerDisabled: boolean = false;
   private _knockPlayerDisabled: boolean = false;
+  private _aceOfClubsPlayerDisabled: boolean = false;
   
   private _allChatMessages: ChatMessage[] = [];
   private _gameChatMessages: ChatMessage[] = [];
@@ -85,6 +86,21 @@ export class HubService {
 
       setTimeout(() => {
         this._knockPlayerDisabled = false;
+      }, 5000);
+    });
+
+
+    this._hubConnection.on('AceOfClubsPlayer', () => {
+      if (this._aceOfClubsPlayerDisabled) return;
+
+      this._aceOfClubsPlayerDisabled = true;
+
+      let ace = new Audio('/sounds/ace_of_clubs.mp3');
+      ace.load();
+      ace.play();
+
+      setTimeout(() => {
+        this._aceOfClubsPlayerDisabled = false;
       }, 5000);
     });
 

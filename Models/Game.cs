@@ -37,9 +37,16 @@ namespace TresetaApp.Models
         public bool IsFirstRound { get; set; } = false;
         public bool RoundEnded { get; set; } = false;
         public GameSetup GameSetup { get; }
-
+        public bool IsLastCardAceOfClubsInEvasionMode{
+            get{
+                var lastCardPlayed = CardsPlayed.LastOrDefault();
+                return  lastCardPlayed != null &&
+                        lastCardPlayed.Card.IsAceOfClubs &&
+                        GameSetup.GameMode == GameMode.Evasion;
+            }
+        }
         public bool MakeMove(string playerConnectionId, Card card)
-        {
+        {            
             var player = GetPlayerFromConnectionId(playerConnectionId);
 
             if (player.Cards.FirstOrDefault(x => x.Color == card.Color && x.Number == card.Number) == null)
@@ -131,6 +138,7 @@ namespace TresetaApp.Models
             }
             if (CardsPlayed.Count == Players.Count && IsFirstRound)
                 IsFirstRound = false;
+
             return true;
         }
 
