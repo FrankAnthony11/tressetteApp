@@ -51,7 +51,7 @@
                   <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/{{game.gameSetup.typeOfDeck}}/deckbackground.jpg">
                   <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/{{game.gameSetup.typeOfDeck}}/whitebackground.jpg">
                   <div class="card-body">
-                    <p class="card-title text-center">{{game.deckSize/2}}</p>
+                    <p class="card-title text-center">{{game.deckSize/game.teams.length}}</p>
                   </div>
                 </div>
               </div>
