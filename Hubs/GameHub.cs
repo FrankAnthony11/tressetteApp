@@ -126,7 +126,12 @@ namespace TresetaApp.Hubs
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
 
             var message = $"Player {user.Name} is calling on action: {action}";
-            await DisplayToastMessageToGame(gameid, message);   
+            await DisplayToastMessageToGame(gameid, message);
+            if(action == "KNOCK")
+                await Clients.All.SendAsync("KnockPlayer");
+            else if(action == "SLIDE"){
+                //TODO
+            }
         }
 
 

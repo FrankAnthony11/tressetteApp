@@ -17,7 +17,8 @@ export class HubService {
   private _hubConnection: signalR.HubConnection;
 
   private _buzzPlayerDisabled: boolean = false;
-
+  private _knockPlayerDisabled: boolean = false;
+  
   private _allChatMessages: ChatMessage[] = [];
   private _gameChatMessages: ChatMessage[] = [];
 
@@ -73,6 +74,19 @@ export class HubService {
       }, 5000);
     });
 
+    this._hubConnection.on('KnockPlayer', () => {
+      if (this._knockPlayerDisabled) return;
+
+      this._knockPlayerDisabled = true;
+
+      let knock = new Audio('/sounds/knock.mp3');
+      knock.load();
+      knock.play();
+
+      setTimeout(() => {
+        this._knockPlayerDisabled = false;
+      }, 5000);
+    });
 
     this._hubConnection.on('KickUSerFromGame', () => {
       this.activeGameObservable.next(null);
