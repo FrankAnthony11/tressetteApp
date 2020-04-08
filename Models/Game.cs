@@ -11,7 +11,7 @@ namespace TresetaApp.Models
     {
         private CardAndUser _strongestCardInRound;
         private CardAndUser _firstCardPlayedInRound;
-        private User _firstPlayerPreviousRound;
+        private Player _firstPlayerPreviousRound;
         public Game(GameSetup gameSetup)
         {
             CardsPlayed = new List<CardAndUser>();
@@ -37,9 +37,16 @@ namespace TresetaApp.Models
         public bool IsFirstRound { get; set; } = false;
         public bool RoundEnded { get; set; } = false;
         public GameSetup GameSetup { get; }
-
+        public bool IsLastCardAceOfClubsInEvasionMode{
+            get{
+                var lastCardPlayed = CardsPlayed.LastOrDefault();
+                return  lastCardPlayed != null &&
+                        lastCardPlayed.Card.IsAceOfClubs &&
+                        GameSetup.GameMode == GameMode.Evasion;
+            }
+        }
         public bool MakeMove(string playerConnectionId, Card card)
-        {
+        {            
             var player = GetPlayerFromConnectionId(playerConnectionId);
 
             if (player.Cards.FirstOrDefault(x => x.Color == card.Color && x.Number == card.Number) == null)
@@ -131,6 +138,7 @@ namespace TresetaApp.Models
             }
             if (CardsPlayed.Count == Players.Count && IsFirstRound)
                 IsFirstRound = false;
+
             return true;
         }
 
@@ -359,11 +367,11 @@ namespace TresetaApp.Models
         private void ChooseFirstRoundPlayer()
         {
             if(_firstPlayerPreviousRound == null){ //if no previous round has been played, pick the first
-                UserTurnToPlay = Players.First().User;
+                _firstPlayerPreviousRound = Players.First();
             }else{ // otherwise it is up to the player next to the player who played first on the previous round
-                UserTurnToPlay = GetNextPlayerFromConnectionId(_firstPlayerPreviousRound.ConnectionId).User;
+                _firstPlayerPreviousRound = GetNextPlayerFromConnectionId(_firstPlayerPreviousRound.User.ConnectionId);
             }
-            _firstPlayerPreviousRound = UserTurnToPlay;
+            UserTurnToPlay = _firstPlayerPreviousRound.User;
         }
     }
 }

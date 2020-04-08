@@ -51,7 +51,7 @@
                   <img [hidden]="game.deckSize==0" class="card-img-top" src="/images/{{game.gameSetup.typeOfDeck}}/deckbackground.jpg">
                   <img [hidden]="game.deckSize>0" class="card-img-top" src="/images/{{game.gameSetup.typeOfDeck}}/whitebackground.jpg">
                   <div class="card-body">
-                    <p class="card-title text-center">{{game.deckSize/2}}</p>
+                    <p class="card-title text-center">{{game.deckSize/game.teams.length}}</p>
                   </div>
                 </div>
               </div>
@@ -86,7 +86,7 @@
         </button>
 
         <div ngbDropdown placement="top-right" class="d-inline-block action-button">
-          <button class="btn btn-primary" id="callactiondropdown" *ngIf="game.gameSetup.gameMode!=GameMode.evasion && currentUser.connectionId==game.userTurnToPlay.connectionId && game.cardsPlayed.length==0 && !selectingCardsForExtraPoints"
+          <button class="btn btn-primary" id="callactiondropdown" *ngIf="game.gameSetup.gameMode!=GameMode.evasion && currentUser.connectionId==game.userTurnToPlay.connectionId && game.isFirstRound && !selectingCardsForExtraPoints"
             ngbDropdownToggle>Call action</button>
           <div ngbDropdownMenu aria-labelledby="callactiondropdown">
             <button class="dropdown-item" (click)="CallAction('KNOCK')">Knock</button>

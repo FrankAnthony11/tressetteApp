@@ -14,7 +14,7 @@ namespace TresetaApp.Models
         public string ImageUrl { get; set; }
         public CardColor Color { get; set; }
         public CardNumber Number { get; set; }
-
+        public bool IsAceOfClubs { get => Color == CardColor.Bastoni && Number == CardNumber.Ace; }
         public int Value(GameMode gameMode)
         {
             switch (Number)
