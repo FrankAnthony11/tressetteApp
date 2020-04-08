@@ -18,7 +18,7 @@ namespace TresetaApp.Models
         public string Password { get; set; }
         public int PlayUntilPoints { get; set; }
         public int ExpectedNumberOfPlayers { get; set; }
-        public TypeOfDeck TypeOfDeck { get; set; } = TypeOfDeck.Napoletano;
+        public TypeOfDeck TypeOfDeck { get; set; } = TypeOfDeck.Triestino;
         public GameMode GameMode {get; set; }
     }
 }

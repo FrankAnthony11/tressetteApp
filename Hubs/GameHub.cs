@@ -95,6 +95,7 @@ namespace TresetaApp.Hubs
                 return;
             game.GameSetup.TypeOfDeck = (TypeOfDeck)typeOfDeck;
             await UpdateAllGames();
+            await GameUpdated(game);
             await DisplayToastMessageToGame(id, "Type of Deck updated");
         }
 

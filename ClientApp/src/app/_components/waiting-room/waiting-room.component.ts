@@ -64,6 +64,10 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     if (cfrm) this._hubService.KickUSerFromGame(player.user);
   }
 
+  getDeckTypeName() {
+    return this.activeGame.gameSetup.typeOfDeck == 1 ? "Napoletane" : "Triestine";
+  }
+
   setDeckType(typeOfDeck: number) {
     this._hubService.SetGameTypeOfDeck(this.activeGame.gameSetup.id, typeOfDeck);
   }
