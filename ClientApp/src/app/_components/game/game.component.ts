@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'app/_models/user';
 import { Game } from 'app/_models/game';
@@ -7,33 +7,40 @@ import { CardAndUser } from 'app/_models/cardAndUser';
 import { GameMode } from 'app/_models/enums';
 import { HubService } from 'app/_services/hub.service';
 import { Router } from '@angular/router';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   @ViewChild('cardsPlayedPopover')
   private cardsPlayedPopover: NgbPopover;
   private gamefinished = false;
+
+  private _isAlive = true;
 
   isGameChatSidebarOpen = false;
   gameLocked = false;
   currentUser: User;
   game: Game;
   GameMode = GameMode;
-  
+
   numberUnreadMessages: number = 0;
   cardsForExtraPoints: Card[] = [];
   selectingCardsForExtraPoints: boolean = false;
 
   cardsDrewPreviousRound: CardAndUser[];
 
-  constructor(private _hubService: HubService, private _router: Router) {}
+  constructor(private _hubService: HubService, private _router: Router) { }
+
+  ngOnDestroy(): void {
+    this._isAlive = false;
+  }
 
   ngOnInit() {
-    this._hubService.ActiveGame.subscribe(game => {
+    this._hubService.ActiveGame.pipe(takeWhile(() => this._isAlive)).subscribe(game => {
       this.game = game;
       if (game == null) return;
       if (this.gamefinished) return;
@@ -58,11 +65,11 @@ export class GameComponent implements OnInit {
       }
     });
 
-    this._hubService.CurrentUser.subscribe(user => {
+    this._hubService.CurrentUser.pipe(takeWhile(() => this._isAlive)).subscribe(user => {
       this.currentUser = user;
     });
 
-    this._hubService.GameChatMessages.subscribe(messages => {
+    this._hubService.GameChatMessages.pipe(takeWhile(() => this._isAlive)).subscribe(messages => {
       if (messages.length > 0 && messages[0].username != this.currentUser.name && !this.isGameChatSidebarOpen) this.numberUnreadMessages++;
     });
   }
