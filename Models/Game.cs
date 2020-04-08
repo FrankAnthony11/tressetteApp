@@ -11,7 +11,7 @@ namespace TresetaApp.Models
     {
         private CardAndUser _strongestCardInRound;
         private CardAndUser _firstCardPlayedInRound;
-        private User _firstPlayerPreviousRound;
+        private Player _firstPlayerPreviousRound;
         public Game(GameSetup gameSetup)
         {
             CardsPlayed = new List<CardAndUser>();
@@ -367,11 +367,11 @@ namespace TresetaApp.Models
         private void ChooseFirstRoundPlayer()
         {
             if(_firstPlayerPreviousRound == null){ //if no previous round has been played, pick the first
-                UserTurnToPlay = Players.First().User;
+                _firstPlayerPreviousRound = Players.First();
             }else{ // otherwise it is up to the player next to the player who played first on the previous round
-                UserTurnToPlay = GetNextPlayerFromConnectionId(_firstPlayerPreviousRound.ConnectionId).User;
+                _firstPlayerPreviousRound = GetNextPlayerFromConnectionId(_firstPlayerPreviousRound.User.ConnectionId);
             }
-            _firstPlayerPreviousRound = UserTurnToPlay;
+            UserTurnToPlay = _firstPlayerPreviousRound.User;
         }
     }
 }
