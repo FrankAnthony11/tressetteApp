@@ -32,6 +32,11 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     this._hubService.CurrentUser.pipe(takeWhile(() => this._isAlive)).subscribe(user => {
       this.currentUser = user;
     });
+
+    let storedDeckType = localStorage.getItem("deckType");
+    if(storedDeckType) {
+      this.setDeckType(+storedDeckType);
+    }
   }
 
   leaveWaitingRoom() {
@@ -70,5 +75,6 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
   setDeckType(typeOfDeck: number) {
     this._hubService.SetGameTypeOfDeck(this.activeGame.gameSetup.id, typeOfDeck);
+    localStorage.setItem("deckType", ""+typeOfDeck);
   }
 }
