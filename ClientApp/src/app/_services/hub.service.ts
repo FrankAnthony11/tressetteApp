@@ -1,3 +1,4 @@
+import { TypeOfDeck } from './../_models/enums';
 import { Injectable } from '@angular/core';
 import { ChatMessage } from 'app/_models/chatMessage';
 import { BehaviorSubject } from 'rxjs';
@@ -19,7 +20,7 @@ export class HubService {
   private _buzzPlayerDisabled: boolean = false;
   private _knockPlayerDisabled: boolean = false;
   private _aceOfClubsPlayerDisabled: boolean = false;
-  
+
   private _allChatMessages: ChatMessage[] = [];
   private _gameChatMessages: ChatMessage[] = [];
 
@@ -111,16 +112,16 @@ export class HubService {
 
     this._hubConnection.on('GameUpdate', (game: Game) => {
       this.activeGameObservable.next(game);
-      if(game.gameStarted){
+      if (game.gameStarted) {
         if (this._router.url != '/game') {
           this._router.navigateByUrl('/game');
         }
-      }else{
+      } else {
         if (this._router.url != '/waitingRoom') {
           this._router.navigateByUrl('/waitingRoom');
         }
       }
-      
+
     });
 
     this._hubConnection.on('SendMessageToAllChat', (message: ChatMessage) => {
@@ -146,17 +147,10 @@ export class HubService {
     this._hubConnection.invoke('KickUSerFromGame', user.connectionId, this.activeGameObservable.getValue().gameSetup.id);
   }
 
-  JoinGame(id: string, password:string ): any {
+  JoinGame(id: string, password: string): any {
     this._hubConnection.invoke('JoinGame', id, password);
   }
 
-  SetGamePassword(id: string, roomPassword: string): any {
-    this._hubConnection.invoke('SetGamePassword', id, roomPassword);
-  }
-
-  SetGameTypeOfDeck(id: string, typeOfDeck: number): any {
-    this._hubConnection.invoke('SetGameTypeOfDeck', id, typeOfDeck);
-  }
 
   ExitGame(): any {
     if (!this.activeGameObservable.getValue()) return;
@@ -164,8 +158,12 @@ export class HubService {
     this.activeGameObservable.next(null);
   }
 
-  CreateGame(playUntilPoints:number,  expectedNumberOfPlayers:number, gameMode: GameMode) {
-    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers, gameMode);
+  CreateGame(playUntilPoints: number, expectedNumberOfPlayers: number, gameMode: GameMode, typeOfDeck: TypeOfDeck, password: string) {
+    this._hubConnection.invoke('CreateGame', playUntilPoints, expectedNumberOfPlayers, gameMode, typeOfDeck, password);
+  }
+
+  UpdateGame(gameId: string, playUntilPoints: number, expectedNumberOfPlayers: number, gameMode: GameMode, typeOfDeck: TypeOfDeck, password: string) {
+    this._hubConnection.invoke('UpdateGame', gameId, playUntilPoints, expectedNumberOfPlayers, gameMode, typeOfDeck, password);
   }
 
   AddExtraPoints(cards: Card[]) {

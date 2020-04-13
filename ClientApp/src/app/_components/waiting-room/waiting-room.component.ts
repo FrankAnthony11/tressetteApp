@@ -1,3 +1,4 @@
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { Player } from './../../_models/player';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -5,6 +6,8 @@ import { User } from 'app/_models/user';
 import { HubService } from 'app/_services/hub.service';
 import { Game } from 'app/_models/game';
 import { takeWhile } from 'rxjs/operators';
+import { GameMode } from 'app/_models/enums';
+import { GameSetupComponent } from '../_modals/game-setup/game-setup.component';
 
 @Component({
   selector: 'app-waiting-room',
@@ -15,10 +18,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
   private _isAlive = true;
 
   activeGame: Game;
-  password: string;
   currentUser: User;
 
-  constructor(private _hubService: HubService, private _router: Router) { }
+  constructor(private _hubService: HubService, private _router: Router, private _modalService: NgbModal) { }
 
   ngOnDestroy(): void {
     this._isAlive = false;
@@ -33,12 +35,11 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       this.currentUser = user;
     });
 
-    let storedDeckType = localStorage.getItem("deckType");
-    if(storedDeckType) {
-      this.setDeckType(+storedDeckType);
-    }
   }
-
+  updateGame() {
+    var userSettingsModal = this._modalService.open(GameSetupComponent, { backdrop: 'static', keyboard: false });
+    return userSettingsModal;
+  }
   leaveWaitingRoom() {
     this._hubService.ExitGame();
     this._router.navigate(['/']);
@@ -59,11 +60,6 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     this._hubService.StartGame();
   }
 
-  setRoomPassword() {
-    if (!this.password) return;
-    this._hubService.SetGamePassword(this.activeGame.gameSetup.id, this.password);
-  }
-
   kickPlayerFromGame(player: Player) {
     let cfrm = confirm('Really kick this player? ' + player.user.name);
     if (cfrm) this._hubService.KickUSerFromGame(player.user);
@@ -73,8 +69,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     return this.activeGame.gameSetup.typeOfDeck == 1 ? "Napoletane" : "Triestine";
   }
 
-  setDeckType(typeOfDeck: number) {
-    this._hubService.SetGameTypeOfDeck(this.activeGame.gameSetup.id, typeOfDeck);
-    localStorage.setItem("deckType", ""+typeOfDeck);
+
+  getGameModeName() {
+    return this.activeGame.gameSetup.gameMode == GameMode.plain ? "Standard" : "Evasion";
   }
+
 }

@@ -1,0 +1,114 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Setup the game</h4>
+  <button type="button" class="close" aria-describedby="modal-title" (click)="closeModal()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-12">
+      <div class="form-group row">
+        <label for="gameType" class="col-6 col-form-label">Game Mode</label>
+        <div class="col-6">
+          <div class="row">
+            <div class="col-9">
+              <select (change)="gameModeChanged()" [(ngModel)]="gameMode" class="form-control form-control-sm" id="gameMode">
+                <option value="0">Standard</option>
+                <option value="1">Evasion</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <span [placement]="['top', 'auto']" class="text-primary cursor-pointer lead" [container]="'body'" [ngbPopover]="gameModeBody" [popoverTitle]="gameModeTitle">
+                &#9432;
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="gameType" class="col-6 col-form-label">Number of players</label>
+        <div class="col-6">
+          <select [(ngModel)]="expectedNumberOfPlayers" class="form-control form-control-sm" id="gameType">
+            <option value="2">2</option>
+            <option [hidden]="gameMode==0" value="3">3</option>
+            <option value="4">4</option>
+            <option [hidden]="gameMode==0" value="5">5</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="gameType" class="col-6 col-form-label">Play until</label>
+        <div class="col-6">
+          <select [(ngModel)]="playUntilPoints" class="form-control form-control-sm" id="gameType">
+            <option [hidden]="gameMode==1" value="21">21</option>
+            <option [hidden]="gameMode==1" value="41">41</option>
+            <option [hidden]="gameMode==0" value="51">51</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="gameType" class="col-6 col-form-label">Deck type</label>
+        <div class="col-6">
+          <div class="row">
+            <div class="col-9">
+              <select [(ngModel)]="deckType" class="form-control form-control-sm" id="gameType">
+                <option value="1">Napoletano</option>
+                <option value="2">Triestino</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <span  [placement]="['top', 'auto']"  class="text-primary cursor-pointer lead" [container]="'body'" [ngbPopover]="deckTypeBody" [popoverTitle]="deckTypeTitle">
+                &#9432;
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="form-group row">
+        <label for="password" class="col-6 col-form-label">Password</label>
+        <div class="col-6">
+          <input type="password" [(ngModel)]="password" class="form-control" autocomplete="off" name="password" id="password" placeholder="(optional)" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <hr />
+      <button class="btn btn-lg btn-block btn-info" (click)="createGame()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #gameModeTitle>
+  <p [hidden]="gameMode!=0"> Standard Mode</p>
+  <p [hidden]="gameMode!=1"> Evasion Mode</p>
+</ng-template>
+
+<ng-template #gameModeBody>
+  <p [hidden]="gameMode!=0">
+    This is plain Tressette where the goal is to maximize the score.
+    Aces account for 1 point, and all cards not in range [4-6] account for 1/3 points.
+  </p>
+  <p [hidden]="gameMode!=1">
+    In this variation, each player plays alone, and the goal is to minimize the score.
+    The first player reaching the given upper score loses, the game ends, and a new game without that player starts.
+    Card points are like in standard mode. Depending on the region, the Ace of Clubs might account
+    for more points than the other Aces. In the variation implemented here, it accounts for 4 points rather than 1.
+    At the end of each round, the player getting the last point will also get all spurious cards
+    from the other players. However, if a player scores all points at the end of a round,
+    these points will go to the other players instead.
+  </p>
+</ng-template>
+
+<ng-template #deckTypeTitle>
+  <p [hidden]="deckType!=1"> Napoletano</p>
+  <p [hidden]="deckType!=2"> Triestino</p>
+</ng-template>
+<ng-template #deckTypeBody>
+  <img width="50" src="/images/{{deckType}}/1/8.jpg">
+  <img width="50" src="/images/{{deckType}}/2/8.jpg">
+  <img width="50" src="/images/{{deckType}}/3/8.jpg">
+  <img width="50" src="/images/{{deckType}}/4/8.jpg">
+</ng-template>

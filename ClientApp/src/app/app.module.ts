@@ -14,7 +14,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SidebarModule } from 'ng-sidebar';
@@ -24,6 +23,8 @@ import { HomeComponent } from './_components/home/home.component';
 import { WaitingRoomComponent } from './_components/waiting-room/waiting-room.component';
 import { WaitingRoomGuard } from './_guards/waiting-room.guard';
 import { RunningGamesComponent } from './_components/_lobbyInfo/running-games/running-games.component';
+import { GameSetupComponent } from './_components/_modals/game-setup/game-setup.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ import { RunningGamesComponent } from './_components/_lobbyInfo/running-games/ru
     GameChatComponent,
     GameSpectatorsComponent,
     AllChatComponent,
-    GameTabsComponent
+    GameTabsComponent,
+    GameSetupComponent,
+
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -56,6 +59,9 @@ import { RunningGamesComponent } from './_components/_lobbyInfo/running-games/ru
     ])
   ],
   providers: [HubService, WaitingRoomGuard, GameGuard, GameDeactivateGuard],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[
+    GameSetupComponent
+  ]
 })
 export class AppModule {}

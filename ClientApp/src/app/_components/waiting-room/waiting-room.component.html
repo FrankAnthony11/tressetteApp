@@ -1,49 +1,31 @@
 <div class="row mb-3">
   <div class="col-sm-12">
-    <button class="btn btn-danger btn-block mb-2" (click)="leaveWaitingRoom()">Leave waiting room</button>
+    <div class="row" *ngIf="activeGame.players[0].user.name==currentUser.name">
+      <div class="col-6">
+        <button class="btn btn-danger btn-block mb-2" (click)="leaveWaitingRoom()">Leave Waiting Room</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-primary btn-block mb-2" (click)="updateGame()">Change Game Setup</button>
+      </div>
+    </div>
+    <div class="row" *ngIf="activeGame.players[0].user.name!=currentUser.name">
+      <div class="col-12">
+        <button class="btn btn-danger btn-block mb-2" (click)="leaveWaitingRoom()">Leave Waiting Room</button>
+      </div>
+    </div>
     <div class="alert alert-primary">
       <div class="row">
-        <div class="col-12">
+        <div class="col-12" id="game-info">
+          <p><strong>Game Mode:</strong> {{getGameModeName()}}</p>
           <p><strong>Playing until:</strong> {{activeGame.gameSetup.playUntilPoints}}</p>
-        </div>
-        <div class="col-12">
           <p><strong>Expected number of players:</strong> {{activeGame.gameSetup.expectedNumberOfPlayers}}</p>
-        </div>
-        <div class="col-12">
           <p><strong>Deck type:</strong> {{getDeckTypeName()}}</p>
-        </div>
-        <div class="col-12" *ngIf="activeGame.players[0].user.connectionId==currentUser.connectionId">
-          <div class="row">
-            <div class="col-12">
-              <form>
-                <div class="form-group row">
-                  <label for="password" class="col-3 col-sm-1 col-form-label"><strong>Password:</strong> </label>
-                  <div class="col-5 col-sm-4">
-                    <input type="password" [(ngModel)]="password" name="password" class="form-control" id="password" placeholder="(Optional)">
-                  </div>
-                  <div class="col-4 col-sm-2">
-                    <button class="btn btn-primary btn-block" (click)="setRoomPassword()">Set</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <div ngbDropdown>
-                <button class="btn btn-primary" ngbDropdownToggle> Deck Type</button>
-                <div ngbDropdownMenu>
-                  <button class="dropdown-item" (click)="setDeckType(1)">Napoletane</button>
-                  <button class="dropdown-item" (click)="setDeckType(2)">Triestine</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p><strong>Password protected room:</strong> {{activeGame.gameSetup.isPasswordProtected}}</p>
         </div>
       </div>
     </div>
     <button class="btn btn-primary my-3" *ngIf="userIsSpectator() && activeGame.players.length<activeGame.gameSetup.expectedNumberOfPlayers" (click)="joinGame()">Join the game</button>
-    <h3>
+    <h4>
       <span class="text-danger" [hidden]="activeGame.players.length==activeGame.gameSetup.expectedNumberOfPlayers">
         Waiting for
         {{activeGame.gameSetup.expectedNumberOfPlayers - activeGame.players.length}} more
@@ -51,7 +33,7 @@
       <span class="text-success" [hidden]="activeGame.players.length!=activeGame.gameSetup.expectedNumberOfPlayers">
         All players are here! Host can start the game!
       </span>
-    </h3>
+    </h4>
     <ul>
       <li *ngFor="let player of activeGame.players">
         {{player.user.name}}

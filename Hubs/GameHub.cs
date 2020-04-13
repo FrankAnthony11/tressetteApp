@@ -78,41 +78,18 @@ namespace TresetaApp.Hubs
             await Clients.All.SendAsync("GetAllPlayers", _users);
         }
 
-
-        public async Task SetGamePassword(string id, string password)
-        {
-            var game = _games.FirstOrDefault(x => x.GameSetup.Id == id);
-            if (game == null)
-                return;
-            game.GameSetup.Password = password;
-            await UpdateAllGames();
-            await DisplayToastMessageToGame(id, "Password updated");
-        }
-
-        public async Task SetGameTypeOfDeck(string id, int typeOfDeck)
-        {
-            var game = _games.FirstOrDefault(x => x.GameSetup.Id == id);
-            if (game == null)
-                return;
-            game.GameSetup.TypeOfDeck = (TypeOfDeck)typeOfDeck;
-            await UpdateAllGames();
-            await GameUpdated(game);
-            await DisplayToastMessageToGame(id, "Type of Deck updated");
-        }
-
         public async Task UpdateAllGames()
         {
             var games = _mapper.Map<List<GameDto>>(_games);
             await Clients.All.SendAsync("UpdateAllGames", games);
         }
 
-        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers, GameMode gameMode)
+        public async Task CreateGame(int playUntilPoints, int expectedNumberOfPlayers, GameMode gameMode, TypeOfDeck typeOfDeck, string password)
         {
-
             await CleanupUserFromGames();
 
             var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers,gameMode);
+            var gameSetup = new GameSetup(playUntilPoints, expectedNumberOfPlayers,gameMode, password, typeOfDeck);
             
             var game = new Game(gameSetup);
             game.Players.Add(new Player(user));
@@ -120,6 +97,28 @@ namespace TresetaApp.Hubs
             await GameUpdated(game);
             await UpdateAllGames();
             await SendMessageToAllChat("Server", $"User {user.Name} has created new game", TypeOfMessage.Server);
+        }
+
+        public async Task UpdateGame(string gameId, int playUntilPoints, int expectedNumberOfPlayers, GameMode gameMode, TypeOfDeck typeOfDeck, string password)
+        {
+            var game = _games.FirstOrDefault(x => x.GameSetup.Id == gameId);
+
+            if (game == null) return;
+            if (game.GameStarted) return;
+
+            var user = _users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            
+            if(user==null) return;
+            if (game.Players.First().User!=user) return;
+
+            game.GameSetup.Password=password;
+            game.GameSetup.ExpectedNumberOfPlayers=expectedNumberOfPlayers;
+            game.GameSetup.GameMode=gameMode;
+            game.GameSetup.PlayUntilPoints=playUntilPoints;
+            game.GameSetup.TypeOfDeck=typeOfDeck;
+            
+            await GameUpdated(game);
+            await UpdateAllGames();
         }
 
 

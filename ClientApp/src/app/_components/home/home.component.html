@@ -3,22 +3,7 @@
     <div class="row">
       <div class="col-12 text-center fill-viewport-max-20">
         <h3 class="h3 text-center text-primary">Tressette - Card Game</h3>
-            <div ngbDropdown>
-              <button class="btn btn-primary my-3" ngbDropdownToggle> New game</button>
-              <div ngbDropdownMenu>
-                <h5 ngbTooltip="{{standardDescription}}" placement="bottom" class="dropdown-header">Standard mode</h5>
-                <button class="dropdown-item" (click)="createGame(21,2)">2 players until 21</button>
-                <button class="dropdown-item" (click)="createGame(41,2)">2 players until 41</button>
-                <button class="dropdown-item" (click)="createGame(21,4)">4 players until 21</button>
-                <button class="dropdown-item" (click)="createGame(41,4)">4 players until 41</button>
-                <div class="dropdown-divider"></div>
-                <h5 ngbTooltip="{{evasionDescription}}" placement="bottom" class="dropdown-header">Evasion mode</h5>
-                <button class="dropdown-item" (click)="createGameEvasion(51,2)">2 players until 51</button>
-                <button class="dropdown-item" (click)="createGameEvasion(51,3)">3 players until 51</button>
-                <button class="dropdown-item" (click)="createGameEvasion(51,4)">4 players until 51</button>
-                <button class="dropdown-item" (click)="createGameEvasion(51,5)">5 players until 51</button>
-              </div>
-            </div>
+        <button class="btn btn-primary my-3" (click)="createGame()" > New Game</button>
       </div>
       <div class="col-12 scrollable-div-y fill-viewport-max-80">
         <app-all-chat></app-all-chat>
@@ -31,3 +16,5 @@
     <app-running-games></app-running-games>
   </div>
 </div>
+
+
