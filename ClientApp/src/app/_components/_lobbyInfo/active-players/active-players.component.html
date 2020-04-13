@@ -1,9 +1,12 @@
 <div class="row">
   <div class="col-12">
     <div class="alert alert-primary">
-      <h4 class="h4">Available players ({{users.length}}):</h4>
+      <span>Online Users ({{ users.length }}):</span>
     </div>
-    <p *ngFor="let user of users">{{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span>
-    </p>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let user of users">
+        {{user.name}} <span class="cursor-pointer" (click)="buzzPlayer(user)">&#x260A;</span>
+      </li>
+    </ul>
   </div>
 </div>

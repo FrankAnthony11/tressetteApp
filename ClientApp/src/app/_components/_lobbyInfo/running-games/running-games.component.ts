@@ -37,4 +37,9 @@ export class RunningGamesComponent implements OnInit, OnDestroy {
     this._hubService.JoinGame(game.gameSetup.id, password);
   }
 
+  getBadgeClass(game: Game) {
+    if (game.gameStarted) return 'badge-danger';
+    return 'badge-primary';
+  }
+
 }

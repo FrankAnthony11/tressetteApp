@@ -1,3 +1,4 @@
+using System;
 namespace TresetaApp.Models
 {
     public class User
@@ -6,9 +7,11 @@ namespace TresetaApp.Models
         {
             ConnectionId = connectionId;
             Name = name;
+            LastBuzzedUtc=DateTime.UtcNow;
         }
 
         public string ConnectionId { get; set; }
         public string Name { get; set; }
+        public DateTime LastBuzzedUtc {get;set;}
     }
 }

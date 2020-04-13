@@ -1,6 +1,25 @@
-.card-header{
-    padding:0.5rem;
-}
-.card-body{
-    padding:0.5rem;
-}
+.card-header {
+    padding: 0.2rem;
+  }
+  .card-body {
+    padding: 0.5rem;
+  }
+  p {
+    margin-bottom: 0.1rem;
+  }
+  @media (max-width: 768px) {
+    p {
+      font-size: 0.85rem;
+    }
+    h6 {
+      font-size: 0.85rem;
+    }
+    .form-control {
+      font-size: 0.8r5em;
+    }
+  }
+  
+  #emojiContainer:after {
+    content: '\25BE';
+  }
+  

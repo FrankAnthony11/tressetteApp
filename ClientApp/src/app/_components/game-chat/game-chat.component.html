@@ -1,17 +1,24 @@
 <div class="row">
   <div class="col-12">
     <div class="card">
-      <h5 class="card-header">
-        <p>Your username: <strong>{{currentUser?.name}}</strong> </p>
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h6 class="ml-2">
+              Hello, <strong>{{ currentUser.name }}</strong>
+            </h6>
+          </div>
+        </div>
         <form novalidate name="newMessageForm" (ngSubmit)="sendMessageToGameChat()">
-          <input type="text" name="newMessage"  autocomplete="off" class="form-control" placeholder="New Message"
-            [(ngModel)]="newMessage">
+          <input type="text" name="newMessage" autocomplete="off" class="form-control" placeholder="New Message" [(ngModel)]="newMessage">
         </form>
-      </h5>
+      </div>
       <div class="card-body">
         <p class="card-text" [hidden]="messages.length>0">No messages</p>
-        <p class="card-text" [hidden]="getChatMessageHidden(message)" [ngClass]="getChatMessageClass(message)" *ngFor="let message of messages"><strong>
-            [{{message.username}}]: </strong> {{message.text}}</p>
+        <p class="card-text" [hidden]="getChatMessageHidden(message)" [ngClass]="getChatMessageClass(message)" *ngFor="let message of messages">
+          <strong>[{{ message.createdUtc | date: 'shortTime' }} | {{ message.username }}]: </strong>
+          <span>{{message.text}}</span>
+        </p>
       </div>
     </div>
   </div>

@@ -1,0 +1,8 @@
+.alert{
+    margin-bottom: 0;
+}
+@media (max-width: 768px) {
+  .list-group-item {
+    padding: 0.75rem 0.75rem;
+  }
+}

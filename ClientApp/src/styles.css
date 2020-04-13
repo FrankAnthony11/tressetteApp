@@ -1,102 +1,183 @@
-/* You can add global styles to this file, and also import other style files */
-:disabled{
+.ng-sidebar--opened {
+  border: 2px solid lightgray;
+  padding: 0 2px;
+}
+.ng-sidebar {
+  overflow-x: hidden !important;
+}
+.ng-sidebar__content {
+  overflow-x: hidden !important;
+}
+
+body {
+  /* default is 1rem or 16px */
+}
+.dropdown-menu.show {
+  z-index: 3000;
+}
+
+@media (max-width: 767px) {
+  body {
+    /* Increase all font sizes on mobile */
+    /* default is 1rem or 16px */
+  }
+  .alert {
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+:disabled {
   cursor: not-allowed;
 }
-.cursor-pointer{
-  cursor:pointer
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .fill-viewport-100 {
-  height: 100vh;
+  height: 100vh !important;
 }
-.fill-viewport-80{
-  height: 80vh;
+.fill-viewport-90 {
+  height: 90vh !important;
+}
+.fill-viewport-80 {
+  height: 80vh !important;
 }
 .fill-viewport-70 {
-  height: 70vh;
+  height: 70vh !important;
+}
+.fill-viewport-60 {
+  height: 60vh !important;
 }
 .fill-viewport-50 {
-  height: 50vh;
+  height: 50vh !important;
+}
+.fill-viewport-40 {
+  height: 40vh !important;
 }
 .fill-viewport-30 {
-  height: 30vh;
+  height: 30vh !important;
 }
-.fill-viewport--20 {
-  height: 20vh;
+.fill-viewport-20 {
+  height: 20vh !important;
 }
 
 .fill-viewport-max-100 {
-  max-height: 100vh;
+  max-height: 100vh !important;
 }
-.fill-viewport-max-80{
-  max-height: 80vh;
+.fill-viewport-max-90 {
+  max-height: 90vh !important;
+}
+.fill-viewport-max-80 {
+  max-height: 80vh !important;
 }
 .fill-viewport-max-70 {
-  max-height: 70vh;
+  max-height: 70vh !important;
+}
+.fill-viewport-max-60 {
+  max-height: 60vh !important;
 }
 .fill-viewport-max-50 {
-  max-height: 50vh;
+  max-height: 50vh !important;
+}
+.fill-viewport-max-40 {
+  max-height: 40vh !important;
 }
 .fill-viewport-max-30 {
-  max-height: 30vh;
+  max-height: 30vh !important;
 }
 .fill-viewport-max-20 {
-  max-height: 20vh;
+  max-height: 20vh !important;
 }
-
 
 .fill-viewport-min-100 {
-  min-height: 100vh;
+  min-height: 100vh !important;
 }
-
+.fill-viewport-min-90 {
+  min-height: 90vh !important;
+}
 .fill-viewport-min-70 {
-  min-height: 70vh;
+  min-height: 70vh !important;
 }
-
+.fill-viewport-min-60 {
+  min-height: 60vh !important;
+}
 .fill-viewport-min-50 {
-  min-height: 50vh;
+  min-height: 50vh !important;
 }
-
+.fill-viewport-min-40 {
+  min-height: 50vh !important;
+}
+.fill-viewport-min-30 {
+  min-height: 50vh !important;
+}
 .fill-viewport-min-20 {
-  min-height: 20vh;
+  min-height: 20vh !important;
 }
 
-.min-width-50{
+.min-width-50 {
   min-width: 50%;
 }
-.min-height-50{
+.min-height-50 {
   min-height: 50%;
 }
-.max-width-50{
+.max-width-50 {
   max-width: 50%;
 }
-.max-height-50{
+.max-height-50 {
   max-height: 50%;
 }
 
 .scrollable-div-y {
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .scrollable-div-x {
-  overflow-x: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .animate {
   transition: all 0.5s ease-in-out;
 }
-.server-chat-message{
-  color:grey;
+.server-chat-message {
+  color: grey;
   font-style: italic;
 }
 
-.nav-link{
-  padding:.5rem!important;
+.spectators-chat-message {
+  color: lightskyblue;
+  /* font-style: italic; */
+}
+
+.btn-group.special {
+  display: flex;
+}
+
+.special .btn {
+  flex: 1;
+}
+
+.nav-link {
+  padding: 0.5rem !important;
 }
 
 .popover-previous-cards {
-  top:0!important;
+  top: 0 !important;
 }
 @media (max-width: 768px) {
   .popover-previous-cards {
-    max-width: 200px!important;
+    max-width: 200px !important;
   }
+}
+.nav-tabs .nav-item {
+  font-size: 14px;
+}
+
+.dropdown-menu.scrollable-menu > li.active {
+  background-color: transparent;
+}
+
+.ellipsis-text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

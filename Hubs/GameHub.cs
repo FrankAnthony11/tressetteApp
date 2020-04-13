@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using TresetaApp.Contants;
 using TresetaApp.Enums;
 using TresetaApp.Models;
 using TresetaApp.Models.Dtos;
@@ -189,14 +190,24 @@ namespace TresetaApp.Hubs
             {
                 var targetedUsername = match.Groups[2].Value;
                 var targetedUser = _users.FirstOrDefault(x => x.Name == targetedUsername);
+
                 if (targetedUser != null)
                 {
-                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
-                    await SendMessageToAllChat("Server", $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                    var canBeBuzzedAfter = targetedUser.LastBuzzedUtc.AddSeconds(Constants.MINIMUM_TIME_SECONDS_BETWEEN_BUZZ);
+                    if (DateTime.Now > canBeBuzzedAfter)
+                    {
+                          targetedUser.LastBuzzedUtc = DateTime.Now;
+                          await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+                          await SendMessageToAllChat("Server", $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                    }else{
+                      var  msgDto =new ChatMessage("Server", $"User {targetedUser.Name} was not buzzed! Wait {Constants.MINIMUM_TIME_SECONDS_BETWEEN_BUZZ} seconds.", TypeOfMessage.Server);
+                      await Clients.Caller.SendAsync("SendMessageToAllChat", msgDto);
+                    }
                 }
                 else
                 {
-                    await SendMessageToAllChat("Server", $"Player not found", TypeOfMessage.Server);
+                    var  msgDto =new ChatMessage("Server", $"User {targetedUsername} was not found!", TypeOfMessage.Server);
+                    await Clients.Caller.SendAsync("SendMessageToAllChat", msgDto);
                 }
                 return;
             }
@@ -226,15 +237,23 @@ namespace TresetaApp.Hubs
 
                 if (targetedUser != null)
                 {
-                    await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
-                    await SendMessageToGameChat(gameId, "Server", $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                    var canBeBuzzedAfter = targetedUser.LastBuzzedUtc.AddSeconds(Constants.MINIMUM_TIME_SECONDS_BETWEEN_BUZZ);
+                    if (DateTime.Now > canBeBuzzedAfter)
+                    {
+                          targetedUser.LastBuzzedUtc = DateTime.Now;
+                          await Clients.Client(targetedUser.ConnectionId).SendAsync("BuzzPlayer");
+                          await SendMessageToGameChat(gameId, "Server", $"User {user.Name} has buzzed player {targetedUser.Name} ", TypeOfMessage.Server);
+                    }else{
+                      var  msgDto =new ChatMessage("Server", $"User {targetedUser.Name} was not buzzed! Wait {Constants.MINIMUM_TIME_SECONDS_BETWEEN_BUZZ} seconds.", TypeOfMessage.Server);
+                      await Clients.Caller.SendAsync("SendMessageToGameChat", msgDto);
+                    }
                 }
                 else
                 {
-                    await SendMessageToGameChat(gameId, "Server", $"Player not found", TypeOfMessage.Server);
+                    var  msgDto =new ChatMessage("Server", $"User {targetedUsername} was not found!", TypeOfMessage.Server);
+                    await Clients.Caller.SendAsync("SendMessageToGameChat", msgDto);
                 }
                 return;
-
             }
 
             var msg = new ChatMessage(username, message, typeOfMessage);
